@@ -2,6 +2,8 @@
 package log
 
 import (
+	"os"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -57,13 +59,21 @@ func Initialize(logLevel string) {
 
 	writeSyncer := zapcore.AddSync(lumberjackLogger)
 
-	core := zapcore.NewCore(
+	fileCore := zapcore.NewCore(
 		zapcore.NewJSONEncoder(encoderConfig),
 		writeSyncer,
 		level,
 	)
 
-	logger := zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
+	consoleCore := zapcore.NewCore(
+		zapcore.NewConsoleEncoder(encoderConfig),
+		zapcore.AddSync(os.Stdout),
+		level,
+	)
+
+	combinedCore := zapcore.NewTee(fileCore, consoleCore)
+
+	logger := zap.New(combinedCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 
 	globalLogger = logger
 }
