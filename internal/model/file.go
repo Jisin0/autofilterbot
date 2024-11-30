@@ -1,4 +1,4 @@
-package database
+package model
 
 // File is a single file stored in the database.
 type File struct {

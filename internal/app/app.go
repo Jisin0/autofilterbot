@@ -17,15 +17,16 @@ import (
 	"go.uber.org/zap"
 )
 
-var gloablApp *App
+var _app *App
 
 // App wraps various individual components of the app to orchestrate application processes.
 type App struct {
-	DB         database.Database
+	DB        database.Database
+	Log       *zap.Logger
+	StartTime time.Time
+
 	Config     config.Config
-	Log        *zap.Logger
 	AutoDelete *autodelete.Manager
-	StartTime  time.Time
 }
 
 // RunAppOptions wraps command-line arguments for app startup.
@@ -107,7 +108,7 @@ func Run(opts RunAppOptions) {
 		logger.Error("autodelete module setup failed", zap.Error(err))
 	}
 
-	gloablApp = &App{
+	_app = &App{
 		DB:         db,
 		Config:     *appConfig,
 		Log:        logger,
@@ -124,10 +125,10 @@ func Run(opts RunAppOptions) {
 	logger.Info("stopping app: interrupt signal received", zap.Any("signal", s))
 
 	cancel() // autodelete & mongo updater should stop with this
-	gloablApp.DB.Shutdown()
+	_app.DB.Shutdown()
 }
 
 // App returns the initialized global app instance.
 func Application() *App {
-	return gloablApp
+	return _app
 }

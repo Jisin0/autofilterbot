@@ -1,0 +1,70 @@
+/*
+Package dispatcher sets up the dispatcher and adds handlers
+*/
+package dispatcher
+
+import (
+	"fmt"
+	"runtime/debug"
+	"strings"
+
+	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext"
+	"go.uber.org/zap"
+)
+
+func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
+	d := ext.NewDispatcher(&ext.DispatcherOpts{
+		// If an error is returned by a handler, log it and continue going.
+		Error: func(b *gotgbot.Bot, ctx *ext.Context, err error) ext.DispatcherAction {
+			logFields := []zap.Field{zap.Error(err)}
+			logFields = addLogFieldsFromContext(ctx, logFields)
+
+			log.Error("error occurred while handling update", logFields...)
+
+			return ext.DispatcherActionNoop
+		},
+
+		Panic: func(b *gotgbot.Bot, ctx *ext.Context, r interface{}) {
+			logFields := []zap.Field{zap.String("panic", fmt.Sprintf("%v\n%s", r, cleanedStack()))}
+			logFields = addLogFieldsFromContext(ctx, logFields)
+
+			log.Error("panic recovered", logFields...)
+		},
+	})
+
+	return d
+}
+
+// logFieldsFromContext adds zap fields to logFields about specific update from ctx to help troubleshooting.
+func addLogFieldsFromContext(ctx *ext.Context, logFields []zap.Field) []zap.Field {
+	switch {
+	case ctx.Message != nil:
+		logFields = append(logFields,
+			zap.Int64("chat_id", ctx.Message.Chat.Id),
+			zap.Int64("message_id", ctx.Message.MessageId),
+			zap.String("text", ctx.Message.Text),
+		)
+	case ctx.CallbackQuery != nil:
+		logFields = append(logFields,
+			zap.String("callback_query_id", ctx.CallbackQuery.Id),
+			zap.String("data", ctx.CallbackQuery.Data),
+			zap.Int64("chat_id", ctx.CallbackQuery.Message.GetChat().Id),
+			zap.Int64("message_id", ctx.CallbackQuery.Message.GetMessageId()),
+		)
+	case ctx.InlineQuery != nil:
+		logFields = append(logFields,
+			zap.String("inline_query_id", ctx.InlineQuery.Id),
+			zap.String("query", ctx.InlineQuery.Query),
+			zap.Int64("from", ctx.InlineQuery.From.Id),
+		)
+	}
+
+	return logFields
+}
+
+// cleanedStack returns stack trace with gotgbot library parts removed to prevent confusion.
+// Copied from https://github.com/PaulSonOfLars/gotgbot/blob/v2/ext/dispatcher.go.
+func cleanedStack() string {
+	return strings.Join(strings.Split(string(debug.Stack()), "\n")[4:], "\n")
+}

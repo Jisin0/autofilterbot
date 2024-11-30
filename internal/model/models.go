@@ -1,5 +1,5 @@
 // Package models contains types shared by various packages.
-package models
+package model
 
 // FsubChannel is a single force sub channel.
 type FsubChannel struct {

@@ -1,7 +1,10 @@
 // Package database holds interfaces and types used for mongo or couchbase storage.
 package database
 
-import "github.com/Jisin0/autofilterbot/internal/config"
+import (
+	"github.com/Jisin0/autofilterbot/internal/config"
+	"github.com/Jisin0/autofilterbot/internal/model"
+)
 
 const (
 	CollectionNameUsers      = "Users"
@@ -19,7 +22,7 @@ type Database interface {
 	// SaveUser saves the id of a user to the database if it does not exist.
 	SaveUser(userId int64) error
 	// GetUser gets a user from the database using their id.
-	GetUser(userId int64) (*User, error)
+	GetUser(userId int64) (*model.User, error)
 	// DeleteUser deletes a user from the database. This could be because the user has blocked the bot.
 	DeleteUser(userId int64) error
 	// SaveUserJoinRequest saves the chat id to which a user has sent a join request.
@@ -32,11 +35,11 @@ type Database interface {
 
 	// SaveFile saves a file to the database and returns a FileAlreadyExistsError if the file already exists.
 	// The file can be a duplicate if it has the same file_id or file_name-file_size combination.
-	SaveFile(f *File) error
+	SaveFile(f *model.File) error
 	// SaveFiles saves multiple files to the database and returns a list of errors.
-	SaveFiles(files ...*File) []error
+	SaveFiles(files ...*model.File) []error
 	// GetFile fetches a file from the database using its file_id.
-	GetFile(fileId string) (*File, error)
+	GetFile(fileId string) (*model.File, error)
 	// DeleteFile deletes a file from the database using its file_id.
 	DeleteFile(fileId string) error
 	// SearchFiles searches for files in the database by their name. The query should be sanitized first.

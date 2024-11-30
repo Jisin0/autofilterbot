@@ -5,12 +5,13 @@ import (
 	"strings"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (c *Client) SaveFile(f *database.File) error {
+func (c *Client) SaveFile(f *model.File) error {
 	// Find any with matching file_id
 	if res := c.fileCollection.FindOne(c.ctx, fileIdFilter(f.FileId)); res.Err() != mongo.ErrNoDocuments {
 		return database.FileAlreadyExistsError{FileName: f.FileName}
@@ -32,7 +33,7 @@ func (c *Client) SaveFile(f *database.File) error {
 	return err
 }
 
-func (c *Client) SaveFiles(files ...*database.File) []error {
+func (c *Client) SaveFiles(files ...*model.File) []error {
 	var errs []error
 	for _, f := range files {
 		if err := c.SaveFile(f); err != nil {
@@ -43,13 +44,13 @@ func (c *Client) SaveFiles(files ...*database.File) []error {
 	return errs
 }
 
-func (c *Client) GetFile(fileId string) (*database.File, error) {
+func (c *Client) GetFile(fileId string) (*model.File, error) {
 	res := c.fileCollection.FindOne(c.ctx, fileIdFilter(fileId))
 	if err := res.Err(); err != nil {
 		return nil, err
 	}
 
-	var f database.File
+	var f model.File
 
 	res.Decode(&f)
 

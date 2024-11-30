@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
-	"github.com/Jisin0/autofilterbot/internal/models"
+	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
 // FsubChannel is a single force sub channel.
 type FsubChannel struct {
-	models.FsubChannel
+	model.FsubChannel
 }
 
 // IsJoined reports wether the user is a member of the channel.
@@ -77,7 +77,7 @@ type FsubChannelArray struct {
 func (f FsubChannelArray) GetNotMemberOrRequest(bot *gotgbot.Bot, userId int64) ([]FsubChannel, error) {
 	var (
 		l         = f.List
-		user      *database.User
+		user      *model.User
 		allErrors []error
 		notJoined = make([]FsubChannel, len(l))
 	)

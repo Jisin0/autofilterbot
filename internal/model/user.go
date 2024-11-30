@@ -1,4 +1,4 @@
-package database
+package model
 
 // User contains data of a single user of the bot saved in the database.
 type User struct {

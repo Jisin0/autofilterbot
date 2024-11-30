@@ -2,10 +2,10 @@
 package config
 
 import (
-	"github.com/Jisin0/autofilterbot/internal/models"
+	"github.com/Jisin0/autofilterbot/internal/model"
 )
 
 // Config contains the saved configs for the bot.
 type Config struct {
-	FsubChannels []models.FsubChannel
+	FsubChannels []model.FsubChannel
 }
