@@ -11,12 +11,14 @@ func Execute() {
 	mongodbUri := flag.String("mongodb-uri", "", "mongodb uri for database (use env for additional uris or couchbase)")
 	botToken := flag.String("bot-token", "", "bot token obtained from @botfather")
 	logLevel := flag.String("log-level", "warn", "level of logs to be shown")
+	noOutput := flag.Bool("no-output", false, "disable console logs (does not affect log file)")
 
 	app.Run(
 		app.RunAppOptions{
-			MongodbURI: *mongodbUri,
-			LogLevel:   *logLevel,
-			BotToken:   *botToken,
+			MongodbURI:         *mongodbUri,
+			LogLevel:           *logLevel,
+			BotToken:           *botToken,
+			DisableConsoleLogs: *noOutput,
 		},
 	)
 }

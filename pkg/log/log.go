@@ -16,12 +16,15 @@ var (
 const (
 	DebugLevelStr   = "debug"
 	InfoLevelStr    = "info"
-	WarningLevelStr = "warning"
+	WarningLevelStr = "warn"
 	ErrorLevelStr   = "error"
 )
 
 // Initialize sets up the logger with provided log level and log rolling with lumberjack. Log level defaults to "warn".
-func Initialize(logLevel string) {
+//
+// - logLevel: Level of logs to display can be debig, info, warn or error use log.*LevelStr constants.
+// - disableConsoleOutput: to disable output to console.
+func Initialize(logLevel string, disableConsoleOutput bool) {
 	var level zapcore.Level
 	switch logLevel {
 	case DebugLevelStr:
@@ -65,13 +68,19 @@ func Initialize(logLevel string) {
 		level,
 	)
 
-	consoleCore := zapcore.NewCore(
-		zapcore.NewConsoleEncoder(encoderConfig),
-		zapcore.AddSync(os.Stdout),
-		level,
-	)
+	cores := []zapcore.Core{fileCore}
 
-	combinedCore := zapcore.NewTee(fileCore, consoleCore)
+	if !disableConsoleOutput {
+		consoleCore := zapcore.NewCore(
+			zapcore.NewConsoleEncoder(encoderConfig),
+			zapcore.AddSync(os.Stdout),
+			level,
+		)
+
+		cores = append(cores, consoleCore)
+	}
+
+	combinedCore := zapcore.NewTee(cores...)
 
 	logger := zap.New(combinedCore, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel))
 

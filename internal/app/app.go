@@ -31,9 +31,10 @@ type App struct {
 
 // RunAppOptions wraps command-line arguments for app startup.
 type RunAppOptions struct {
-	MongodbURI string
-	LogLevel   string
-	BotToken   string
+	MongodbURI         string
+	LogLevel           string
+	BotToken           string
+	DisableConsoleLogs bool
 }
 
 // Run starts the application and initializes core components.
@@ -48,7 +49,7 @@ func Run(opts RunAppOptions) {
 		logLevel = s
 	}
 
-	log.Initialize(logLevel)
+	log.Initialize(logLevel, opts.DisableConsoleLogs)
 	logger := log.Logger()
 
 	botToken := opts.BotToken
