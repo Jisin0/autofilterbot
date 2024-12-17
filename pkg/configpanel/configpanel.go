@@ -4,8 +4,6 @@ Package configpanel creates a modular panel to
 package configpanel
 
 import (
-	"fmt"
-
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
@@ -14,6 +12,18 @@ const (
 	PathHome = "home"
 )
 
+// ContentGenerator is a function that returns a string which will be used as the text content for a message.
+// The text should use html styling.
+type ContentGenerator func() string
+
+// Panel is the entrypoint to the configpanel to which pages can be added. Use the NewPanel function to create a new panel.
+type Panel struct {
+	// List of pages.
+	Pages []*Page
+	// Function to generate the text content for the homepage.
+	HomepageGenerator ContentGenerator
+}
+
 // NewPanel intializes a new empty config panel.
 func NewPanel() *Panel {
 	return &Panel{
@@ -21,10 +31,10 @@ func NewPanel() *Panel {
 	}
 }
 
-// Panel is the entrypoint to the configpanel to which pages can be added. Use the NewPanel function to create a new panel.
-type Panel struct {
-	// List of pages.
-	Pages []*Page
+// WithHomepageGenerator sets the HomepageGenerator field.
+func (p *Panel) WithHomepageGenerator(g ContentGenerator) *Panel {
+	p.HomepageGenerator = g
+	return p
 }
 
 // AddPage adds a new page to the root panel.
@@ -56,7 +66,15 @@ func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]
 	}
 
 	if len(data.Path) < 2 || data.Path[1] == PathHome {
-		//TODO: edit with homepage and buttons
+		var content string
+
+		if p.HomepageGenerator != nil {
+			content = p.HomepageGenerator()
+		} else {
+			content = "<b>Welcome</b> to your config panel 👋\n\n🤖 Use the buttons below to navigate and customize your bot 👇"
+		}
+
+		return content, buttonsFromPages(ctx.CallbackData, p.Pages), nil
 	}
 
 	rootPage, ok := findPage(p.Pages, data.Path[1])
@@ -65,15 +83,15 @@ func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]
 	}
 
 	if len(data.Path) == 2 { // if only one subroute i.e display root page
-		//TODO: handle pls
+		return rootPage.GetContent(), buttonsFromPages(ctx.CallbackData, nil), nil
 	}
 
 	currentPage := rootPage
 
-	for _, subRoutes := range data.Path[2:] {
-		nextPage, ok := findPage(currentPage.SubPages, subRoutes)
+	for _, subRoute := range data.Path[2:] {
+		nextPage, ok := findPage(currentPage.SubPages, subRoute)
 		if !ok {
-			//TODO: return not found msg
+			return "", nil, PageNotFoundError{pageName: subRoute}
 		}
 
 		currentPage = nextPage
@@ -86,14 +104,5 @@ func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]
 		return currentPage.CallbackFunc(ctx)
 	}
 
-	var (
-		content = currentPage.Content
-		markup  = buttonsFromPages(ctx.CallbackData, currentPage.SubPages)
-	)
-
-	if content == "" {
-		content = fmt.Sprintf("<b>%s</b>\n\nUse the options below to configure this field 👇", currentPage.DisplayName)
-	}
-
-	return content, markup, nil
+	return currentPage.GetContent(), buttonsFromPages(ctx.CallbackData, currentPage.SubPages), nil
 }
