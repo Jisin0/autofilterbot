@@ -4,6 +4,8 @@ Package configpanel creates a modular panel to
 package configpanel
 
 import (
+	"fmt"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
@@ -45,12 +47,23 @@ func (p *Panel) AddPage(page *Page) *Page {
 
 // HandleUpdate processes the update and runs it through the config panel.
 func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
-	//TODO: handle result and error
-	handleUpdate(p, ctx, bot)
+	update := ctx.CallbackQuery
 
-	//TODO: create close button after markup length check
+	content, markup, err := handleUpdate(p, ctx, bot)
+	if err != nil {
+		content = fmt.Sprintf("An error occured while handling request: %s", err.Error())
+	}
 
-	return nil
+	if len(markup) == 0 {
+		markup = [][]gotgbot.InlineKeyboardButton{{closeButton}}
+	}
+
+	_, _, err = update.Message.EditText(bot, content, &gotgbot.EditMessageTextOpts{
+		ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: markup},
+		ParseMode:   gotgbot.ParseModeHTML,
+	})
+
+	return err
 }
 
 // handleUpdate processes the update and returns the text and buttons to edit the message with.
