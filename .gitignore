@@ -29,3 +29,6 @@ autofilterbot
 
 # app logs
 logs/
+
+# autodelete database
+autodelete.sqlite

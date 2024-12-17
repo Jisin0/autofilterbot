@@ -49,7 +49,7 @@ func NewManager(bot *gotgbot.Bot) (*Manager, error) {
 	}, nil
 }
 
-const insertQuery = `INSERT INTO autodelete (chat_id, message_id, expiry_time) VALUES (:chat_id, :message_id, :expiry_time,)
+const insertQuery = `INSERT INTO autodelete (chat_id, message_id, expiry_time) VALUES (:chat_id, :message_id, :expiry_time)
 	ON CONFLICT(chat_id, message_id) DO UPDATE SET expiry_time=excluded.expiry_time;`
 
 // Save adds a message to the autodelete database which will be deleted after duration.
