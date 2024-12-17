@@ -3,7 +3,7 @@ package configpanel_test
 import (
 	"testing"
 
-	"github.com/Jisin0/autofilterbot/internal/configpanel"
+	"github.com/Jisin0/autofilterbot/pkg/configpanel"
 	"github.com/stretchr/testify/assert"
 )
 
