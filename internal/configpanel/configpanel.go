@@ -6,7 +6,6 @@ package configpanel
 import (
 	"fmt"
 
-	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
@@ -16,9 +15,8 @@ const (
 )
 
 // NewPanel intializes a new empty config panel.
-func NewPanel(app *app.App) *Panel {
+func NewPanel() *Panel {
 	return &Panel{
-		App:   app,
 		Pages: make([]*Page, 5),
 	}
 }
@@ -27,8 +25,6 @@ func NewPanel(app *app.App) *Panel {
 type Panel struct {
 	// List of pages.
 	Pages []*Page
-	// Application instance.
-	App *app.App
 }
 
 // AddPage adds a new page to the root panel.
@@ -53,7 +49,6 @@ func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]
 	data := CallbackDataFromString(update.CallbackQuery.Data)
 
 	ctx := &Context{
-		App:           p.App,
 		Bot:           bot,
 		Update:        update,
 		CallbackQuery: update.CallbackQuery,
