@@ -94,3 +94,5 @@ func (c CallbackData) RemoveLastPath() CallbackData {
 		Args: c.Args,
 	}
 }
+
+//TODO: create BackButton bound method to generate back button to last route and implement at points of error

@@ -6,12 +6,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-type OperationType int
-
-const (
-	OperationTypeDelete OperationType = iota + 1
-	OperationTypeAdd
-)
+type CallbackFunc func(ctx *Context) (string, [][]gotgbot.InlineKeyboardButton, error)
 
 // Page is a single page in the config panel.
 type Page struct {
@@ -25,8 +20,8 @@ type Page struct {
 	Name string
 	// Function to call when page is hit. returns the text & buttons to edit and an error.
 	// The back button will be appended and does not need to be returned.
-	CallbackFunc func(ctx *Context) (string, [][]gotgbot.InlineKeyboardButton, error)
-	// Additional subpages.
+	CallbackFunc CallbackFunc
+	// Additional subpages. CallbackFunc becomes obsolete if set.
 	SubPages []*Page
 }
 
@@ -34,6 +29,35 @@ type Page struct {
 func (p *Page) WithContentGenerator(g ContentGenerator) *Page {
 	p.ContentGenerator = g
 	return p
+}
+
+// WithContent sets the Content field of the page.
+func (p *Page) WithContent(val string) *Page {
+	p.Content = val
+	return p
+}
+
+// WithContent sets the Content field of the page.
+func (p *Page) WithCallbackFunc(val CallbackFunc) *Page {
+	p.CallbackFunc = val
+	return p
+}
+
+// AddSubPage adds a new sub page.
+func (p *Page) AddSubPage(page *Page) *Page {
+	p.SubPages = append(p.SubPages, page)
+	return page
+}
+
+// NewPage creates a new empty subpage with given name and displayName.
+func (p *Page) NewSubPage(name, displayName string) *Page {
+	newPage := &Page{
+		Name:        name,
+		DisplayName: displayName,
+	}
+	p.SubPages = append(p.SubPages, newPage)
+
+	return newPage
 }
 
 // GetContent returns the COntent for the page or the default content if empty.

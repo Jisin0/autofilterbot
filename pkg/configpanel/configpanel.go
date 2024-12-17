@@ -29,7 +29,7 @@ type Panel struct {
 // NewPanel intializes a new empty config panel.
 func NewPanel() *Panel {
 	return &Panel{
-		Pages: make([]*Page, 5),
+		Pages: make([]*Page, 0),
 	}
 }
 
@@ -45,11 +45,22 @@ func (p *Panel) AddPage(page *Page) *Page {
 	return page
 }
 
-// HandleUpdate processes the update and runs it through the config panel.
+// NewPage creates a new empty page with given name used in callback data and displayName showed onn the button.
+func (p *Panel) NewPage(name, displayName string) *Page {
+	newPage := &Page{
+		Name:        name,
+		DisplayName: displayName,
+	}
+	p.Pages = append(p.Pages, newPage)
+
+	return newPage
+}
+
+// HandleUpdate processes the update and then edits the message's content with result.
 func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
 	update := ctx.CallbackQuery
 
-	content, markup, err := handleUpdate(p, ctx, bot)
+	content, markup, err := ProcessUpdate(p, ctx, bot)
 	if err != nil {
 		content = fmt.Sprintf("An error occured while handling request: %s", err.Error())
 	}
@@ -66,9 +77,9 @@ func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
 	return err
 }
 
-// handleUpdate processes the update and returns the text and buttons to edit the message with.
+// ProcessUpdate processes the update and returns the text and buttons to edit the message with.
 // Returns a [PageNotFoundError] if page was not found.
-func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]gotgbot.InlineKeyboardButton, error) {
+func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]gotgbot.InlineKeyboardButton, error) {
 	data := CallbackDataFromString(update.CallbackQuery.Data)
 
 	ctx := &Context{
@@ -92,28 +103,30 @@ func handleUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]
 
 	rootPage, ok := findPage(p.Pages, data.Path[1])
 	if !ok {
-		return "", nil, PageNotFoundError{pageName: data.Path[1]}
+		return "", nil, PageNotFoundError{PageName: data.Path[1]}
 	}
 
-	if len(data.Path) == 2 { // if only one subroute i.e display root page
-		return rootPage.GetContent(), buttonsFromPages(ctx.CallbackData, nil), nil
-	}
+	// if len(data.Path) == 2 { // if only one subroute i.e display root page
+	// 	return rootPage.GetContent(), buttonsFromPages(ctx.CallbackData, nil), nil
+	// }
 
 	currentPage := rootPage
 
-	for _, subRoute := range data.Path[2:] {
-		nextPage, ok := findPage(currentPage.SubPages, subRoute)
-		if !ok {
-			return "", nil, PageNotFoundError{pageName: subRoute}
-		}
+	if len(data.Path) > 2 { // if data has subroutes
+		for _, subRoute := range data.Path[2:] {
+			nextPage, ok := findPage(currentPage.SubPages, subRoute)
+			if !ok {
+				return "", nil, PageNotFoundError{PageName: subRoute}
+			}
 
-		currentPage = nextPage
+			currentPage = nextPage
+		}
 	}
 
 	// If page has no subpages call CallbackFunc and return result
 	// Otherwise return page content and generated markup
 
-	if len(currentPage.SubPages) == 0 {
+	if len(currentPage.SubPages) == 0 && currentPage.CallbackFunc != nil {
 		return currentPage.CallbackFunc(ctx)
 	}
 
