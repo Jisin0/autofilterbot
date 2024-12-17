@@ -10,6 +10,8 @@ import (
 type Context struct {
 	// Application.
 	App *app.App
+	// Bot object.
+	Bot *gotgbot.Bot
 	// Full Update.
 	Update *ext.Context
 	// Query which propogated the request.

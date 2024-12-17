@@ -13,6 +13,8 @@ const (
 type Page struct {
 	// Name shown on the panel button.
 	DisplayName string
+	// Content is the text content of the page.
+	Content string
 	// Name is the unique identifier for this page. It should be as short as possible to not affect hit the callback data limit.
 	Name string
 	// Function to call when page is hit. returns the text & buttons to edit and an error.
