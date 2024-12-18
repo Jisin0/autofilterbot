@@ -6,6 +6,7 @@ package configpanel
 import (
 	"fmt"
 
+	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
@@ -80,7 +81,7 @@ func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
 // ProcessUpdate processes the update and returns the text and buttons to edit the message with.
 // Returns a [PageNotFoundError] if page was not found.
 func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][]gotgbot.InlineKeyboardButton, error) {
-	data := CallbackDataFromString(update.CallbackQuery.Data)
+	data := callbackdata.FromString(update.CallbackQuery.Data)
 
 	ctx := &Context{
 		Bot:           bot,

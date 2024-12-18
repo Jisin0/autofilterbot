@@ -1,4 +1,4 @@
-package configpanel
+package callbackdata
 
 import (
 	"strings"
@@ -13,11 +13,11 @@ const (
 	SectionDelimiter = '|'
 )
 
-// CallbackDataFromString parses the string, usually the raw callback data, and returns a CallbackData object.
+// FromString parses the string, usually the raw callback data, and returns a CallbackData object.
 // the data should be a string in the format:
 //
 //	<path1>:<path2>:<path3...>|<arg1>_<arg2>_<arg3...>
-func CallbackDataFromString(s string) CallbackData {
+func FromString(s string) CallbackData {
 	sections := strings.SplitN(s, string(SectionDelimiter), 2)
 
 	cB := CallbackData{}

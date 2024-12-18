@@ -2,6 +2,7 @@ package configpanel
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/app"
+	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
@@ -17,5 +18,5 @@ type Context struct {
 	// Query which propogated the request.
 	CallbackQuery *gotgbot.CallbackQuery
 	// CallbackData wraps the request path and arguments.
-	CallbackData CallbackData
+	CallbackData callbackdata.CallbackData
 }
