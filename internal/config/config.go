@@ -21,6 +21,7 @@ type Config struct {
 	AboutText string `json:"about_text,omitempty"`
 	HelpText  string `json:"help_text,omitempty"`
 	StatsText string `json:"stats_text,omitempty"`
+	PrivacyText string `json:"privacy_text,omitempty"`
 }
 
 func (c *Config) GetStartText() string {
@@ -90,6 +91,26 @@ func (c *Config) GetStatsText() string {
 ├ ▸ Files : <code>{files}</code>
 ├ ▸ Groups : <code>{groups}</code>
 ╰ ▸ Uptime : <code>{uptime}</code>
+`
+}
+
+func (c *Config) GetPrivacyText() string {
+	if c.PrivacyText != "" {
+		return c.PrivacyText
+	}
+
+	return `
+<blockquote expandable>Privacy Policy
+This bot stores the publicly visible data of users for marketing, analytics and core functioning purposes.
+
+The following data of a user could be saved:
+‣ Id
+‣ Name
+‣ Username
+‣ Join Requests
+
+ℹ️ Use the /info command with your user id to view data stored about you.
+</blockquote>
 `
 }
 

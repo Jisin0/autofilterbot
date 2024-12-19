@@ -51,7 +51,7 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 	case "help":
 		content = app.Config.GetHelpText()
 	case "privacy":
-		content = "" //TODO: privacy text
+		content = app.Config.GetPrivacyText()
 	}
 
 	content = FormatString(content, app.BasicMessageValues(ctx.EffectiveMessage))
