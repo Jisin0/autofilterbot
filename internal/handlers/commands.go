@@ -45,8 +45,6 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 		err     error
 	)
 
-	//TODO: format text
-
 	switch commandName {
 	case "about":
 		content = app.Config.GetAboutText()
@@ -55,6 +53,8 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 	case "privacy":
 		content = "" //TODO: privacy text
 	}
+
+	content = FormatString(content, app.BasicMessageValues(ctx.EffectiveMessage))
 
 	if isMedia {
 		_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{Caption: content, ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: markup}})

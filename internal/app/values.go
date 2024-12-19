@@ -25,7 +25,8 @@ func (app *App) BasicMessageValues(m *gotgbot.Message) map[string]string {
 	}
 
 	if c := m.Chat; c!=nil {
-		
+		values["chat_name"] = c.Title
+		values["chat_username"] = c.Username
 	}
 
 	return values
