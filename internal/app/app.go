@@ -24,6 +24,7 @@ type App struct {
 	DB        database.Database
 	Log       *zap.Logger
 	StartTime time.Time
+	Bot		  *gotgbot.Bot
 
 	Config     config.Config
 	AutoDelete *autodelete.Manager
@@ -112,6 +113,7 @@ func Run(opts RunAppOptions) {
 	_app = &App{
 		DB:         db,
 		Config:     *appConfig,
+		Bot: 		bot,
 		Log:        logger,
 		AutoDelete: autodeleteManager,
 		StartTime:  time.Now(),
