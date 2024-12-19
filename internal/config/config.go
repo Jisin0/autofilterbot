@@ -68,6 +68,7 @@ func (c *Config) GetHelpText() string {
 /help - get this message
 /stats - some number crushing
 /privacy - what data I steal
+/uinfo - get user data stored
 /id - if you know u know
 
 🍷 Exclusive Commands:
@@ -100,8 +101,8 @@ func (c *Config) GetPrivacyText() string {
 	}
 
 	return `
-<blockquote expandable>Privacy Policy
-This bot stores the publicly visible data of users for marketing, analytics and core functioning purposes.
+<blockquote expandable>Privacy Policy 📜
+This bot stores the publicly visible data of users that is required for the bot to work.
 
 The following data of a user could be saved:
 ‣ Id
@@ -109,7 +110,7 @@ The following data of a user could be saved:
 ‣ Username
 ‣ Join Requests
 
-ℹ️ Use the /info command with your user id to view data stored about you.
+ℹ️ Use the /uinfo command with your user id to view data stored about you.
 </blockquote>
 `
 }
