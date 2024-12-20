@@ -25,4 +25,17 @@ func TestCallbackData(t *testing.T) {
 		assert.Equal([]string{"paf1", "paf2"}, c.Path)
 		assert.Equal([]string{"arg1", "arg2"}, c.Args)
 	}
+
+	{
+		c := callbackdata.FromString("p1|a1")
+
+		assert.Equal([]string{"p1"}, c.Path)
+		assert.Equal([]string{"a1"}, c.Args)
+	}
+
+	{
+		c := callbackdata.FromString("justpath")
+
+		assert.Equal([]string{"justpath"}, c.Path)
+	}
 }
