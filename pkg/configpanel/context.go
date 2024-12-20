@@ -2,7 +2,7 @@ package configpanel
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/app"
-	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
+	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )

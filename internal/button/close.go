@@ -3,7 +3,7 @@ package button
 import (
 	"fmt"
 
-	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
+	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
