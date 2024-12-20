@@ -4,6 +4,8 @@ import (
 	"strings"
 )
 
+//TODO: write tests
+
 const (
 	// Character that joins paths (colon)
 	PathDelimiter = ':'
@@ -30,6 +32,11 @@ func FromString(s string) CallbackData {
 	}
 
 	return cB
+}
+
+// New creates a new empty callback data structure.
+func New() CallbackData {
+	return CallbackData{}
 }
 
 // CallbackData wraps the raw callback data which represents the path of the request with some useful methods.
@@ -71,6 +78,14 @@ func (c CallbackData) AddArg(val string) CallbackData {
 	return CallbackData{
 		Path: c.Path,
 		Args: append(c.Args, val),
+	}
+}
+
+// AddArgs adds appends a list of arguments.
+func (c CallbackData) AddArgs(vals ...string) CallbackData {
+	return CallbackData{
+		Path: c.Path,
+		Args: append(c.Args, vals...),
 	}
 }
 

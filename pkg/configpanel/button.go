@@ -1,14 +1,10 @@
 package configpanel
 
 import (
+	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
-
-var closeButton = gotgbot.InlineKeyboardButton{
-	Text:         "X ᴄʟᴏsᴇ X",
-	CallbackData: "close",
-}
 
 // buttonsFromPages creates keyboard button with subpages from given CallbackData.
 func buttonsFromPages(callbackData callbackdata.CallbackData, pages []*Page) [][]gotgbot.InlineKeyboardButton {
@@ -16,7 +12,7 @@ func buttonsFromPages(callbackData callbackdata.CallbackData, pages []*Page) [][
 
 	if len(callbackData.Path) <= 1 {
 		// root page so add close button
-		backRow = []gotgbot.InlineKeyboardButton{closeButton}
+		backRow = []gotgbot.InlineKeyboardButton{button.Close()}
 	} else {
 		// nested page so add back button
 		backRow = []gotgbot.InlineKeyboardButton{backButton(callbackData.RemoveLastPath().ToString())}

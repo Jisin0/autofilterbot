@@ -6,6 +6,7 @@ package configpanel
 import (
 	"fmt"
 
+	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/pkg/configpanel/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -67,7 +68,7 @@ func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
 	}
 
 	if len(markup) == 0 {
-		markup = [][]gotgbot.InlineKeyboardButton{{closeButton}}
+		markup = [][]gotgbot.InlineKeyboardButton{{button.Close()}}
 	}
 
 	_, _, err = update.Message.EditText(bot, content, &gotgbot.EditMessageTextOpts{

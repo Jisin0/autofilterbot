@@ -1,4 +1,4 @@
-package callbackdata_test
+package configpanel_test
 
 import (
 	"testing"
