@@ -1,22 +1,20 @@
 package app
 
 import (
+	"fmt"
+
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-const (
-	defaultFirstName = "user"
-)
-
-// BasicMessageValues creates a map with basic values to format message text with 
+// BasicMessageValues creates a map with basic values to format message text with
 func (app *App) BasicMessageValues(m *gotgbot.Message) map[string]string {
 	values := map[string]string{
 		"my_name": app.Bot.FirstName,
 	}
 
-	if u := m.From; u!=nil {
+	if u := m.From; u != nil {
 		values["first_name"] = u.FirstName
-		values["userid"] = u.Id
+		values["userid"] = fmt.Sprint(u.Id)
 		values["username"] = u.Username
 
 		if u.LastName != "" {
@@ -24,9 +22,12 @@ func (app *App) BasicMessageValues(m *gotgbot.Message) map[string]string {
 		}
 	}
 
-	if c := m.Chat; c!=nil {
-		values["chat_name"] = c.Title
-		values["chat_username"] = c.Username
+	if m.Chat.Title != "" {
+		values["chat_name"] = m.Chat.Title
+	}
+
+	if m.Chat.Username != "" {
+		values["chat_username"] = m.Chat.Username
 	}
 
 	return values
