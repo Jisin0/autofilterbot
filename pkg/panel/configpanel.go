@@ -1,7 +1,7 @@
 /*
-Package configpanel creates a modular panel to
+Package panel creates a modular panel to
 */
-package configpanel
+package panel
 
 import (
 	"fmt"

@@ -1,15 +1,15 @@
-package configpanel_test
+package panel_test
 
 import (
 	"testing"
 
-	"github.com/Jisin0/autofilterbot/pkg/configpanel"
+	"github.com/Jisin0/autofilterbot/pkg/panel"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/stretchr/testify/assert"
 )
 
-func mockCallbackFunc(ctx *configpanel.Context) (string, [][]gotgbot.InlineKeyboardButton, error) {
+func mockCallbackFunc(ctx *panel.Context) (string, [][]gotgbot.InlineKeyboardButton, error) {
 	return "foo", nil, nil
 }
 
@@ -36,13 +36,13 @@ func countButtons(m [][]gotgbot.InlineKeyboardButton) int {
 	return count
 }
 
-func TestConfigPanel(t *testing.T) {
+func TestPanel(t *testing.T) {
 	assert := assert.New(t)
 
-	panel := configpanel.NewPanel()
+	p := panel.NewPanel()
 
-	panel.NewPage("pg1", "Page 1").WithCallbackFunc(mockCallbackFunc)
-	pg2 := panel.NewPage("pg2", "Page 2").WithContent("test")
+	p.NewPage("pg1", "Page 1").WithCallbackFunc(mockCallbackFunc)
+	pg2 := p.NewPage("pg2", "Page 2").WithContent("test")
 	pg2.NewSubPage("sp1", "Sub Page 1").WithContent("test1")
 
 	// Expected result is a panel with two buttons labelled "Page 1" & "Page 2" respectively.
@@ -74,13 +74,13 @@ func TestConfigPanel(t *testing.T) {
 		},
 		{
 			data: "config:pg2:sp3",
-			err:  configpanel.PageNotFoundError{PageName: "sp3"},
+			err:  panel.PageNotFoundError{PageName: "sp3"},
 		},
 	}
 
 	for _, item := range table {
 		t.Run(item.data, func(t *testing.T) {
-			c, m, e := configpanel.ProcessUpdate(panel, mockCallbackQuery(item.data), nil)
+			c, m, e := panel.ProcessUpdate(p, mockCallbackQuery(item.data), nil)
 
 			if item.text != "" {
 				assert.Equal(item.text, c)

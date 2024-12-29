@@ -1,4 +1,4 @@
-package configpanel
+package panel
 
 import (
 	"fmt"

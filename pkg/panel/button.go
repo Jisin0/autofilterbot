@@ -1,4 +1,4 @@
-package configpanel
+package panel
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/button"
