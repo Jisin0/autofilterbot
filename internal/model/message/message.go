@@ -1,4 +1,4 @@
-package model
+package message
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/button"
@@ -12,6 +12,8 @@ type Message struct {
 	// Keyboard is the inline keyboard for the message.
 	Keyboard [][]button.InlineKeyboardButton
 }
+
+// Format formats a message from
 
 // Send sends the message to the target chatId using html formatting by default.
 func (m Message) Send(bot *gotgbot.Bot, chatId int64, opts ...*gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
