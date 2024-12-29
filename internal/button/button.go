@@ -51,3 +51,20 @@ func (val InlineKeyboardButton) Unwwrap() gotgbot.InlineKeyboardButton {
 
 	return b
 }
+
+// UnwrapKeyboard converts a keyboard of InlineKeyboardButton to gotgbot.InlineKeyboardButton.
+func UnwrapKeyboard(input [][]InlineKeyboardButton) [][]gotgbot.InlineKeyboardButton {
+	newKeyboard := [][]gotgbot.InlineKeyboardButton{}
+
+	for _, row := range input {
+		newRow := []gotgbot.InlineKeyboardButton{}
+
+		for _, btn := range row {
+			newRow = append(newRow, btn.Unwwrap())
+		}
+
+		newKeyboard = append(newKeyboard, newRow)
+	}
+
+	return newKeyboard
+}
