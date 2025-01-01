@@ -14,7 +14,7 @@ func (app *App) BasicMessageValues(m *gotgbot.Message) map[string]string {
 
 	if u := m.From; u != nil {
 		values["first_name"] = u.FirstName
-		values["userid"] = fmt.Sprint(u.Id)
+		values["user_id"] = fmt.Sprint(u.Id)
 		values["username"] = u.Username
 
 		if u.LastName != "" {

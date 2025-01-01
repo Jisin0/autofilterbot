@@ -2,6 +2,7 @@ package message
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/button"
+	"github.com/Jisin0/autofilterbot/internal/format"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
@@ -13,7 +14,11 @@ type Message struct {
 	Keyboard [][]button.InlineKeyboardButton
 }
 
-// Format formats a message from
+// Format formats message text with given key value pairs.
+func (m *Message) Format(values map[string]string) *Message {
+	m.Text = format.KeyValueFormat(m.Text, values)
+	return m
+}
 
 // Send sends the message to the target chatId using html formatting by default.
 func (m Message) Send(bot *gotgbot.Bot, chatId int64, opts ...*gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
