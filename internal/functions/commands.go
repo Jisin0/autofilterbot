@@ -2,7 +2,7 @@
 Basic static commands that don't require additional helpers
 */
 
-package handlers
+package functions
 
 import (
 	"fmt"

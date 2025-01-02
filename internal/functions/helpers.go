@@ -2,7 +2,7 @@
 Wrapper methods to simplify api calls
 */
 
-package handlers
+package functions
 
 import "github.com/PaulSonOfLars/gotgbot/v2"
 

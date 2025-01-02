@@ -1,9 +1,9 @@
-package handlers_test
+package functions_test
 
 import (
 	"testing"
 
-	"github.com/Jisin0/autofilterbot/internal/handlers"
+	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +38,7 @@ func TestFormatString(t *testing.T) {
 
 	for _, item := range table {
 		t.Run(item.output, func(t *testing.T) {
-			o := handlers.FormatString(item.input, item.values)
+			o := functions.FormatString(item.input, item.values)
 			assert.Equal(item.output, o)
 		})
 	}
