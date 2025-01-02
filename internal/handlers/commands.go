@@ -5,9 +5,12 @@ Basic static commands that don't require additional helpers
 package handlers
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/Jisin0/autofilterbot/internal/app"
+	"github.com/Jisin0/autofilterbot/internal/button"
+	"github.com/Jisin0/autofilterbot/internal/model/message"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -22,7 +25,8 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 		isMedia     bool
 	)
 
-	if c := ctx.CallbackQuery; c != nil {
+	isCallback := ctx.CallbackQuery != nil
+	if c := ctx.CallbackQuery; isCallback {
 		data := callbackdata.FromString(c.Data)
 		if len(data.Path) > 1 {
 			commandName = strings.ToLower(data.Path[1])
@@ -40,26 +44,35 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 	}
 
 	var (
-		content string
-		markup  [][]gotgbot.InlineKeyboardButton //TODO: implement
-		err     error
+		msg *message.Message
+		err error
 	)
 
 	switch commandName {
+	case "start":
+		msg = app.Config.GetStartMessage(bot.Username)
 	case "about":
-		content = app.Config.GetAboutText()
+		msg = app.Config.GetAboutMessage()
 	case "help":
-		content = app.Config.GetHelpText()
+		msg = app.Config.GetHelpMessage()
 	case "privacy":
-		content = app.Config.GetPrivacyText()
+		msg = app.Config.GetPrivacyMessage()
+	default:
+		msg = &message.Message{
+			Text: fmt.Sprintf("Commsnd %v Was Not Found!", commandName),
+		}
 	}
 
-	content = FormatString(content, app.BasicMessageValues(ctx.EffectiveMessage))
+	msg.Format(app.BasicMessageValues(ctx.EffectiveMessage))
 
-	if isMedia {
-		_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{Caption: content, ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: markup}})
+	if isCallback {
+		if isMedia {
+			_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{Caption: msg.Text, ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)}})
+		} else {
+			_, _, err = ctx.EffectiveMessage.EditText(bot, msg.Text, &gotgbot.EditMessageTextOpts{ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)}})
+		}
 	} else {
-		_, _, err = ctx.EffectiveMessage.EditText(bot, content, &gotgbot.EditMessageTextOpts{ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: markup}})
+		_, err = msg.Send(bot, ctx.EffectiveChat.Id)
 	}
 
 	if err != nil {
