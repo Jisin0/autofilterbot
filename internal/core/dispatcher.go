@@ -1,14 +1,10 @@
-/*
-Package dispatcher sets up the dispatcher and adds handlers
-*/
-package dispatcher
+package core
 
 import (
 	"fmt"
 	"runtime/debug"
 	"strings"
 
-	"github.com/Jisin0/autofilterbot/internal/functions"
 	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -40,7 +36,7 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 		},
 	})
 
-	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, functions.StaticCommands), commandHandlerGroup)
+	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, StaticCommands), commandHandlerGroup)
 
 	return d
 }
