@@ -8,11 +8,14 @@ import (
 	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
 	"go.uber.org/zap"
 )
 
 const (
-	commandHandlerGroup = 1
+	commandHandlerGroup = iota + 1
+	callbackQueryGroup
 )
 
 // SetupDispatcher creates a new empty dispatcher with error and panic recovery setup.
@@ -37,6 +40,8 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	})
 
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, StaticCommands), commandHandlerGroup)
+
+	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("cmd:"), StaticCommands), callbackQueryGroup)
 
 	return d
 }
