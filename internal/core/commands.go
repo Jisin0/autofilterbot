@@ -67,9 +67,16 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if isCallback {
 		if isMedia {
-			_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{Caption: msg.Text, ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)}})
+			_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{
+				Caption:     msg.Text,
+				ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)},
+				ParseMode:   gotgbot.ParseModeHTML,
+			})
 		} else {
-			_, _, err = ctx.EffectiveMessage.EditText(bot, msg.Text, &gotgbot.EditMessageTextOpts{ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)}})
+			_, _, err = ctx.EffectiveMessage.EditText(bot, msg.Text, &gotgbot.EditMessageTextOpts{
+				ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)},
+				ParseMode:   gotgbot.ParseModeHTML,
+			})
 		}
 	} else {
 		_, err = msg.Send(bot, ctx.EffectiveChat.Id)
