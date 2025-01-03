@@ -8,11 +8,18 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/Jisin0/autofilterbot/internal/functions"
+	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"go.uber.org/zap"
 )
 
+const (
+	commandHandlerGroup = 1
+)
+
+// SetupDispatcher creates a new empty dispatcher with error and panic recovery setup.
 func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d := ext.NewDispatcher(&ext.DispatcherOpts{
 		// If an error is returned by a handler, log it and continue going.
@@ -32,6 +39,8 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 			log.Error("panic recovered", logFields...)
 		},
 	})
+
+	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, functions.StaticCommands), commandHandlerGroup)
 
 	return d
 }

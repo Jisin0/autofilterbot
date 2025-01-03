@@ -5,7 +5,7 @@ import "github.com/Jisin0/autofilterbot/internal/config"
 //TODO: implement
 
 func (c *Client) GetConfig(botId int64) (*config.Config, error) {
-	return nil, nil
+	return &config.Config{}, nil
 }
 
 func (c *Client) UpdateConfig(botId int64, key string, value interface{}) error {

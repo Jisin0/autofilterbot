@@ -1,16 +1,13 @@
 package panel
 
 import (
-	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
 
-// Context wraps the app, update and other additional data for callback functions to use.
+// Context wraps the update and other additional data for callback functions to use.
 type Context struct {
-	// Application.
-	App *app.App
 	// Bot object.
 	Bot *gotgbot.Bot
 	// Full Update.

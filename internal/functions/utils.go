@@ -21,7 +21,7 @@ func FormatString(template string, values map[string]string) string {
 	return result
 }
 
-// hasMedia reports whether message has media.
-func hasMedia(m *gotgbot.Message) bool {
+// HasMedia reports whether message contains media.
+func HasMedia(m *gotgbot.Message) bool {
 	return m.Photo != nil || m.Document != nil || m.Video != nil || m.Animation != nil || m.Audio != nil
 }

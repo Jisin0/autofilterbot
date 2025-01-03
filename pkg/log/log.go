@@ -36,7 +36,7 @@ func Initialize(logLevel string, disableConsoleOutput bool) {
 	case ErrorLevelStr:
 		level = zap.ErrorLevel
 	default:
-		level = zap.WarnLevel
+		level = zap.InfoLevel
 	}
 
 	lumberjackLogger := &lumberjack.Logger{

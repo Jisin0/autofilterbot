@@ -2,14 +2,14 @@
 Basic static commands that don't require additional helpers
 */
 
-package functions
+package core
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/internal/button"
+	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/Jisin0/autofilterbot/internal/model/message"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -19,7 +19,7 @@ import (
 
 // StaticCommands handles all static text commands like about, help, privacy etc.
 // Also handles callback queries in the format cmd:<command_name>
-func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
+func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 	var (
 		commandName string
 		isMedia     bool
@@ -34,13 +34,13 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 
 		switch m := c.Message.(type) {
 		case gotgbot.Message:
-			isMedia = hasMedia(&m)
+			isMedia = functions.HasMedia(&m)
 		}
 	} else {
 		m := ctx.EffectiveMessage
 
 		commandName = strings.ToLower(strings.Split(strings.ToLower(strings.Fields(ctx.EffectiveMessage.GetText())[0]), "@")[0][1:])
-		isMedia = hasMedia(m)
+		isMedia = functions.HasMedia(m)
 	}
 
 	var (
@@ -50,20 +50,20 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 
 	switch commandName {
 	case "start":
-		msg = app.Config.GetStartMessage(bot.Username)
+		msg = _app.Config.GetStartMessage(bot.Username)
 	case "about":
-		msg = app.Config.GetAboutMessage()
+		msg = _app.Config.GetAboutMessage()
 	case "help":
-		msg = app.Config.GetHelpMessage()
+		msg = _app.Config.GetHelpMessage()
 	case "privacy":
-		msg = app.Config.GetPrivacyMessage()
+		msg = _app.Config.GetPrivacyMessage()
 	default:
 		msg = &message.Message{
 			Text: fmt.Sprintf("Commsnd %v Was Not Found!", commandName),
 		}
 	}
 
-	msg.Format(app.BasicMessageValues(ctx.EffectiveMessage))
+	msg.Format(_app.BasicMessageValues(ctx.EffectiveMessage))
 
 	if isCallback {
 		if isMedia {
@@ -76,7 +76,7 @@ func StaticCommands(app *app.App, ctx *ext.Context, bot *gotgbot.Bot) error {
 	}
 
 	if err != nil {
-		app.Log.Warn(err.Error(), zap.String("command", commandName))
+		_app.Log.Warn(err.Error(), zap.String("command", commandName))
 	}
 
 	return nil
