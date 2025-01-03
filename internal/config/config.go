@@ -11,6 +11,7 @@ import (
 
 // Config contains custom values saved for the bot using the config panel.
 type Config struct {
+	BotId int64 `json:"_id,omitempty" bson:"_id,omitempty" `
 	// Force Subscribe Channels.
 	FsubChannels []model.FsubChannel `json:"fsub,omitempty" bson:"fsub,omitempty"`
 
