@@ -63,7 +63,7 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 		}
 	}
 
-	msg.Format(_app.BasicMessageValues(ctx.EffectiveMessage))
+	msg.Format(_app.BasicMessageValues(ctx))
 
 	if isCallback {
 		if isMedia {
@@ -76,6 +76,9 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 			_, _, err = ctx.EffectiveMessage.EditText(bot, msg.Text, &gotgbot.EditMessageTextOpts{
 				ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(msg.Keyboard)},
 				ParseMode:   gotgbot.ParseModeHTML,
+				LinkPreviewOptions: &gotgbot.LinkPreviewOptions{
+					IsDisabled: true,
+				},
 			})
 		}
 	} else {

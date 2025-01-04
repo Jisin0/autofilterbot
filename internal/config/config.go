@@ -3,6 +3,7 @@ package config
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/internal/model"
@@ -46,23 +47,22 @@ func (c *Config) GetStartMessage(botUsername string) *message.Message {
 		buttons [][]button.InlineKeyboardButton
 	)
 
+	addToGroupUrl := fmt.Sprintf("https://t.me/%s?startgroup&admin=delete_messages+pin_messages+invite_users+ban_users+promote_members", botUsername)
+
 	if c.StartText != "" {
 		text = c.StartText
 	} else {
-		text = `<i><b>Hey there {mention} 👋</b></i>
-
-🔥 I'm an awesome media <b>search</b> bot that can filter through millions of <b>files</b> in seconds 🗃️
-
-Add me to a group or type go inline to start using me 👇`
+		text = fmt.Sprintf(`<i><b>Hᴇʏ Tʜᴇʀᴇ <tg-spoiler>{mention}</tg-spoiler> 👅</b></i>
+<blockquote><b>𝖠𝖼𝖼𝖾𝗌𝗌 𝖧𝗎𝗇𝖽𝗋𝖾𝖽𝗌 𝗈𝖿 𝖳𝗁𝗈𝗎𝗌𝖺𝗇𝖽𝗌 𝗈𝖿 𝖥𝗂𝗅𝖾𝗌 𝖤𝖺𝗌𝗂𝗅𝗒... <a href='%s'>𝖠𝖽𝖽 𝖬𝖾</a> 𝖳𝗈 𝖺 𝖦𝗋𝗈𝗎𝗉 𝗈𝗋 𝖳𝗒𝗉𝖾 𝖬𝗒 𝖴𝗌𝖾𝗋𝗇𝖺𝗆𝖾 𝗂𝗇 𝖠𝗇𝗒 𝖢𝗁𝖺𝗍 𝖳𝗈 𝖲𝗍𝖺𝗋𝗍 𝖲𝖾𝖺𝗋𝖼𝗁𝗂𝗇𝗀!!</b></blockquote>`, addToGroupUrl)
 	}
 
 	if len(c.StartButtons) != 0 {
 		buttons = c.StartButtons
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
-			{{Text: "➕ Add Me To Your Group  ➕", Url: fmt.Sprintf("https://t.me/%s?startgroup=true&admin=delete_messages+pin_messages+invite_users+ban_users+promote_members", botUsername)}},
-			{{Text: "About", CallbackData: "cmd:about"}, {Text: "Help", CallbackData: "cmd:help"}},
-			{{Text: "Search Inline 🔎", SwitchInlineQueryCurrentChat: "", IsInline: true}},
+			{{Text: "ᴀʙᴏᴜᴛ", CallbackData: "cmd:about"}, {Text: "ʜᴇʟᴘ", CallbackData: "cmd:help"}},
+			{{Text: "ᴘʀɪᴠᴀᴄʏ", CallbackData: "cmd:privacy"}, {Text: "sᴇᴀʀᴄʜ 🔎", SwitchInlineQueryCurrentChat: "", IsInline: true}},
+			{{Text: "➕ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ  ➕", Url: addToGroupUrl}},
 		}
 	}
 
@@ -77,15 +77,16 @@ func (c *Config) GetAboutMessage() *message.Message {
 		text    string
 		buttons [][]button.InlineKeyboardButton
 	)
-
+	runtime.Version()
 	if c.AboutText != "" {
 		text = c.AboutText
 	} else {
 		text = `
-○ Language : Go
-○ Library : gotgbot
-○ Database : {database}
-○ Version : 0.1
+○ 𝖫𝖺𝗇𝗀𝗎𝖺𝗀𝖾  :  Go 1.22
+○ 𝖫𝗂𝖻𝗋𝖺𝗋𝗒  :  <a href='https://github.com/PaulSonOfLars/gotgbot'>GoTgBot</a>
+○ 𝖮𝖲  :  <code>{os}</code>
+⛃ 𝖣𝖺𝗍𝖺𝖻𝖺𝗌𝖾  :  <code>{database}</code>
+○ 𝖵𝖾𝗋𝗌𝗂𝗈𝗇  :  <code>0.1</code>
 `
 	}
 
@@ -93,7 +94,8 @@ func (c *Config) GetAboutMessage() *message.Message {
 		buttons = c.AboutButtons
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
-			{{Text: "Source", Url: "https://github.com/Jisin0/autofilterbot"}, {Text: "Stats", CallbackData: "cmd:stats"}},
+			{{Text: "« ʙᴀᴄᴋ", CallbackData: "cmd:start"}, {Text: "sᴛᴀᴛs", CallbackData: "cmd:stats"}},
+			{{Text: "sᴏᴜʀᴄᴇ 🔗", Url: "https://github.com/Jisin0/autofilterbot"}},
 		}
 	}
 
@@ -113,12 +115,12 @@ func (c *Config) GetHelpMessage() *message.Message {
 		text = c.HelpText
 	} else {
 		text = `
-🖐️ Here's Two Ways you can Use me. . .
+<b>🖐️ 𝖧𝖾𝗋𝖾'𝗌 𝖳𝗐𝗈 𝖶𝖺𝗒𝗌 𝖸𝗈𝗎 𝖢𝖺𝗇 𝖴𝗌𝖾 𝖬𝖾. . .</b>
 
-○ <b>Inline</b>: Just Start Typing my Username into any Chat and get Results On The Fly ✈️
-○ <b>Groups</b>: Add me to your Group Chat and Just Send the Name of the File you Want ✍️
+○ <b>𝖨𝗇𝗅𝗂𝗇𝖾</b> : <i>Just Start Typing my Username into any Chat and get Results On The Fly ✈️</i>
+○ <b>𝖦𝗋𝗈𝗎𝗉</b> : <i>Add me to your Group Chat and Just Send the Name of the File you Want ✍️</i>
 
-🤖 Other Commands:
+🤖 <b>User Commands:</b>
 /start - check if I'm alive
 /about - learn a bit about me
 /help - get this message
@@ -127,7 +129,7 @@ func (c *Config) GetHelpMessage() *message.Message {
 /uinfo - get user data stored
 /id - if you know u know
 
-🍷 Exclusive Commands:
+🍷 <b>Exclusive Commands:</b>
 /broadcast - spam users with ads
 /settings - customize me
 /batch - bunch up messages
@@ -142,7 +144,7 @@ func (c *Config) GetHelpMessage() *message.Message {
 		buttons = c.HelpButtons
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
-			{{Text: "<- Back", CallbackData: "cmd:start"}, {Text: "Privacy", CallbackData: "cmd:privacy"}},
+			{{Text: "« ʙᴀᴄᴋ", CallbackData: "cmd:start"}, {Text: "ᴘʀɪᴠᴀᴄʏ", CallbackData: "cmd:privacy"}},
 		}
 	}
 
@@ -162,10 +164,10 @@ func (c *Config) GetStatsMessage() *message.Message {
 		text = c.StatsText
 	} else {
 		text = `
-╭ ▸ Users : <code>{users}</code> 
-├ ▸ Files : <code>{files}</code>
-├ ▸ Groups : <code>{groups}</code>
-╰ ▸ Uptime : <code>{uptime}</code>
+╭ ▸ 𝖴𝗌𝖾𝗋𝗌 : <code>{users}</code> 
+├ ▸ 𝖥𝗂𝗅𝖾𝗌 : <code>{files}</code>
+├ ▸ 𝖦𝗋𝗈𝗎𝗉𝗌 : <code>{groups}</code>
+╰ ▸ 𝖴𝗉𝗍𝗂𝗆𝖾 : <code>{uptime}</code>
 `
 	}
 
@@ -173,7 +175,7 @@ func (c *Config) GetStatsMessage() *message.Message {
 		buttons = c.StatsButton
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
-			{{Text: "<- Back", CallbackData: "cmd:about"}},
+			{{Text: "« ʙᴀᴄᴋ", CallbackData: "cmd:about"}, button.CloseLocal()},
 		}
 	}
 
@@ -193,8 +195,8 @@ func (c *Config) GetPrivacyMessage() *message.Message {
 		text = c.PrivacyText
 	} else {
 		text = `
-<blockquote expandable>Privacy Policy 📜
-This bot stores the publicly visible data of users that is required for the bot to operate.
+<blockquote expandable><b>Privacy Policy 📜</b>
+<i>This bot stores the <b>publicly</b> visible data of users that is <b>required</b> for the bot to operate.
 
 The following data of a user could be saved:
 ‣ Id
@@ -202,7 +204,7 @@ The following data of a user could be saved:
 ‣ Username
 ‣ Join Requests
 
-ℹ️ Use the /uinfo command with your user id to view data stored about you.
+ℹ️ Use the /uinfo command with your user id to view data stored about you.</i>
 </blockquote>
 `
 	}
@@ -211,7 +213,7 @@ The following data of a user could be saved:
 		buttons = c.PrivacyButtons
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
-			{{Text: "<- Back", CallbackData: "cmd:help"}},
+			{{Text: "« ʙᴀᴄᴋ", CallbackData: "cmd:help"}, button.CloseLocal()},
 		}
 	}
 

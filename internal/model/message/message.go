@@ -36,5 +36,7 @@ func (m Message) Send(bot *gotgbot.Bot, chatId int64, opts ...*gotgbot.SendMessa
 		sendOpts.ReplyMarkup = gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(m.Keyboard)}
 	}
 
+	sendOpts.LinkPreviewOptions = &gotgbot.LinkPreviewOptions{IsDisabled: true}
+
 	return bot.SendMessage(chatId, m.Text, sendOpts)
 }

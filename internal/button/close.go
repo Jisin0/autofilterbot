@@ -15,7 +15,20 @@ func Close(userId ...int64) gotgbot.InlineKeyboardButton {
 	}
 
 	return gotgbot.InlineKeyboardButton{
-		Text:         "X ᴄʟᴏsᴇ X",
+		Text:         "ᴄʟᴏsᴇ ⛌",
+		CallbackData: data.ToString(),
+	}
+}
+
+// CloseLocal creates a close button of the local InlineKeyboardButton type.
+func CloseLocal(userId ...int64) InlineKeyboardButton {
+	data := callbackdata.New().AddPath("close")
+	for _, u := range userId {
+		data.AddArg(fmt.Sprint(u))
+	}
+
+	return InlineKeyboardButton{
+		Text:         "ᴄʟᴏsᴇ ⛌",
 		CallbackData: data.ToString(),
 	}
 }

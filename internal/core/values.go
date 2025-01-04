@@ -3,23 +3,39 @@ package core
 import (
 	"fmt"
 
-	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
 
 // BasicMessageValues creates a map with basic values to format message text with
-func (app *App) BasicMessageValues(m *gotgbot.Message) map[string]string {
+func (app *App) BasicMessageValues(ctx *ext.Context) map[string]string {
+	m := ctx.EffectiveMessage
+	u := ctx.EffectiveUser
+
 	values := map[string]string{
 		"my_name": app.Bot.FirstName,
 	}
 
-	if u := m.From; u != nil {
+	if u != nil {
 		values["first_name"] = u.FirstName
 		values["user_id"] = fmt.Sprint(u.Id)
-		values["username"] = u.Username
+
+		fullName := u.FirstName
 
 		if u.LastName != "" {
-			values["full_name"] = u.FirstName + " " + u.LastName
+			fullName = fullName + " " + u.LastName
 		}
+		values["full_name"] = fullName
+
+		var mention string
+		if u.Username != "" {
+			values["username"] = u.Username
+			mention = "@" + u.Username
+		} else {
+			mention = fmt.Sprintf("<a href='tg://user?id=%d'>%s</a>", u.Id, fullName)
+		}
+
+		values["mention"] = mention
+
 	}
 
 	if m.Chat.Title != "" {
