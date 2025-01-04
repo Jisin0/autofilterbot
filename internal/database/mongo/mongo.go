@@ -21,6 +21,8 @@ type Client struct {
 	fileCollection *mongo.Collection
 	// configCollection stores settings configuration of the bot.
 	configCollection *mongo.Collection
+	// groupCollection contains data about group chats.
+	groupCollection *mongo.Collection
 
 	ctx    context.Context
 	client *mongo.Client
@@ -60,6 +62,7 @@ func NewClient(ctx context.Context, mongodbUri, databaseName, collectionName str
 		userCollection:   dataBase.Collection(database.CollectionNameUsers),
 		fileCollection:   fcol,
 		configCollection: dataBase.Collection(database.CollectionNameConfigs),
+		groupCollection:  dataBase.Collection(database.CollectionNameGroups),
 	}
 
 	return client, nil

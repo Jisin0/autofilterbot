@@ -11,6 +11,7 @@ const (
 	CollectionNameFiles      = "Files"
 	CollectionNameConfigs    = "Configs"
 	CollectionNameOperations = "Operations"
+	CollectionNameGroups     = "Groups"
 
 	DefaultDatabaseName = "AutoFilterBot"
 )
@@ -44,6 +45,9 @@ type Database interface {
 	DeleteFile(fileId string) error
 	// SearchFiles searches for files in the database by their name. The query should be sanitized first.
 	SearchFiles(query string) (Cursor, error)
+
+	// SaveGroup inserts a group id into the database to keep track of them.
+	SaveGroup(id int64) error
 
 	// GetConfig fetches the bot configs from the database.
 	GetConfig(botId int64) (*config.Config, error)
