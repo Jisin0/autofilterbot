@@ -32,3 +32,6 @@ logs/
 
 # autodelete database
 autodelete.sqlite
+
+# json cache folders
+.results

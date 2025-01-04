@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/Jisin0/autofilterbot/internal/cache"
 	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
@@ -25,6 +26,7 @@ type App struct {
 	Log       *zap.Logger
 	StartTime time.Time
 	Bot       *gotgbot.Bot
+	Cache     *cache.Cache
 
 	Config     *config.Config
 	AutoDelete *autodelete.Manager
@@ -119,6 +121,7 @@ func Run(opts RunAppOptions) {
 		Log:        logger,
 		AutoDelete: autodeleteManager,
 		StartTime:  time.Now(),
+		Cache:      cache.NewCache(),
 	}
 
 	dispatcher := SetupDispatcher(logger)

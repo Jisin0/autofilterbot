@@ -5,10 +5,16 @@ package jsoncache
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
+)
+
+var (
+	ErrFileNotFound     = errors.New("file was not found")
+	ErrCacheDataExpired = errors.New("cached data has expired")
 )
 
 // Cache is a struct that manages file-based caching
@@ -59,6 +65,10 @@ func (c *Cache) Load(id string, data interface{}) error {
 
 	jsonData, err := os.ReadFile(filePath)
 	if err != nil {
+		if _, ok := err.(*os.PathError); ok {
+			return ErrFileNotFound
+		}
+
 		return fmt.Errorf("failed to read data from file: %v", err)
 	}
 
@@ -70,7 +80,7 @@ func (c *Cache) Load(id string, data interface{}) error {
 
 	// Check if the data is within the timeout
 	if time.Since(cacheData.Timestamp) > c.timeout {
-		return fmt.Errorf("cached data has expired")
+		return ErrCacheDataExpired
 	}
 
 	dataBytes, err := json.Marshal(cacheData.Data)
