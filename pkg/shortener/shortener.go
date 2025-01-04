@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-// ShortenerClient is used to manage url shortener.
-type ShortenerClient struct {
+// Shortener is used to manage url shortener.
+type Shortener struct {
 	// Api key usually obtained from <api_homepage>/member/tools/api.
-	ApiKey string
+	ApiKey string `json:"api_key,omitempty" bson:"api_key,omitempty"`
 	// Url of the homepage of the shortener for ex: https://gplinks.com.
-	RootURL string
+	RootURL string `json:"root_url,omitempty" bson:"root_url,omitempty"`
 	// If set the shortener will return the raw api url in the format <shortener_url>/api?api=<apikey>&url=<url>
-	RawURL bool
+	RawURL bool `json:"raw_url,omitempty" bson:"raw_url,omitempty"`
 }
 
 // ShortenURLOpts are optional parameter for ShortenURL.
@@ -33,7 +33,7 @@ type shortenResult struct {
 	Message interface{} `json:"message,omitempty"` // type can vary from list to string so we'll just stringify it
 }
 
-func (c *ShortenerClient) ShortenURL(inputURL string) (string, error) {
+func (c *Shortener) ShortenURL(inputURL string) (string, error) {
 	// protocol is already added when saving
 	requestURL := fmt.Sprintf("%v/api?api=%v&url=%v", c.RootURL, c.ApiKey, inputURL)
 

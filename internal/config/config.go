@@ -8,6 +8,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/Jisin0/autofilterbot/internal/model/message"
+	"github.com/Jisin0/autofilterbot/pkg/shortener"
 )
 
 // Config contains custom values saved for the bot using the config panel.
@@ -37,6 +38,8 @@ type Config struct {
 	// Custom Privacy Message
 	PrivacyText    string                          `json:"privacy_text,omitempty" bson:"privacy_text,omitempty"`
 	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
+
+	Shortener shortener.Shortener
 }
 
 // GetStartMessage returns the custom start message if available or the default values.
@@ -245,4 +248,8 @@ func (c *Config) GetMaxPages() int {
 	}
 
 	return 5
+}
+
+func (c *Config) GetShortener() shortener.Shortener {
+	return c.Shortener
 }

@@ -31,7 +31,7 @@ type Panel struct {
 // NewPanel intializes a new empty config panel.
 func NewPanel() *Panel {
 	return &Panel{
-		Pages: make([]*Page, 0),
+		Pages: make([]*Page, 0, 5),
 	}
 }
 

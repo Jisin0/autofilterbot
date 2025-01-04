@@ -12,6 +12,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/log"
+	"github.com/Jisin0/autofilterbot/pkg/shortener"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/joho/godotenv"
@@ -27,9 +28,10 @@ type App struct {
 	StartTime time.Time
 	Bot       *gotgbot.Bot
 	Cache     *cache.Cache
+	Config    *config.Config
 
-	Config     *config.Config
 	AutoDelete *autodelete.Manager
+	Shortener  *shortener.Shortener
 }
 
 // extendedHandler returns a handlers.Response that calls
