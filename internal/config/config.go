@@ -12,7 +12,7 @@ import (
 
 // Config contains custom values saved for the bot using the config panel.
 type Config struct {
-	BotId int64 `json:"_id,omitempty" bson:"_id,omitempty" `
+	BotId int64 `json:"_id" bson:"_id" `
 	// Force Subscribe Channels.
 	FsubChannels []model.FsubChannel `json:"fsub,omitempty" bson:"fsub,omitempty"`
 
@@ -24,19 +24,19 @@ type Config struct {
 
 	// Custom Start Message
 	StartText    string                          `json:"start_text,omitempty" bson:"start_text,omitempty"`
-	StartButtons [][]button.InlineKeyboardButton `json:"start_button,omitempty" bson:"start_button,omitempty"`
+	StartButtons [][]button.InlineKeyboardButton `json:"start_buttons,omitempty" bson:"start_buttons,omitempty"`
 	// Custom About Message
 	AboutText    string                          `json:"about_text,omitempty" bson:"about_text,omitempty"`
-	AboutButtons [][]button.InlineKeyboardButton `json:"about_button,omitempty" bson:"about_button,omitempty"`
+	AboutButtons [][]button.InlineKeyboardButton `json:"about_buttons,omitempty" bson:"about_buttons,omitempty"`
 	// Custom Help Message
 	HelpText    string                          `json:"help_text,omitempty" bson:"help_text,omitempty"`
-	HelpButtons [][]button.InlineKeyboardButton `json:"help_button,omitempty" bson:"help_button,omitempty"`
+	HelpButtons [][]button.InlineKeyboardButton `json:"help_buttons,omitempty" bson:"help_buttons,omitempty"`
 	// Custom Stats Message
-	StatsText   string                          `json:"stats_text,omitempty" bson:"stats_text,omitempty"`
-	StatsButton [][]button.InlineKeyboardButton `json:"stats_button,omitempty" bson:"stats_button,omitempty"`
+	StatsText    string                          `json:"stats_text,omitempty" bson:"stats_text,omitempty"`
+	StatsButtons [][]button.InlineKeyboardButton `json:"stats_buttons,omitempty" bson:"stats_buttons,omitempty"`
 	// Custom Privacy Message
 	PrivacyText    string                          `json:"privacy_text,omitempty" bson:"privacy_text,omitempty"`
-	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_button,omitempty" bson:"privacy_button,omitempty"`
+	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
 }
 
 // GetStartMessage returns the custom start message if available or the default values.
@@ -171,8 +171,8 @@ func (c *Config) GetStatsMessage() *message.Message {
 `
 	}
 
-	if len(c.StatsButton) != 0 {
-		buttons = c.StatsButton
+	if len(c.StatsButtons) != 0 {
+		buttons = c.StatsButtons
 	} else {
 		buttons = [][]button.InlineKeyboardButton{
 			{{Text: "« ʙᴀᴄᴋ", CallbackData: "cmd:about"}, button.CloseLocal()},
