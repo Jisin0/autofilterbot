@@ -6,7 +6,6 @@ import (
 
 	"github.com/Jisin0/autofilterbot/internal/autofilter"
 	"github.com/Jisin0/autofilterbot/internal/cache"
-	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +16,7 @@ func TestAutofilter(t *testing.T) {
 		Query:    "hello mom",
 		FromUser: 69420,
 		ChatID:   123456789,
-		Files: [][]model.File{
+		Files: []autofilter.Files{
 			{{FileId: "QinsiSYA8ysa", FileName: "This Is A Cute Cate Video.mkv", FileType: "video", FileSize: 1 << 24}},
 			{{FileId: "Hkwosmd_6dsn", FileName: "Deadpool.&.Wolverine.2024.Trailer.x264.AAC.mkv", FileSize: 132987239182}},
 		},

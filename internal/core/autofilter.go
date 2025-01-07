@@ -147,11 +147,26 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 	}
 
 	text := format.KeyValueFormat(_app.Config.GetResultTemplate(), _app.BasicMessageValues(ctx, map[string]any{"query": query, "warn": warn}))
-	return bot.SendMessage(inputMessage.GetChat().Id, text, &gotgbot.SendMessageOpts{
+	msg, err := bot.SendMessage(inputMessage.GetChat().Id, text, &gotgbot.SendMessageOpts{
 		ReplyParameters: &gotgbot.ReplyParameters{
 			MessageId: inputMessage.GetMessageId(),
 		},
 		ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: files[0].Process(inputMessage.GetChat().Id, bot.Username, _app.Config)},
 		ParseMode:   gotgbot.ParseModeHTML,
 	})
+	if err != nil {
+		_app.Log.Warn("autofilter: send result failed", zap.Error(err))
+	}
+
+	err = _app.Cache.Autofilter.Save(&autofilter.SearchResult{
+		Query:    query,
+		FromUser: fromUser.Id,
+		ChatID:   ctx.EffectiveChat.Id,
+		Files:    files,
+	})
+	if err != nil {
+		_app.Log.Warn("autfilter: save cache failes", zap.Error(err), zap.String("query", query))
+	}
+
+	return msg, nil
 }
