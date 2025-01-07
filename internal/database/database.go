@@ -39,9 +39,9 @@ type Database interface {
 	SaveFile(f *model.File) error
 	// SaveFiles saves multiple files to the database and returns a list of errors.
 	SaveFiles(files ...*model.File) []error
-	// GetFile fetches a file from the database using its file_id.
+	// GetFile fetches a file from the database using its unique_id.
 	GetFile(fileId string) (*model.File, error)
-	// DeleteFile deletes a file from the database using its file_id.
+	// DeleteFile deletes a file from the database using its unique_id.
 	DeleteFile(fileId string) error
 	// SearchFiles searches for files in the database by their name. The query should be sanitized first.
 	SearchFiles(query string) (Cursor, error)

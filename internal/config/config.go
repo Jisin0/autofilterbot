@@ -39,7 +39,20 @@ type Config struct {
 	PrivacyText    string                          `json:"privacy_text,omitempty" bson:"privacy_text,omitempty"`
 	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
 
+	// Template to use for autofilter result message
+	ResultTemplate string `json:"af_template,omitempty" bson:"af_template,omitempty"`
+	// Message sent when no results are available.
+	NoResultText string `json:"no_result_text,omitempty" bson:"no_result_text,omitempty"`
+	// Template to use for result buttons
+	ButtonTemplate string `json:"btn_template,omitempty" bson:"btn_template,omitempty"`
+
+	// File size is shown in seperate button if set
+	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
+
 	Shortener shortener.Shortener
+
+	// Time in minutes after which message should be deleted.
+	AutodeleteTime int `json:"autodel_time,omitempty" bson:"autodel_time,omitempty"`
 }
 
 // GetStartMessage returns the custom start message if available or the default values.
@@ -120,8 +133,8 @@ func (c *Config) GetHelpMessage() *message.Message {
 		text = `
 <b>🖐️ 𝖧𝖾𝗋𝖾'𝗌 𝖳𝗐𝗈 𝖶𝖺𝗒𝗌 𝖸𝗈𝗎 𝖢𝖺𝗇 𝖴𝗌𝖾 𝖬𝖾. . .</b>
 
-○ <b>𝖨𝗇𝗅𝗂𝗇𝖾</b> : <i>Just Start Typing my Username into any Chat and get Results On The Fly ✈️</i>
-○ <b>𝖦𝗋𝗈𝗎𝗉</b> : <i>Add me to your Group Chat and Just Send the Name of the File you Want ✍️</i>
+✈️ <b>𝖨𝗇𝗅𝗂𝗇𝖾</b> : <i>Just Start Typing my Username into any Chat and get Results On The Fly</i>
+✍️ <b>𝖦𝗋𝗈𝗎𝗉</b> : <i>Add me to your Group Chat and Just Send the Name of the File you Want</i>
 
 🤖 <b>User Commands:</b>
 /start - check if I'm alive
@@ -226,30 +239,10 @@ The following data of a user could be saved:
 	}
 }
 
-func (c *Config) GetMaxResults() int {
-	if c.MaxResults != 0 {
-		return c.MaxResults
-	}
-
-	return 50
-}
-
-func (c *Config) GetMaxPerPage() int {
-	if c.MaxPerPage != 0 {
-		return c.MaxPerPage
-	}
-
-	return 10
-}
-
-func (c *Config) GetMaxPages() int {
-	if c.MaxResults != 0 {
-		return c.MaxResults
-	}
-
-	return 5
-}
-
 func (c *Config) GetShortener() shortener.Shortener {
 	return c.Shortener
+}
+
+func (c *Config) GetAutodeleteTime() int {
+	return c.AutodeleteTime
 }

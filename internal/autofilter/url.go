@@ -10,7 +10,7 @@ import (
 // URLData wraps the data in a start url from autofilter results.
 type URLData struct {
 	// Id of the file.
-	FileId string
+	FileUniqueId string
 	// Id of chat where query occured.
 	ChatId int64
 	// Indicates whether shortened url should be given or actual file.
@@ -24,7 +24,7 @@ func (d URLData) Encode() string {
 		hasShortener = "1"
 	}
 
-	s := fmt.Sprintf("file|%s|%d|%s", d.FileId, d.ChatId, hasShortener)
+	s := fmt.Sprintf("f|%s|%d|%s", d.FileUniqueId, d.ChatId, hasShortener)
 
 	return base64.StdEncoding.EncodeToString([]byte(s))
 }
@@ -45,7 +45,7 @@ func URLDataFromString(input string) (URLData, error) {
 		return d, fmt.Errorf("not enough arguments")
 	}
 
-	d.FileId = split[1]
+	d.FileUniqueId = split[1]
 
 	i, err := strconv.ParseInt(split[2], 10, 64)
 	if err != nil {

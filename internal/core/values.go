@@ -7,7 +7,7 @@ import (
 )
 
 // BasicMessageValues creates a map with basic values to format message text with
-func (app *App) BasicMessageValues(ctx *ext.Context) map[string]string {
+func (app *App) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
 	m := ctx.EffectiveMessage
 	u := ctx.EffectiveUser
 
@@ -44,6 +44,12 @@ func (app *App) BasicMessageValues(ctx *ext.Context) map[string]string {
 
 	if m.Chat.Username != "" {
 		values["chat_username"] = m.Chat.Username
+	}
+
+	if len(extraValues) != 0 {
+		for key, val := range extraValues[0] {
+			values[key] = fmt.Sprint(val)
+		}
 	}
 
 	return values

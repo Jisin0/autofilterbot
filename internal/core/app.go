@@ -11,6 +11,8 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
+	"github.com/Jisin0/autofilterbot/pkg/env"
+	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/Jisin0/autofilterbot/pkg/log"
 	"github.com/Jisin0/autofilterbot/pkg/shortener"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -29,6 +31,7 @@ type App struct {
 	Bot       *gotgbot.Bot
 	Cache     *cache.Cache
 	Config    *config.Config
+	Admins    []int64
 
 	AutoDelete *autodelete.Manager
 	Shortener  *shortener.Shortener
@@ -124,6 +127,7 @@ func Run(opts RunAppOptions) {
 		AutoDelete: autodeleteManager,
 		StartTime:  time.Now(),
 		Cache:      cache.NewCache(),
+		Admins:     env.Int64s("ADMINS"),
 	}
 
 	dispatcher := SetupDispatcher(logger)
@@ -153,6 +157,16 @@ func Run(opts RunAppOptions) {
 
 	cancel() // autodelete & mongo updater should stop with this
 	_app.DB.Shutdown()
+}
+
+// AuthAdmin reports whether the user who sent the message is an admin or otherwise sends a warn message.
+func (app *App) AuthAdmin(msg *gotgbot.Message) bool {
+	if !exthandlers.UserIds(app.Admins)(msg) {
+		msg.Reply(app.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+		return false
+	}
+
+	return true
 }
 
 // App returns the initialized global app instance.

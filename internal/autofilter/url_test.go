@@ -12,23 +12,23 @@ func TestURLData(t *testing.T) {
 
 	table := []autofilter.URLData{
 		{
-			FileId:       "SDKHjshkdja5645a==addkov_Askdj",
+			FileUniqueId: "SDKHjshkdja5645a==addkov_Askdj",
 			ChatId:       -100123456789,
 			HasShortener: true,
 		},
 		{
-			FileId: "==AQSW5654is_88sdiJHSpPP",
-			ChatId: 209812831,
+			FileUniqueId: "==AQSW5654is_88sdiJHSpPP",
+			ChatId:       209812831,
 		},
 		{
-			FileId:       "__89xczijhDSJsgjdJSHDAJs==",
+			FileUniqueId: "__89xczijhDSJsgjdJSHDAJs==",
 			ChatId:       -87654321,
 			HasShortener: true,
 		},
 	}
 
 	for _, item := range table {
-		t.Run(item.FileId, func(t *testing.T) {
+		t.Run(item.FileUniqueId, func(t *testing.T) {
 			s := item.Encode()
 
 			out, err := autofilter.URLDataFromString(s)

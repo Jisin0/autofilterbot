@@ -45,7 +45,7 @@ func (c *Client) SaveFiles(files ...*model.File) []error {
 }
 
 func (c *Client) GetFile(fileId string) (*model.File, error) {
-	res := c.fileCollection.FindOne(c.ctx, fileIdFilter(fileId))
+	res := c.fileCollection.FindOne(c.ctx, idFilter(fileId))
 	if err := res.Err(); err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) GetFile(fileId string) (*model.File, error) {
 }
 
 func (c *Client) DeleteFile(fileId string) error {
-	_, err := c.fileCollection.DeleteOne(c.ctx, fileIdFilter(fileId))
+	_, err := c.fileCollection.DeleteOne(c.ctx, idFilter(fileId))
 	return err
 }
 

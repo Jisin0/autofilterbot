@@ -5,17 +5,23 @@ import (
 	"runtime/debug"
 	"strings"
 
+	"github.com/Jisin0/autofilterbot/pkg/conversation"
+	"github.com/Jisin0/autofilterbot/pkg/env"
 	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/callbackquery"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/message"
 	"go.uber.org/zap"
 )
 
 const (
-	commandHandlerGroup = iota + 1
+	autofilterHandlerGroup = iota + 1
+	commandHandlerGroup
 	callbackQueryGroup
+	miscHandlerGroup
+	middleWareGroup
 )
 
 // SetupDispatcher creates a new empty dispatcher with error and panic recovery setup.
@@ -39,9 +45,16 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 		},
 	})
 
+	d.AddHandlerToGroup(handlers.NewMessage(message.Supergroup, Autofilter), autofilterHandlerGroup)
+
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, StaticCommands), commandHandlerGroup)
+	d.AddHandlerToGroup(handlers.NewCommand("delete", DeleteFile).SetAllowChannel(true), commandHandlerGroup)
 
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("cmd:"), StaticCommands), callbackQueryGroup)
+
+	d.AddHandlerToGroup(handlers.NewMessage(exthandlers.ChatIds(env.Int64s("FILE_CHANNELS")), NewFile), miscHandlerGroup)
+
+	d.AddHandlerToGroup(handlers.NewMessage(message.All, conversation.MessageHandler), middleWareGroup)
 
 	return d
 }

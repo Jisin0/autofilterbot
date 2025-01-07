@@ -1,8 +1,17 @@
 package model
 
+const (
+	FileTypeDocument = "document"
+	FileTypeVideo    = "video"
+	FileTypeAudio    = "audio"
+	FileTypeVoice    = "voice"
+)
+
 // File is a single file stored in the database.
 type File struct {
-	// Unique id of the file used to save, fetch and send files.
+	// Unique id of the file used to save and fetch files from db.
+	UniqueId string `json:"_id" bson:"_id"`
+	// Id used to send and copy files
 	FileId string `json:"file_id" bson:"file_id"`
 	// Name of the file including extension
 	FileName string `json:"file_name" bson:"file_name"`
