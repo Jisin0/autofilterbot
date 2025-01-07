@@ -2,6 +2,8 @@ package autofilter
 
 // SearchResult holds the result of a search query.
 type SearchResult struct {
+	// Unique id used to identify the query.
+	UniqueId string
 	// Query is the sanitized message that was searched for.
 	Query string `json:"query"`
 	// FromUser is the id of the user who initiated it.

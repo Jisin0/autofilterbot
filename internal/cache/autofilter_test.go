@@ -13,6 +13,7 @@ func TestAutofilter(t *testing.T) {
 	assert := assert.New(t)
 
 	data := &autofilter.SearchResult{
+		UniqueId: "ssabmud",
 		Query:    "hello mom",
 		FromUser: 69420,
 		ChatID:   123456789,
@@ -27,7 +28,7 @@ func TestAutofilter(t *testing.T) {
 	err := c.Save(data)
 	assert.NoError(err)
 
-	res, err, _ := c.Get("hello mom", 123456789)
+	res, err, _ := c.Get("ssabmud")
 	assert.NoError(err)
 
 	assert.Equal(data, res)

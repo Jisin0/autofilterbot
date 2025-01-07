@@ -169,13 +169,14 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 	}
 
 	err = _app.Cache.Autofilter.Save(&autofilter.SearchResult{
+		UniqueId: uniqueId,
 		Query:    query,
 		FromUser: fromUser.Id,
 		ChatID:   ctx.EffectiveChat.Id,
 		Files:    files,
 	})
 	if err != nil {
-		_app.Log.Warn("autfilter: save cache failes", zap.Error(err), zap.String("query", query))
+		_app.Log.Warn("autfilter: save cache failed", zap.Error(err), zap.String("query", query))
 	}
 
 	return msg, nil
