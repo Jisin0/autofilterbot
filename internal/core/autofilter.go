@@ -9,6 +9,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/autofilter"
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/internal/format"
+	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -146,12 +147,21 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 		warn = fmt.Sprintf("<blockquote><b>⚠️ 𝖳𝗁𝗂𝗌 𝖬𝖾𝗌𝗌𝖺𝗀𝖾 𝖶𝗂𝗅𝗅 𝖡𝖾 𝖠𝗎𝗍𝗈𝗆𝖺𝗍𝗂𝖼𝖺𝗅𝗅𝗒 𝖣𝖾𝗅𝖾𝗍𝖾𝖽 𝖨𝗇 %q 𝖬𝗂𝗇𝗎𝗍𝖾𝗌</b>", _app.Config.AutodeleteTime)
 	}
 
+	var (
+		buttons  = make([][]gotgbot.InlineKeyboardButton, 0, len(files)+2)
+		uniqueId = functions.RandString(15)
+	)
+
+	buttons = append(buttons, headerRow(uniqueId, 0))
+	buttons = append(buttons, files[0].Process(inputMessage.GetChat().Id, bot.Username, _app.Config)...)
+	buttons = append(buttons, footerRow(uniqueId, 0, len(files)))
+
 	text := format.KeyValueFormat(_app.Config.GetResultTemplate(), _app.BasicMessageValues(ctx, map[string]any{"query": query, "warn": warn}))
 	msg, err := bot.SendMessage(inputMessage.GetChat().Id, text, &gotgbot.SendMessageOpts{
 		ReplyParameters: &gotgbot.ReplyParameters{
 			MessageId: inputMessage.GetMessageId(),
 		},
-		ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: files[0].Process(inputMessage.GetChat().Id, bot.Username, _app.Config)},
+		ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: buttons},
 		ParseMode:   gotgbot.ParseModeHTML,
 	})
 	if err != nil {
@@ -169,4 +179,39 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 	}
 
 	return msg, nil
+}
+
+func headerRow(uniqueId string, pageIndex int) []gotgbot.InlineKeyboardButton {
+	return []gotgbot.InlineKeyboardButton{allButton(uniqueId, pageIndex), selectButton(uniqueId, pageIndex)}
+}
+
+func allButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
+	return gotgbot.InlineKeyboardButton{Text: "ᴀʟʟ", CallbackData: fmt.Sprintf("all|%s_%d", uniqueId, pageIndex)}
+}
+
+func selectButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
+	return gotgbot.InlineKeyboardButton{Text: "sᴇʟᴇᴄᴛ", CallbackData: fmt.Sprintf("select|%s_%d", uniqueId, pageIndex)}
+}
+
+func footerRow(uniqueId string, pageIndex, totalPages int) []gotgbot.InlineKeyboardButton {
+	btns := make([]gotgbot.InlineKeyboardButton, 0, 3)
+	if pageIndex != 0 {
+		btns = append(btns, backButton(uniqueId, pageIndex-1))
+	}
+
+	btns = append(btns, gotgbot.InlineKeyboardButton{Text: fmt.Sprintf("📑 𝗣𝗔𝗚𝗘 %d/%d", pageIndex+1, totalPages), CallbackData: "ignore"})
+
+	if pageIndex+1 != totalPages {
+		btns = append(btns, nextButton(uniqueId, pageIndex+1))
+	}
+
+	return btns
+}
+
+func backButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
+	return gotgbot.InlineKeyboardButton{Text: "« ʙᴀᴄᴋ", CallbackData: fmt.Sprintf("navg|%s_%d", uniqueId, pageIndex)}
+}
+
+func nextButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
+	return gotgbot.InlineKeyboardButton{Text: "ɴᴇxᴛ »", CallbackData: fmt.Sprintf("navg|%s_%d", uniqueId, pageIndex)}
 }

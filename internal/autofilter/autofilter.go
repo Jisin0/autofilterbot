@@ -98,13 +98,15 @@ func FilesFromCursor(ctx context.Context, c database.Cursor, opts FilesFromCurso
 			}
 
 			row = append(row, f)
-
-			if finished {
-				return totalFiles, err
-			}
 		}
 
-		totalFiles = append(totalFiles, row)
+		if len(row) != 0 {
+			totalFiles = append(totalFiles, row)
+		}
+
+		if finished {
+			return totalFiles, nil
+		}
 
 		if totalCount >= opts.GetMaxResults() { // only checks after completing a page. should this behaviour be changed?
 			break
