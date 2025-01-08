@@ -43,3 +43,9 @@ func Close(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	return nil
 }
+
+// Ignore handles the ignore callback.
+func Ignore(bot *gotgbot.Bot, ctx *ext.Context) error {
+	ctx.CallbackQuery.Answer(bot, nil)
+	return nil
+}
