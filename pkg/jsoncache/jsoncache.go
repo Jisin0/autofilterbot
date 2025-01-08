@@ -80,6 +80,7 @@ func (c *Cache) Load(id string, data interface{}) error {
 
 	// Check if the data is within the timeout
 	if time.Since(cacheData.Timestamp) > c.timeout {
+		os.Remove(filePath)
 		return ErrCacheDataExpired
 	}
 
