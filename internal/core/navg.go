@@ -15,30 +15,30 @@ func Navigate(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	data := callbackdata.FromString(c.Data)
 	if len(data.Args) < 2 {
-		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Error: Not Enough Arguments", ShowAlert: true})
+		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Error: Not Enough Arguments", ShowAlert: true, CacheTime: fiveHoursInSeconds})
 		return nil
 	}
 
 	r, err, ok := _app.Cache.Autofilter.Get(data.Args[0])
 	if err != nil {
-		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "An Error Occured :(", ShowAlert: true})
+		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "An Error Occured :\\", ShowAlert: true})
 		_app.Log.Warn("navg: result from cache failed", zap.Error(err))
 		return nil
 	}
 
 	if !ok {
-		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "This Query Has Expired!\nPlease Request Again...", ShowAlert: true})
+		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "This Query Has Expired!\nPlease Request Again...", ShowAlert: true, CacheTime: fiveHoursInSeconds})
 		return nil
 	}
 
 	if r.FromUser != c.From.Id {
-		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "You Can't Use This, Please Ask For Your Own!", ShowAlert: true})
+		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "You Can't Use This, Please Ask For Your Own!", ShowAlert: true, CacheTime: fiveHoursInSeconds})
 		return nil
 	}
 
 	pageIndex, err := strconv.Atoi(data.Args[1])
 	if err != nil {
-		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "An Error Occured :(", ShowAlert: true})
+		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "An Error Occured :\\", ShowAlert: true})
 		_app.Log.Warn("navg: parse page index failed", zap.Error(err))
 		return nil
 	}
