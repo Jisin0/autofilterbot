@@ -52,9 +52,9 @@ func (c *Client) GetFile(fileId string) (*model.File, error) {
 
 	var f model.File
 
-	res.Decode(&f)
+	err := res.Decode(&f)
 
-	return &f, nil
+	return &f, err
 }
 
 func (c *Client) DeleteFile(fileId string) error {

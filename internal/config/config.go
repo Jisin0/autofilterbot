@@ -45,6 +45,8 @@ type Config struct {
 	NoResultText string `json:"no_result_text,omitempty" bson:"no_result_text,omitempty"`
 	// Template to use for result buttons
 	ButtonTemplate string `json:"btn_template,omitempty" bson:"btn_template,omitempty"`
+	// File Details Calbback Template.
+	FileDetailsTemplate string `json:"fdetails_template,omitempty" bson:"fdetails_template,omitempty"`
 
 	// File size is shown in seperate button if set
 	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
@@ -245,4 +247,15 @@ func (c *Config) GetShortener() shortener.Shortener {
 
 func (c *Config) GetAutodeleteTime() int {
 	return c.AutodeleteTime
+}
+
+func (c *Config) GetFileDetailsTemplate() string {
+	if c.FileDetailsTemplate != "" {
+		return c.FileDetailsTemplate
+	}
+
+	return `Name: {file_name}
+Size: {file_size}
+Type: {file_type}
+Uploaded: {date}`
 }

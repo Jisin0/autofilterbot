@@ -45,7 +45,7 @@ func ProcessFiles(files Files, chatId int64, botUsername string, opts ProcessFil
 		size := functions.FileSizeToString(f.FileSize)
 
 		if opts.GetSizeButton() {
-			result = append(result, []gotgbot.InlineKeyboardButton{{Text: f.FileName, CallbackData: "fdetails|" + f.FileId}, {Text: size, Url: url}})
+			result = append(result, []gotgbot.InlineKeyboardButton{{Text: f.FileName, CallbackData: "fdetails|" + f.UniqueId}, {Text: size, Url: url}})
 		} else {
 			text := format.KeyValueFormat(opts.GetButtonTemplate(), map[string]string{
 				"file_name": f.FileName,
