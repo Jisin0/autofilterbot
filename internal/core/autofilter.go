@@ -148,7 +148,7 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 	}
 
 	var (
-		buttons  = make([][]gotgbot.InlineKeyboardButton, 0, len(files)+2)
+		buttons  = make([][]gotgbot.InlineKeyboardButton, 0, len(files[0])+2)
 		uniqueId = functions.RandString(15)
 	)
 
