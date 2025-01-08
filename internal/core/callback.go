@@ -52,7 +52,7 @@ func Close(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 // Ignore handles the ignore callback.
 func Ignore(bot *gotgbot.Bot, ctx *ext.Context) error {
-	ctx.CallbackQuery.Answer(bot, nil)
+	ctx.CallbackQuery.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{CacheTime: fiveHoursInSeconds})
 	return nil
 }
 
