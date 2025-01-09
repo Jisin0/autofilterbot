@@ -7,7 +7,7 @@ import (
 )
 
 // BasicMessageValues creates a map with basic values to format message text with
-func (app *App) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
+func (app *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
 	m := ctx.EffectiveMessage
 	u := ctx.EffectiveUser
 

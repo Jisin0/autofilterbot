@@ -6,35 +6,25 @@ import (
 	"os"
 	"time"
 
+	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/internal/cache"
-	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/env"
 	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/Jisin0/autofilterbot/pkg/log"
-	"github.com/Jisin0/autofilterbot/pkg/shortener"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 )
 
-var _app *App
+var _app *Core
 
-// App wraps various individual components of the app to orchestrate application processes.
-type App struct {
-	DB        database.Database
-	Log       *zap.Logger
-	StartTime time.Time
-	Bot       *gotgbot.Bot
-	Cache     *cache.Cache
-	Config    *config.Config
-	Admins    []int64
-
-	AutoDelete *autodelete.Manager
-	Shortener  *shortener.Shortener
+// Core wraps various individual components of the app to orchestrate application processes.
+type Core struct {
+	app.App
 }
 
 // extendedHandler returns a handlers.Response that calls
@@ -119,15 +109,17 @@ func Run(opts RunAppOptions) {
 		logger.Error("autodelete module setup failed", zap.Error(err))
 	}
 
-	_app = &App{
-		DB:         db,
-		Config:     appConfig,
-		Bot:        bot,
-		Log:        logger,
-		AutoDelete: autodeleteManager,
-		StartTime:  time.Now(),
-		Cache:      cache.NewCache(),
-		Admins:     env.Int64s("ADMINS"),
+	_app = &Core{
+		app.App{
+			DB:         db,
+			Config:     appConfig,
+			Bot:        bot,
+			Log:        logger,
+			AutoDelete: autodeleteManager,
+			StartTime:  time.Now(),
+			Cache:      cache.NewCache(),
+			Admins:     env.Int64s("ADMINS"),
+		},
 	}
 
 	dispatcher := SetupDispatcher(logger)
@@ -160,7 +152,7 @@ func Run(opts RunAppOptions) {
 }
 
 // AuthAdmin reports whether the user who sent the message is an admin or otherwise sends a warn message.
-func (app *App) AuthAdmin(msg *gotgbot.Message) bool {
+func (app *Core) AuthAdmin(msg *gotgbot.Message) bool {
 	if !exthandlers.UserIds(app.Admins)(msg) {
 		msg.Reply(app.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
 		return false
@@ -170,6 +162,6 @@ func (app *App) AuthAdmin(msg *gotgbot.Message) bool {
 }
 
 // App returns the initialized global app instance.
-func Application() *App {
+func Application() *Core {
 	return _app
 }
