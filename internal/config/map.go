@@ -1,64 +1,47 @@
 package config
 
+const (
+	FieldNameFsub             = "fsub"
+	FieldNameMaxResults       = "max_results"
+	FiledNameMaxPages         = "max_pages"
+	FieldNameMaxPerPage       = "max_per_page"
+	FieldNameStart            = "start"
+	FieldNameAbout            = "about"
+	FieldNameHelp             = "help"
+	FieldNamePrivacy          = "privacy"
+	FieldNameStats            = "stats"
+	FieldNameShortener        = "shortener"
+	FieldNameNoResultText     = "no_result_text"
+	FieldNameResultTemplate   = "af_template"
+	FieldNameButtonTemplate   = "btn_template"
+	FieldNameFdetailsTemplate = "fdetails_template"
+	FieldNameSizeButton       = "size_btn"
+	FieldNameAutodeleteTime   = "autodel_time"
+)
+
 // ToMap converts the contents of the struct into map so fields can be dynamically accessed.
 func (c Config) ToMap() map[string]any {
 	vals := make(map[string]any)
 
-	if len(c.FsubChannels) != 0 {
-		vals["fsub"] = c.FsubChannels
-	}
+	vals[FieldNameFsub] = c.GetFsubChannels()
+	vals[FieldNameMaxResults] = c.GetMaxResults()
+	vals[FiledNameMaxPages] = c.GetMaxPages()
+	vals[FieldNameMaxPerPage] = c.GetMaxPerPage()
 
-	if c.MaxResults != 0 {
-		vals["max_results"] = c.MaxResults
-	}
+	// all message values are saved by prefix appended with _text and _buttons for text and markup
+	vals[FieldNameStart] = c.GetStartMessage("")
+	vals[FieldNameAbout] = c.GetAboutMessage()
+	vals[FieldNameHelp] = c.GetHelpMessage()
+	vals[FieldNamePrivacy] = c.GetPrivacyMessage()
+	vals[FieldNameStats] = c.GetStatsMessage()
 
-	if c.MaxPages != 0 {
-		vals["max_pages"] = c.MaxPages
-	}
-
-	if c.MaxPerPage != 0 {
-		vals["max_per_page"] = c.MaxPerPage
-	}
-
-	if c.StartText != "" {
-		vals["start_text"] = c.StartText
-	}
-
-	if len(c.StartButtons) != 0 {
-		vals["start_buttons"] = c.StartButtons
-	}
-
-	if c.AboutText != "" {
-		vals["about_text"] = c.AboutText
-	}
-
-	if len(c.AboutButtons) != 0 {
-		vals["about_buttons"] = c.AboutButtons
-	}
-
-	if c.HelpText != "" {
-		vals["help_text"] = c.HelpText
-	}
-
-	if len(c.HelpButtons) != 0 {
-		vals["help_buttons"] = c.HelpButtons
-	}
-
-	if c.PrivacyText != "" {
-		vals["privacy_text"] = c.PrivacyText
-	}
-
-	if len(c.PrivacyButtons) != 0 {
-		vals["privacy_buttons"] = c.PrivacyButtons
-	}
-
-	if c.StatsText != "" {
-		vals["stats_text"] = c.StatsText
-	}
-
-	if len(c.StatsButtons) != 0 {
-		vals["stats_buttons"] = c.StatsButtons
-	}
+	vals[FieldNameShortener] = c.GetShortener()
+	vals[FieldNameNoResultText] = c.GetNoResultText()
+	vals[FieldNameResultTemplate] = c.GetResultTemplate()
+	vals[FieldNameButtonTemplate] = c.GetButtonTemplate()
+	vals[FieldNameFdetailsTemplate] = c.GetFileDetailsTemplate()
+	vals[FieldNameSizeButton] = c.GetSizeButton()
+	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
 
 	return vals
 }
