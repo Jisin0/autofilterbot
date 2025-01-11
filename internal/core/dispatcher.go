@@ -37,6 +37,10 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 			return ext.DispatcherActionNoop
 		},
 
+		UnhandledErrFunc: func(err error) {
+			log.Debug("dispatcher: unhandled error", zap.Error(err))
+		},
+
 		Panic: func(b *gotgbot.Bot, ctx *ext.Context, r interface{}) {
 			logFields := []zap.Field{zap.String("panic", fmt.Sprintf("%v\n%s", r, cleanedStack()))}
 			logFields = addLogFieldsFromContext(ctx, logFields)

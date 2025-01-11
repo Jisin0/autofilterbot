@@ -125,7 +125,11 @@ func Run(opts RunAppOptions) {
 	_app.ConfigPanel = configpanel.CreatePanel(_app)
 
 	dispatcher := SetupDispatcher(logger)
-	updater := ext.NewUpdater(dispatcher, &ext.UpdaterOpts{})
+	updater := ext.NewUpdater(dispatcher, &ext.UpdaterOpts{
+		UnhandledErrFunc: func(err error) {
+			logger.Debug("updater: unhandled error", zap.Error(err))
+		},
+	})
 
 	err = updater.StartPolling(bot, &ext.PollingOpts{
 		DropPendingUpdates: true,
