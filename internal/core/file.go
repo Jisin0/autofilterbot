@@ -50,7 +50,7 @@ func NewFile(bot *gotgbot.Bot, ctx *ext.Context) error {
 func DeleteFile(bot *gotgbot.Bot, ctx *ext.Context) error {
 	m := ctx.EffectiveMessage
 
-	if !_app.AuthAdmin(m) {
+	if !_app.AuthAdmin(ctx) {
 		return nil
 	}
 
@@ -96,7 +96,7 @@ const (
 func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 	m := ctx.EffectiveMessage
 
-	if !_app.AuthAdmin(m) {
+	if !_app.AuthAdmin(ctx) {
 		return nil
 	}
 

@@ -88,7 +88,7 @@ func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][
 		Bot:           bot,
 		Update:        update,
 		CallbackQuery: update.CallbackQuery,
-		CallbackData:  data,
+		CallbackData:  &data,
 	}
 
 	if len(data.Path) < 2 || data.Path[1] == PathHome {
@@ -129,6 +129,7 @@ func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][
 	// Otherwise return page content and generated markup
 
 	if len(currentPage.SubPages) == 0 && currentPage.CallbackFunc != nil {
+		ctx.Page = currentPage
 		return currentPage.CallbackFunc(ctx)
 	}
 

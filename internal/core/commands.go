@@ -95,11 +95,11 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 // Logs handles the /logs command.
 func Logs(bot *gotgbot.Bot, ctx *ext.Context) error {
-	m := ctx.EffectiveMessage
-
-	if !_app.AuthAdmin(m) {
+	if !_app.AuthAdmin(ctx) {
 		return nil
 	}
+
+	m := ctx.EffectiveMessage
 
 	prg, _ := m.Reply(bot, "⏳ 𝖴𝗉𝗅𝗈𝖺𝖽𝗂𝗇𝗀 . . .", nil)
 

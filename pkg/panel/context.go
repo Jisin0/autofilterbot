@@ -15,5 +15,7 @@ type Context struct {
 	// Query which propogated the request.
 	CallbackQuery *gotgbot.CallbackQuery
 	// CallbackData wraps the request path and arguments.
-	CallbackData callbackdata.CallbackData
+	CallbackData *callbackdata.CallbackData
+	// Page is the page which trigerred the request.
+	Page *Page
 }

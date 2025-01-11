@@ -7,7 +7,7 @@ import (
 )
 
 // buttonsFromPages creates keyboard button with subpages from given CallbackData.
-func buttonsFromPages(callbackData callbackdata.CallbackData, pages []*Page) [][]gotgbot.InlineKeyboardButton {
+func buttonsFromPages(callbackData *callbackdata.CallbackData, pages []*Page) [][]gotgbot.InlineKeyboardButton {
 	var backRow []gotgbot.InlineKeyboardButton
 
 	if len(callbackData.Path) <= 1 {

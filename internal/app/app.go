@@ -10,6 +10,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
+	"github.com/Jisin0/autofilterbot/pkg/panel"
 	"github.com/Jisin0/autofilterbot/pkg/shortener"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"go.uber.org/zap"
@@ -17,13 +18,14 @@ import (
 
 // App wraps various individual components of the app to orchestrate application processes.
 type App struct {
-	DB        database.Database
-	Log       *zap.Logger
-	StartTime time.Time
-	Bot       *gotgbot.Bot
-	Cache     *cache.Cache
-	Config    *config.Config
-	Admins    []int64
+	DB          database.Database
+	Log         *zap.Logger
+	StartTime   time.Time
+	Bot         *gotgbot.Bot
+	Cache       *cache.Cache
+	Config      *config.Config
+	Admins      []int64
+	ConfigPanel *panel.Panel
 
 	AutoDelete *autodelete.Manager
 	Shortener  *shortener.Shortener

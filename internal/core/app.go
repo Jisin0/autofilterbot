@@ -8,11 +8,11 @@ import (
 
 	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/internal/cache"
+	"github.com/Jisin0/autofilterbot/internal/configpanel"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/env"
-	exthandlers "github.com/Jisin0/autofilterbot/pkg/filters"
 	"github.com/Jisin0/autofilterbot/pkg/log"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -122,6 +122,8 @@ func Run(opts RunAppOptions) {
 		},
 	}
 
+	_app.ConfigPanel = configpanel.CreatePanel(_app)
+
 	dispatcher := SetupDispatcher(logger)
 	updater := ext.NewUpdater(dispatcher, &ext.UpdaterOpts{})
 
@@ -152,16 +154,46 @@ func Run(opts RunAppOptions) {
 }
 
 // AuthAdmin reports whether the user who sent the message is an admin or otherwise sends a warn message.
-func (app *Core) AuthAdmin(msg *gotgbot.Message) bool {
-	if !exthandlers.UserIds(app.Admins)(msg) {
-		msg.Reply(app.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+func (app *Core) AuthAdmin(ctx *ext.Context) bool {
+	switch {
+	case ctx.Message != nil:
+		if !containsI64(_app.Admins, ctx.Message.From.Id) {
+			ctx.Message.Reply(app.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+			return false
+		}
+	case ctx.CallbackQuery != nil:
+		if !containsI64(_app.Admins, ctx.CallbackQuery.From.Id) {
+			ctx.CallbackQuery.Answer(_app.Bot, &gotgbot.AnswerCallbackQueryOpts{Text: "𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗", ShowAlert: true})
+			return false
+		}
+	default:
+		_app.Log.Warn("authadmin: unsupported update received", zap.Int64("update_id", ctx.UpdateId))
 		return false
 	}
 
 	return true
 }
 
+// RefreshConfig refetches the bot configs from db.
+func (app *Core) RefreshConfig() {
+	c, err := app.DB.GetConfig(app.Bot.Id)
+	if err != nil {
+		app.Log.Error("failed to refresh configs", zap.Error(err))
+	}
+	app.Config = c
+}
+
 // App returns the initialized global app instance.
 func Application() *Core {
 	return _app
+}
+
+// containsI64 reports whether the given value is in a slice.
+func containsI64(s []int64, val int64) bool {
+	for _, i := range s {
+		if i == val {
+			return true
+		}
+	}
+	return false
 }

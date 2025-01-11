@@ -10,14 +10,14 @@ type CallbackFunc func(ctx *Context) (string, [][]gotgbot.InlineKeyboardButton, 
 
 // Page is a single page in the config panel.
 type Page struct {
+	// Name is the unique identifier for this page. It should be as short as possible to not affect the callback data limit.
+	Name string
 	// Name shown on the panel button.
 	DisplayName string
 	// Content is the text content of the page.
 	Content string
 	// Function to dynamically generate content for the page instead of the static Content.
 	ContentGenerator ContentGenerator
-	// Name is the unique identifier for this page. It should be as short as possible to not affect the callback data limit.
-	Name string
 	// Function to call when page is hit. returns the text & buttons to edit and an error.
 	// The back button will be appended and does not need to be returned.
 	CallbackFunc CallbackFunc
@@ -82,4 +82,14 @@ func findPage(pages []*Page, name string) (*Page, bool) {
 	}
 
 	return nil, false
+}
+
+// NewPage creates a new empty page with name and display name shown on button.
+//
+// NOTE: name should be short and meaningful as it is put in callback data, displayName is shown as button label.
+func NewPage(name, displayName string) *Page {
+	return &Page{
+		Name:        name,
+		DisplayName: displayName,
+	}
 }

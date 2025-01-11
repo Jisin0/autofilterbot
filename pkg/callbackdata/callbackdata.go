@@ -102,4 +102,10 @@ func (c *CallbackData) RemoveLastPath() *CallbackData {
 	return c
 }
 
+// RemoveArgs removes all args from the callback data.
+func (c *CallbackData) RemoveArgs() *CallbackData {
+	c.Args = nil
+	return c
+}
+
 //TODO: create BackButton bound method to generate back button to last route and implement at points of error

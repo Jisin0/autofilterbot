@@ -42,6 +42,7 @@ func TestPanel(t *testing.T) {
 	p := panel.NewPanel()
 
 	p.NewPage("pg1", "Page 1").WithCallbackFunc(mockCallbackFunc)
+	p.WithHomepageGenerator(func() string { return "home" })
 	pg2 := p.NewPage("pg2", "Page 2").WithContent("test")
 	pg2.NewSubPage("sp1", "Sub Page 1").WithContent("test1")
 
@@ -75,6 +76,11 @@ func TestPanel(t *testing.T) {
 		{
 			data: "config:pg2:sp3",
 			err:  panel.PageNotFoundError{PageName: "sp3"},
+		},
+		{
+			data:        "config",
+			text:        "home",
+			buttonCount: 3,
 		},
 	}
 
