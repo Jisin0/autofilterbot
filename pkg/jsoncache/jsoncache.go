@@ -95,3 +95,8 @@ func (c *Cache) Load(id string, data interface{}) error {
 
 	return nil
 }
+
+// Close deletes the cache directory.
+func (c *Cache) Close() error {
+	return os.RemoveAll(c.directory)
+}
