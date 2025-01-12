@@ -1,3 +1,6 @@
+/*
+Package callbackdata allows working with data through data structures in a reliable way instead of working with strings.
+*/
 package callbackdata
 
 import (
