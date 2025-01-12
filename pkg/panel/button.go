@@ -1,6 +1,8 @@
 package panel
 
 import (
+	"fmt"
+
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -12,6 +14,7 @@ func buttonsFromPages(callbackData *callbackdata.CallbackData, pages []*Page) []
 
 	if len(callbackData.Path) <= 1 {
 		// root page so add close button
+		fmt.Println(callbackData.Path, callbackData.Args)
 		backRow = []gotgbot.InlineKeyboardButton{button.Close()}
 	} else {
 		// nested page so add back button
@@ -57,4 +60,21 @@ func backButton(callbackData string) gotgbot.InlineKeyboardButton {
 		Text:         "<- Back",
 		CallbackData: callbackData,
 	}
+}
+
+// addBackOrCloseButton dynamically adds the back or close button to an existing keyboard based on the number of buttons in the last row.
+func addBackOrCloseButton(btns [][]gotgbot.InlineKeyboardButton, b gotgbot.InlineKeyboardButton) [][]gotgbot.InlineKeyboardButton {
+	if len(btns) == 0 {
+		return [][]gotgbot.InlineKeyboardButton{{b}}
+	}
+
+	lastRowIndex := len(btns) - 1
+	switch len(btns[lastRowIndex]) {
+	case 1:
+		btns[lastRowIndex] = append(btns[lastRowIndex], b)
+	default:
+		btns = append(btns, []gotgbot.InlineKeyboardButton{b})
+	}
+
+	return btns
 }

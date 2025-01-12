@@ -1,7 +1,10 @@
 package callbackdata
 
 import (
+	"fmt"
 	"strings"
+
+	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
 //TODO: write tests
@@ -108,4 +111,25 @@ func (c *CallbackData) RemoveArgs() *CallbackData {
 	return c
 }
 
-//TODO: create BackButton bound method to generate back button to last route and implement at points of error
+// TODO: create BackButton bound method to generate back button to last route and implement at points of error
+// BackOrCloseButton creates either a back button if applicable or a close button from the data.
+func (c *CallbackData) BackOrCloseButton(userId ...int64) gotgbot.InlineKeyboardButton {
+	if len(c.Path) <= 1 {
+		return closeButton(userId...)
+	} else {
+		// nested page so add back button
+		return gotgbot.InlineKeyboardButton{Text: "<- Back", CallbackData: c.RemoveArgs().RemoveLastPath().ToString()}
+	}
+}
+
+func closeButton(userId ...int64) gotgbot.InlineKeyboardButton {
+	data := New().AddPath("close")
+	for _, u := range userId {
+		data.AddArg(fmt.Sprint(u))
+	}
+
+	return gotgbot.InlineKeyboardButton{
+		Text:         "𝖢𝗅𝗈𝗌𝖾",
+		CallbackData: data.ToString(),
+	}
+}

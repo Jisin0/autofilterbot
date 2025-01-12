@@ -130,7 +130,8 @@ func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][
 
 	if len(currentPage.SubPages) == 0 && currentPage.CallbackFunc != nil {
 		ctx.Page = currentPage
-		return currentPage.CallbackFunc(ctx)
+		s, b, err := currentPage.CallbackFunc(ctx)
+		return s, addBackOrCloseButton(b, data.BackOrCloseButton()), err
 	}
 
 	return currentPage.GetContent(), buttonsFromPages(ctx.CallbackData, currentPage.SubPages), nil
