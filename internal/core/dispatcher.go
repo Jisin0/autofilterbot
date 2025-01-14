@@ -61,6 +61,7 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("close"), Close), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("navg"), Navigate), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("fdetails"), FileDetails), callbackQueryGroup)
+	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("sel"), Select), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("ignore"), Ignore), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("config"), ConfigPanel), callbackQueryGroup)
 

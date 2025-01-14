@@ -191,7 +191,7 @@ func allButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
 }
 
 func selectButton(uniqueId string, pageIndex int) gotgbot.InlineKeyboardButton {
-	return gotgbot.InlineKeyboardButton{Text: "sᴇʟᴇᴄᴛ", CallbackData: fmt.Sprintf("select|%s_%d", uniqueId, pageIndex)}
+	return gotgbot.InlineKeyboardButton{Text: "sᴇʟᴇᴄᴛ", CallbackData: fmt.Sprintf("sel|%s_%d", uniqueId, pageIndex)}
 }
 
 func footerRow(uniqueId string, pageIndex, totalPages int) []gotgbot.InlineKeyboardButton {

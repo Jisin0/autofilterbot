@@ -13,3 +13,20 @@ type SearchResult struct {
 	// Files are the files fetched from the datbase.
 	Files []Files `json:"files,omitempty"`
 }
+
+// SelectFile sets the IsSelected field of the file on given page.
+func (r *SearchResult) SelectFile(pageIndex int, fileUniqueId string) bool {
+	if pageIndex >= len(r.Files) {
+		return false
+	}
+
+	for i, f := range r.Files[pageIndex] {
+		if f.UniqueId == fileUniqueId {
+			r.Files[pageIndex][i].IsSelected = !f.IsSelected
+
+			return true
+		}
+	}
+
+	return false
+}

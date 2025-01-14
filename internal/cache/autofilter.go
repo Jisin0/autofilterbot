@@ -25,19 +25,19 @@ func (c *Autofilter) Save(data *autofilter.SearchResult) error {
 //
 // If the cache file doesnt exist or was expired a nil error with ok set to false will be returned.
 // In case of any other error ok will be true and error will be set.
-func (c *Autofilter) Get(uniqueId string) (*autofilter.SearchResult, error, bool) {
+func (c *Autofilter) Get(uniqueId string) (*autofilter.SearchResult, bool, error) {
 	var res autofilter.SearchResult
 
 	err := c.cache.Load(uniqueId, &res)
 	if err != nil {
 		if err == jsoncache.ErrFileNotFound || err == jsoncache.ErrCacheDataExpired {
-			return nil, nil, false
+			return nil, false, nil
 		}
 
-		return nil, err, true
+		return nil, true, err
 	}
 
-	return &res, nil, true
+	return &res, true, nil
 }
 
 func NewAutofilter(timeout time.Duration) *Autofilter {

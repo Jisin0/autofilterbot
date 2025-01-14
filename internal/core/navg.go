@@ -19,7 +19,7 @@ func Navigate(bot *gotgbot.Bot, ctx *ext.Context) error {
 		return nil
 	}
 
-	r, err, ok := _app.Cache.Autofilter.Get(data.Args[0])
+	r, ok, err := _app.Cache.Autofilter.Get(data.Args[0])
 	if err != nil {
 		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "An Error Occured :\\", ShowAlert: true})
 		_app.Log.Warn("navg: result from cache failed", zap.Error(err))
