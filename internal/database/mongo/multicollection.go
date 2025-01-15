@@ -149,6 +149,23 @@ func (c *MultiCollection) UpdateOne(ctx context.Context, filter interface{}, upd
 	return &mongo.UpdateResult{}, nil
 }
 
+// EstimatedDocumentCount executes a count command and returns an estimate of the total number of documents in all collections using collection metadata.
+//
+// An error in any collectino will end with the accumulated total and error being returned immediately.
+func (c *MultiCollection) EstimatedDocumentCount(ctx context.Context, opts ...*options.EstimatedDocumentCountOptions) (int64, error) {
+	var total int64
+
+	for _, col := range c.allCollections {
+		n, err := col.EstimatedDocumentCount(ctx, opts...)
+		if err != nil {
+			return total, err
+		}
+		total += n
+	}
+
+	return total, nil
+}
+
 // RunCollectionUpdater is a background job that ensures storageCollection is set to the collection with least documents stored.
 //
 // WARNING: The document count of the collection does not essentially represent the storage usage of the database but the logic depends on the assumption that files will be by far the heaviest collection.

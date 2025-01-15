@@ -10,3 +10,10 @@ type FsubChannel struct {
 	// Invite link for the channel.
 	InviteLink string `json:"link" bson:"link"`
 }
+
+// Stats are database statistics.
+type Stats struct {
+	Users  int64
+	Groups int64
+	Files  interface{} // allows for flexibility, custom types must implement fmt.Stringer
+}

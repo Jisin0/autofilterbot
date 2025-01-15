@@ -56,6 +56,7 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"deleteall", "delall"}, DeleteAllFiles), commandHandlerGroup)
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"settings", "configs", "configpanel"}, Settings), commandHandlerGroup)
 	d.AddHandlerToGroup(handlers.NewCommand("logs", Logs), commandHandlerGroup)
+	d.AddHandlerToGroup(handlers.NewCommand("stats", Stats), commandHandlerGroup)
 
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("cmd"), StaticCommands), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("close"), Close), callbackQueryGroup)
@@ -64,6 +65,7 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("sel"), Select), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("ignore"), Ignore), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("config"), ConfigPanel), callbackQueryGroup)
+	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Equal("stats"), Stats), callbackQueryGroup)
 
 	d.AddHandlerToGroup(handlers.NewMessage(exthandlers.ChatIds(env.Int64s("FILE_CHANNELS")), NewFile), miscHandlerGroup)
 

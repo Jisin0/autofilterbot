@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/internal/functions"
@@ -58,9 +59,11 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 		msg = _app.Config.GetHelpMessage()
 	case "privacy":
 		msg = _app.Config.GetPrivacyMessage()
+	case "stats": // failsafe
+		return Stats(bot, ctx)
 	default:
 		msg = &message.Message{
-			Text: fmt.Sprintf("Commsnd %v Was Not Found!", commandName),
+			Text: fmt.Sprintf("Command %v Was Not Found!", commandName),
 		}
 	}
 
@@ -125,6 +128,54 @@ func Logs(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if prg != nil {
 		prg.Delete(bot, nil)
+	}
+
+	return nil
+}
+
+// Stats handles the stats command and callback query.
+func Stats(bot *gotgbot.Bot, ctx *ext.Context) error {
+	s, err := _app.DB.Stats()
+	if err != nil {
+		_app.Log.Warn("stats: get stats failed", zap.Error(err))
+		return nil
+	}
+
+	m := _app.Config.GetStatsMessage().Format(_app.BasicMessageValues(ctx, map[string]any{
+		"users":  s.Users,
+		"files":  s.Files,
+		"groups": s.Groups,
+		"uptime": time.Since(_app.StartTime).Truncate(time.Second),
+	}))
+
+	switch {
+	case ctx.Message != nil:
+		_, err = m.Send(bot, ctx.EffectiveChat.Id)
+	case ctx.CallbackQuery != nil:
+		var isMedia bool
+		if msg, ok := ctx.CallbackQuery.Message.(*gotgbot.Message); ok {
+			isMedia = functions.HasMedia(msg)
+		}
+
+		if isMedia {
+			_, _, err = ctx.EffectiveMessage.EditCaption(bot, &gotgbot.EditMessageCaptionOpts{
+				Caption:     m.Text,
+				ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(m.Keyboard)},
+				ParseMode:   gotgbot.ParseModeHTML,
+			})
+		} else {
+			_, _, err = ctx.EffectiveMessage.EditText(bot, m.Text, &gotgbot.EditMessageTextOpts{
+				ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: button.UnwrapKeyboard(m.Keyboard)},
+				ParseMode:   gotgbot.ParseModeHTML,
+				LinkPreviewOptions: &gotgbot.LinkPreviewOptions{
+					IsDisabled: true,
+				},
+			})
+		}
+	}
+
+	if err != nil {
+		_app.Log.Warn("stats: send result failed", zap.Error(err))
 	}
 
 	return nil

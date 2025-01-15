@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -51,7 +52,7 @@ func NewClient(ctx context.Context, mongodbUri, databaseName, collectionName str
 	}
 
 	dataBase := mongoClient.Database(databaseName)
-
+	//TODO: implement multi collection
 	fcol := dataBase.Collection(database.CollectionNameFiles)
 	fcol.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{Key: "file_name", Value: "text"}, {Key: "time", Value: 1}}})
 
@@ -70,4 +71,27 @@ func NewClient(ctx context.Context, mongodbUri, databaseName, collectionName str
 
 func (c *Client) Shutdown() error {
 	return c.client.Disconnect(context.Background()) // main ctx may already have been cancelled when this is called
+}
+
+func (c *Client) Stats() (*model.Stats, error) {
+	users, err := c.userCollection.EstimatedDocumentCount(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	groups, err := c.groupCollection.EstimatedDocumentCount(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	files, err := c.fileCollection.EstimatedDocumentCount(c.ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Stats{
+		Users:  users,
+		Groups: groups,
+		Files:  files,
+	}, nil
 }

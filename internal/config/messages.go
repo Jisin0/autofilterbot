@@ -133,7 +133,7 @@ func (c *Config) GetStatsMessage() *message.Message {
 		text = c.StatsText
 	} else {
 		text = `
-╭ ▸ 𝖴𝗌𝖾𝗋𝗌 : <code>{users}</code> 
+╭ ▸ 𝖴𝗌𝖾𝗋𝗌 : <code>{users}</code>
 ├ ▸ 𝖥𝗂𝗅𝖾𝗌 : <code>{files}</code>
 ├ ▸ 𝖦𝗋𝗈𝗎𝗉𝗌 : <code>{groups}</code>
 ╰ ▸ 𝖴𝗉𝗍𝗂𝗆𝖾 : <code>{uptime}</code>

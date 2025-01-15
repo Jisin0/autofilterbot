@@ -57,4 +57,7 @@ type Database interface {
 	SaveConfig(botId int64, data *config.Config) error
 	// ResetConfig removes a config field, resetting it to it's default value.
 	ResetConfig(botId int64, key string) error
+
+	// Stats gets the database usage statistics.
+	Stats() (*model.Stats, error)
 }
