@@ -60,4 +60,6 @@ type Database interface {
 
 	// Stats gets the database usage statistics.
 	Stats() (*model.Stats, error)
+	// GetName returns the name of the database as a user friendly string.
+	GetName() string
 }

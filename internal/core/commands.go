@@ -7,6 +7,7 @@ package core
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -46,8 +47,9 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	var (
-		msg *message.Message
-		err error
+		msg         *message.Message
+		err         error
+		extraValues map[string]any
 	)
 
 	switch commandName {
@@ -55,6 +57,10 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 		msg = _app.Config.GetStartMessage(bot.Username)
 	case "about":
 		msg = _app.Config.GetAboutMessage()
+		extraValues = map[string]any{
+			"os":       runtime.GOOS,
+			"database": _app.DB.GetName(),
+		}
 	case "help":
 		msg = _app.Config.GetHelpMessage()
 	case "privacy":
@@ -67,7 +73,7 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 		}
 	}
 
-	msg.Format(_app.BasicMessageValues(ctx))
+	msg.Format(_app.BasicMessageValues(ctx, extraValues))
 
 	if isCallback {
 		if isMedia {
@@ -152,6 +158,7 @@ func Stats(bot *gotgbot.Bot, ctx *ext.Context) error {
 	case ctx.Message != nil:
 		_, err = m.Send(bot, ctx.EffectiveChat.Id)
 	case ctx.CallbackQuery != nil:
+		ctx.CallbackQuery.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Generating Stats ...", CacheTime: fiveHoursInSeconds})
 		var isMedia bool
 		if msg, ok := ctx.CallbackQuery.Message.(*gotgbot.Message); ok {
 			isMedia = functions.HasMedia(msg)

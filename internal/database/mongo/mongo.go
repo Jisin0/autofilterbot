@@ -95,3 +95,7 @@ func (c *Client) Stats() (*model.Stats, error) {
 		Files:  files,
 	}, nil
 }
+
+func (c *Client) GetName() string {
+	return "MongoDB Atlas"
+}
