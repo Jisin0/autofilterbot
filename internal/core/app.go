@@ -108,6 +108,7 @@ func Run(opts RunAppOptions) {
 	if err != nil {
 		logger.Error("autodelete module setup failed", zap.Error(err))
 	}
+	go autodeleteManager.Run(ctx, logger)
 
 	_app = &Core{
 		app.App{
