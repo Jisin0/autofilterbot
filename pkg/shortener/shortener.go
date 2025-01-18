@@ -41,7 +41,7 @@ func (c *Shortener) ShortenURL(inputURL string) (string, error) {
 		return requestURL, nil
 	}
 
-	req, err := http.NewRequest("GET", requestURL, nil)
+	req, err := http.NewRequest("GET", requestURL, http.NoBody)
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +64,7 @@ func (c *Shortener) ShortenURL(inputURL string) (string, error) {
 		return "", nil
 	}
 
-	if strings.ToLower(res.Status) == "error" {
+	if strings.EqualFold(res.Status, "error") {
 		return "", fmt.Errorf("shortener error response: %v", res.Message)
 	}
 

@@ -108,10 +108,6 @@ func ProcessUpdate(p *Panel, update *ext.Context, bot *gotgbot.Bot) (string, [][
 		return "", nil, PageNotFoundError{PageName: data.Path[1]}
 	}
 
-	// if len(data.Path) == 2 { // if only one subroute i.e display root page
-	// 	return rootPage.GetContent(), buttonsFromPages(ctx.CallbackData, nil), nil
-	// }
-
 	currentPage := rootPage
 
 	if len(data.Path) > 2 { // if data has subroutes

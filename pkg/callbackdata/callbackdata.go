@@ -10,8 +10,6 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
 
-//TODO: write tests
-
 const (
 	// Character that joins paths (colon)
 	PathDelimiter = ':'
@@ -114,7 +112,6 @@ func (c CallbackData) RemoveArgs() CallbackData {
 	return c
 }
 
-// TODO: create BackButton bound method to generate back button to last route and implement at points of error
 // BackOrCloseButton creates either a back button if applicable or a close button from the data.
 func (c CallbackData) BackOrCloseButton(userId ...int64) gotgbot.InlineKeyboardButton {
 	if len(c.Path) <= 1 {

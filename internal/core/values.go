@@ -8,8 +8,10 @@ import (
 
 // BasicMessageValues creates a map with basic values to format message text with
 func (app *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
-	m := ctx.EffectiveMessage
-	u := ctx.EffectiveUser
+	var (
+		m = ctx.EffectiveMessage
+		u = ctx.EffectiveUser
+	)
 
 	values := map[string]string{
 		"my_name": app.Bot.FirstName,
@@ -24,9 +26,11 @@ func (app *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]
 		if u.LastName != "" {
 			fullName = fullName + " " + u.LastName
 		}
+
 		values["full_name"] = fullName
 
 		var mention string
+
 		if u.Username != "" {
 			values["username"] = u.Username
 			mention = "@" + u.Username

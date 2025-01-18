@@ -31,8 +31,7 @@ func ParseFromText(text string) (returnText string, buttons [][]InlineKeyboardBu
 
 	for _, textRows := range strings.Split(text, "\n") {
 		find := buttonRegex.FindAllStringSubmatch(textRows, 20)
-		// row := make([]InlineKeyboardButton, len(find))
-		var row []InlineKeyboardButton
+		row := make([]InlineKeyboardButton, 0, len(find))
 
 		for _, m := range find {
 			if len(m) < 4 {

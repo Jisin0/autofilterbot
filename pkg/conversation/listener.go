@@ -48,9 +48,11 @@ func (ls *ListenerArray) FindMatchAndDelete(m *gotgbot.Message) (*Listener, bool
 		}
 
 		ls.mu.Lock()
-		defer ls.mu.Unlock()
 
 		ls.list = slices.Delete(ls.list, i, i+1)
+
+		ls.mu.Unlock()
+
 		return l, true
 	}
 

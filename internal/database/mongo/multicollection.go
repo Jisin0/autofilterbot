@@ -109,7 +109,7 @@ func (c *MultiCollection) DeleteOne(ctx context.Context, filter interface{}, opt
 // UpdateMany updates all documents that match filter in every collection.
 // If the filter does not match any documents, the operation will succeed and an UpdateResult with a MatchedCount of 0 will be returned.
 // The result will not contain UpsertedId field.
-func (c *MultiCollection) UpdateMany(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+func (c *MultiCollection) UpdateMany(ctx context.Context, filter, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	var (
 		result    mongo.UpdateResult
 		allErrors []error
@@ -133,7 +133,7 @@ func (c *MultiCollection) UpdateMany(ctx context.Context, filter interface{}, up
 
 // UpdateOne updates the first document matching the filter in any collection.
 // If the filter does not match any documents, the operation will succeed and a UpdateResult with a ModifiedCount of 0 will be returned.
-func (c *MultiCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+func (c *MultiCollection) UpdateOne(ctx context.Context, filter, update interface{}, opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
 	for i, col := range c.allCollections {
 		res, err := col.UpdateOne(ctx, filter, update, opts...)
 		if err != nil {
