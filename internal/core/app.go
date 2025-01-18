@@ -186,7 +186,6 @@ func (app *Core) RefreshConfig() {
 		app.Log.Error("failed to refresh configs", zap.Error(err))
 	}
 	app.Config = c
-	app.Config.RefreshMap()
 }
 
 // App returns the initialized global app instance.
