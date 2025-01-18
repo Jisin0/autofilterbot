@@ -35,8 +35,7 @@ func StaticCommands(bot *gotgbot.Bot, ctx *ext.Context) error {
 			commandName = strings.ToLower(data.Path[1])
 		}
 
-		switch m := c.Message.(type) {
-		case gotgbot.Message:
+		if m, ok := c.Message.(gotgbot.Message); ok {
 			isMedia = functions.HasMedia(&m)
 		}
 	} else {

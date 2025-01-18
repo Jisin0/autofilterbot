@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"time"
 
 	"github.com/Jisin0/autofilterbot/internal/app"
@@ -145,12 +146,11 @@ func Run(opts RunAppOptions) {
 	logger.Info(fmt.Sprintf("@%s started successfully !", bot.Username))
 
 	//TODO: setup dispatcher and run bot
-	updater.Idle()
-	// c := make(chan os.Signal, 1)
-	// signal.Notify(c, os.Interrupt)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
 
-	// s := <-c // wait until an interrupt signal is received
-	logger.Info("stopping app: interrupt signal received", zap.Any("signal", ""))
+	s := <-c // wait until an interrupt signal is received
+	logger.Info("stopping app: interrupt signal received", zap.Any("signal", s))
 
 	updater.Stop()
 
@@ -159,11 +159,11 @@ func Run(opts RunAppOptions) {
 }
 
 // AuthAdmin reports whether the user who sent the message is an admin or otherwise sends a warn message.
-func (app *Core) AuthAdmin(ctx *ext.Context) bool {
+func (core *Core) AuthAdmin(ctx *ext.Context) bool {
 	switch {
 	case ctx.Message != nil:
 		if !containsI64(_app.Admins, ctx.Message.From.Id) {
-			ctx.Message.Reply(app.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+			ctx.Message.Reply(core.Bot, "<b>𝖮𝗇𝗅𝗒 𝖺𝗇 𝖺𝖽𝗆𝗂𝗇 𝖼𝖺𝗇 𝗎𝗌𝖾 𝗍𝗁𝖺𝗍 𝖼𝗈𝗆𝗆𝖺𝗇𝖽, 𝖯𝖾𝖺𝗌𝖺𝗇𝗍❗</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
 			return false
 		}
 	case ctx.CallbackQuery != nil:
@@ -180,12 +180,12 @@ func (app *Core) AuthAdmin(ctx *ext.Context) bool {
 }
 
 // RefreshConfig refetches the bot configs from db.
-func (app *Core) RefreshConfig() {
-	c, err := app.DB.GetConfig(app.Bot.Id)
+func (core *Core) RefreshConfig() {
+	c, err := core.DB.GetConfig(core.Bot.Id)
 	if err != nil {
-		app.Log.Error("failed to refresh configs", zap.Error(err))
+		core.Log.Error("failed to refresh configs", zap.Error(err))
 	}
-	app.Config = c
+	core.Config = c
 }
 
 // App returns the initialized global app instance.

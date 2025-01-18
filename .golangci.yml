@@ -28,6 +28,10 @@ linters-settings:
   mnd:
     ignored-numbers:
       - '2'
+  stylecheck:
+    checks: 
+      - "all" 
+      - "-ST1003" # Disable https://staticcheck.dev/docs/checks/#ST1003 as Id is recommended to be ID but I don't agree
 
 linters:
   disable-all: true

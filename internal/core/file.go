@@ -141,7 +141,7 @@ func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 			return nil
 		}
 
-		if strings.ToLower(msg.Text) != "yes" {
+		if !strings.EqualFold(msg.Text, "yes") {
 			msg.Reply(bot, "<i>Operation Cancelled !</i>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
 			return nil
 		}
