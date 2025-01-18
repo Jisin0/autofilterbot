@@ -28,6 +28,7 @@ func CreatePanel(app AppPreview) *panel.Panel {
 	p := panel.NewPanel()
 
 	p.AddPage(panel.NewPage("sizebtn", "Size Button").WithCallbackFunc(BoolField(app, config.FieldNameSizeButton)))
+	p.AddPage(panel.NewPage("autodel", "Auto Delete").WithCallbackFunc(TimeField(app, config.FieldNameAutodeleteTime, []int{5, 10, 15, 20, 30, 45})))
 
 	return p
 }

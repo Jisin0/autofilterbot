@@ -41,8 +41,8 @@ func FromString(s string) CallbackData {
 }
 
 // New creates a new empty callback data structure.
-func New() *CallbackData {
-	return &CallbackData{}
+func New() CallbackData {
+	return CallbackData{}
 }
 
 // CallbackData wraps the raw callback data which represents the path of the request with some useful methods.
@@ -54,7 +54,7 @@ type CallbackData struct {
 }
 
 // ToString stringifies the data to be used in buttons as callback data.
-func (c *CallbackData) ToString() string {
+func (c CallbackData) ToString() string {
 	var b strings.Builder
 
 	// write first path element which should be the root config
@@ -80,25 +80,25 @@ func (c *CallbackData) ToString() string {
 }
 
 // AddArg appends an argument to the end of the callbackdata.
-func (c *CallbackData) AddArg(val string) *CallbackData {
+func (c CallbackData) AddArg(val string) CallbackData {
 	c.Args = append(c.Args, val)
 	return c
 }
 
 // AddArgs adds appends a list of arguments.
-func (c *CallbackData) AddArgs(vals ...string) *CallbackData {
+func (c CallbackData) AddArgs(vals ...string) CallbackData {
 	c.Args = append(c.Args, vals...)
 	return c
 }
 
 // AddPath adds a subpath to the end of existing paths.
-func (c *CallbackData) AddPath(val string) *CallbackData {
+func (c CallbackData) AddPath(val string) CallbackData {
 	c.Path = append(c.Path, val)
 	return c
 }
 
 // RemoveLastPath removes the last path in the callback data.
-func (c *CallbackData) RemoveLastPath() *CallbackData {
+func (c CallbackData) RemoveLastPath() CallbackData {
 	// if less than 2 paths then returned unchaged.
 	if len(c.Path) < 2 {
 		return c
@@ -109,14 +109,14 @@ func (c *CallbackData) RemoveLastPath() *CallbackData {
 }
 
 // RemoveArgs removes all args from the callback data.
-func (c *CallbackData) RemoveArgs() *CallbackData {
+func (c CallbackData) RemoveArgs() CallbackData {
 	c.Args = nil
 	return c
 }
 
 // TODO: create BackButton bound method to generate back button to last route and implement at points of error
 // BackOrCloseButton creates either a back button if applicable or a close button from the data.
-func (c *CallbackData) BackOrCloseButton(userId ...int64) gotgbot.InlineKeyboardButton {
+func (c CallbackData) BackOrCloseButton(userId ...int64) gotgbot.InlineKeyboardButton {
 	if len(c.Path) <= 1 {
 		return closeButton(userId...)
 	} else {

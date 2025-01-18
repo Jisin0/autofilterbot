@@ -20,7 +20,15 @@ const (
 )
 
 // ToMap converts the contents of the struct into map so fields can be dynamically accessed.
-func (c Config) ToMap() map[string]any {
+func (c *Config) ToMap() map[string]any {
+	if c.cachedMap == nil {
+		c.RefreshMap()
+	}
+
+	return c.cachedMap
+}
+
+func (c *Config) toMap() map[string]any {
 	vals := make(map[string]any)
 
 	vals[FieldNameFsub] = c.GetFsubChannels()
@@ -44,4 +52,9 @@ func (c Config) ToMap() map[string]any {
 	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
 
 	return vals
+}
+
+// RefreshMap refreshes the value of the cached map.
+func (c *Config) RefreshMap() {
+	c.cachedMap = c.toMap()
 }

@@ -11,10 +11,7 @@ func TestCallbackData(t *testing.T) {
 	assert := assert.New(t)
 
 	{
-		c := callbackdata.New()
-
-		c.AddPath("dayumm")
-		c.AddArg("foo")
+		c := callbackdata.New().AddPath("dayumm").AddArg("foo")
 
 		assert.Equal("dayumm|foo", c.ToString())
 	}

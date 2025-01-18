@@ -51,6 +51,9 @@ type Config struct {
 
 	// Time in minutes after which message should be deleted.
 	AutodeleteTime int `json:"autodel_time,omitempty" bson:"autodel_time,omitempty"`
+
+	// cached value from ToMap, updated using UpdateMap
+	cachedMap map[string]any
 }
 
 func (c *Config) GetShortener() shortener.Shortener {
