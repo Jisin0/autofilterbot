@@ -57,7 +57,7 @@ func buttonsFromPages(callbackData *callbackdata.CallbackData, pages []*Page) []
 // backButton creates a button with back text with given callback data.
 func backButton(callbackData string) gotgbot.InlineKeyboardButton {
 	return gotgbot.InlineKeyboardButton{
-		Text:         "<- Back",
+		Text:         "‹- ʙᴀᴄᴋ",
 		CallbackData: callbackData,
 	}
 }
@@ -71,7 +71,7 @@ func addBackOrCloseButton(btns [][]gotgbot.InlineKeyboardButton, b gotgbot.Inlin
 	lastRowIndex := len(btns) - 1
 	switch len(btns[lastRowIndex]) {
 	case 1:
-		btns[lastRowIndex] = append(btns[lastRowIndex], b)
+		btns[lastRowIndex] = append([]gotgbot.InlineKeyboardButton{b}, btns[lastRowIndex]...)
 	default:
 		btns = append(btns, []gotgbot.InlineKeyboardButton{b})
 	}

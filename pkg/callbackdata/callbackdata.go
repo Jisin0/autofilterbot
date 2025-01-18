@@ -121,7 +121,7 @@ func (c CallbackData) BackOrCloseButton(userId ...int64) gotgbot.InlineKeyboardB
 		return closeButton(userId...)
 	} else {
 		// nested page so add back button
-		return gotgbot.InlineKeyboardButton{Text: "<- Back", CallbackData: c.RemoveArgs().RemoveLastPath().ToString()}
+		return gotgbot.InlineKeyboardButton{Text: "‹ ʙᴀᴄᴋ", CallbackData: c.RemoveArgs().RemoveLastPath().ToString()}
 	}
 }
 

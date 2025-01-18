@@ -49,10 +49,7 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 				return "", nil, err
 			}
 
-			go app.RefreshConfig()
-
 			s = fmt.Sprintf("<i><b>✅ %s has been set to %d minutes !</b></i>", ctx.Page.DisplayName, val)
-
 		case OperationReset:
 			err := app.GetDB().ResetConfig(ctx.Bot.Id, fieldName)
 			if err != nil {
@@ -88,8 +85,12 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 				keyboard = append(keyboard, row)
 			}
 
+			keyboard = append(keyboard, []gotgbot.InlineKeyboardButton{{Text: "ʀᴇsᴇᴛ 🔁", CallbackData: ctx.CallbackData.AddArg(OperationReset).ToString()}})
+
 			return s.String(), keyboard, nil
 		}
+
+		go app.RefreshConfig()
 
 		return s, nil, nil
 	}
