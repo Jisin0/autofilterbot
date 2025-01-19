@@ -64,7 +64,7 @@ func (p *Panel) HandleUpdate(ctx *ext.Context, bot *gotgbot.Bot) error {
 
 	content, markup, err := ProcessUpdate(p, ctx, bot)
 	if err != nil {
-		content = fmt.Sprintf("An error occured while handling request: %s", err.Error())
+		content = fmt.Sprintf("An error occurred while handling request: %s", err.Error())
 	}
 
 	if len(markup) == 0 {

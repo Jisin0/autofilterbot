@@ -7,14 +7,14 @@ import (
 )
 
 // BasicMessageValues creates a map with basic values to format message text with
-func (app *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
+func (core *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string {
 	var (
 		m = ctx.EffectiveMessage
 		u = ctx.EffectiveUser
 	)
 
 	values := map[string]string{
-		"my_name": app.Bot.FirstName,
+		"my_name": core.Bot.FirstName,
 	}
 
 	if u != nil {
@@ -39,7 +39,6 @@ func (app *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string]
 		}
 
 		values["mention"] = mention
-
 	}
 
 	if m.Chat.Title != "" {

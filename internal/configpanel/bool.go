@@ -27,12 +27,14 @@ func BoolField(app AppPreview, fieldName string) panel.CallbackFunc {
 			if err != nil {
 				return "", nil, err
 			}
+
 			s = fmt.Sprintf("<i><b>✅ %s has been Enabled !</b></i>", ctx.Page.DisplayName)
 		case OperationReset:
 			err := app.GetDB().ResetConfig(ctx.Bot.Id, fieldName)
 			if err != nil {
 				return "", nil, err
 			}
+
 			s = fmt.Sprintf("<i><b>✅ %s has been Reset !</b></i>", ctx.Page.DisplayName)
 		default:
 			return fmt.Sprintf("<i>Use The Buttons Below to Enable/Disable %s</i>", ctx.Page.DisplayName),

@@ -55,9 +55,11 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 			if err != nil {
 				return "", nil, err
 			}
+
 			s = fmt.Sprintf("<i><b>✅ %s has been Reset !</b></i>", ctx.Page.DisplayName)
 		default:
 			var s strings.Builder
+
 			s.WriteString(fmt.Sprintf("<i><b>🧮 Select One of the Values Below to Update %s to Given Number in Minutes\n\n", ctx.Page.DisplayName))
 
 			if v, ok := app.GetConfig().ToMap()[fieldName]; ok {
@@ -65,9 +67,11 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 					s.WriteString(fmt.Sprintf("⭕ Current Value: %dMins\n\n", i))
 				}
 			}
+
 			s.WriteString("🔁 Use the Reset Option to Set it to The Default Value:</b></i>")
 
 			keyboard := make([][]gotgbot.InlineKeyboardButton, 0, len(possibleValues)/2)
+
 			for i := 0; i < len(possibleValues); i += buttonsPerRow {
 				end := i + buttonsPerRow
 				if end > len(possibleValues) {
@@ -75,6 +79,7 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 				}
 
 				row := make([]gotgbot.InlineKeyboardButton, 0, end-i)
+
 				for _, v := range possibleValues[i:end] {
 					valStr := strconv.Itoa(v)
 					row = append(row, gotgbot.InlineKeyboardButton{
@@ -102,5 +107,6 @@ func containsInt(s []int, val int) bool {
 			return true
 		}
 	}
+
 	return false
 }

@@ -53,7 +53,7 @@ func NewClient(ctx context.Context, mongodbUri, databaseName, collectionName str
 
 	dataBase := mongoClient.Database(databaseName)
 	//TODO: implement multi collection
-	fcol := dataBase.Collection(database.CollectionNameFiles)
+	fcol := dataBase.Collection(collectionName)
 	fcol.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{Key: "file_name", Value: "text"}, {Key: "time", Value: 1}}})
 
 	client := &Client{

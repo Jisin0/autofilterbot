@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"runtime"
 
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/internal/model/message"
@@ -46,7 +45,7 @@ func (c *Config) GetAboutMessage() *message.Message {
 		text    string
 		buttons [][]button.InlineKeyboardButton
 	)
-	runtime.Version()
+
 	if c.AboutText != "" {
 		text = c.AboutText
 	} else {

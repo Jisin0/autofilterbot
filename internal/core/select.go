@@ -24,7 +24,7 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 	pageIndex, err := strconv.Atoi(data.Args[1])
 	if err != nil {
 		_app.Log.Warn("select: parse index failed", zap.Error(err))
-		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error Occured :/", ShowAlert: true})
+		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error occurred :/", ShowAlert: true})
 		return err
 	}
 
@@ -38,7 +38,7 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if err != nil {
 		_app.Log.Warn("select: get result cache failed", zap.Error(err))
-		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error Occured :/", ShowAlert: true})
+		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error occurred :/", ShowAlert: true})
 		return err
 	}
 

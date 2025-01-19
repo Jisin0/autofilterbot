@@ -9,15 +9,7 @@ import (
 
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/model"
-	"github.com/PaulSonOfLars/gotgbot/v2"
-	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
-
-// ProcessQuery handles the query after sanitization and validation and returns the results.
-func ProcessQuery(bot *gotgbot.Bot, ctx *ext.Context, db database.Database, query string) (*SearchResult, error) {
-
-	return nil, nil
-}
 
 type FilesFromCursorOptions interface {
 	GetMaxResults() int

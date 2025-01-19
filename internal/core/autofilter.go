@@ -59,7 +59,7 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 		userId, err := strconv.ParseInt(callbackData.Args[1], 10, 64)
 		if err != nil {
 			_, err := c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
-				Text:      "Sorry An Error Occured :{",
+				Text:      "Sorry An Error occurred :{",
 				ShowAlert: true,
 			})
 			_app.Log.Warn("autofilter: parse user id failed", zap.Error(err))

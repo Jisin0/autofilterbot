@@ -63,7 +63,7 @@ func DeleteFile(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 		replyM, err := conv.Ask("Please send me the file you would like to delete:", nil)
 		if err != nil {
-			m.Reply(bot, fmt.Sprintf("An Error Occured: %v", err), nil)
+			m.Reply(bot, fmt.Sprintf("An Error occurred: %v", err), nil)
 			return nil
 		}
 
@@ -114,14 +114,14 @@ func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	cursor, err := _app.DB.SearchFiles(keyword)
 	if err != nil {
-		m.Reply(bot, fmt.Sprintf("An Error Occured: %v", err), nil)
+		m.Reply(bot, fmt.Sprintf("An Error occurred: %v", err), nil)
 		_app.Log.Warn("delall: search files failed", zap.Error(err), zap.String("keyword", keyword))
 		return nil
 	}
 
 	f, err := autofilter.FilesFromCursor(context.Background(), cursor, DeleteAllCursorOptions{})
 	if err != nil {
-		m.Reply(bot, fmt.Sprintf("An Error Occured: %v", err), nil)
+		m.Reply(bot, fmt.Sprintf("An Error occurred: %v", err), nil)
 		_app.Log.Warn("delall: files from cursor failed", zap.Error(err), zap.String("keyword", keyword))
 		return nil
 	}
@@ -171,7 +171,7 @@ func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if len(allErrors) != 0 {
 		errs := errors.Join(allErrors...)
-		text += fmt.Sprintf("\nErrors Occured: %v", errs)
+		text += fmt.Sprintf("\nErrors occurred: %v", errs)
 		_app.Log.Info("delall: errors occurs", zap.Error(errs))
 	}
 

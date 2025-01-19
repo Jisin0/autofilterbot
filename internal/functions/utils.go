@@ -15,6 +15,7 @@ func FormatString(template string, values map[string]string) string {
 		if value, ok := values[key]; ok {
 			return value
 		}
+
 		return match // Leave unchanged as no matching key is found
 	})
 

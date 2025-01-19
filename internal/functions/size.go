@@ -11,6 +11,7 @@ const (
 // FileSizeToString converts file size in bytes to a user friendly string.
 func FileSizeToString(n int64) string {
 	num := float64(n)
+
 	switch {
 	case num > gigaByte:
 		return fmt.Sprintf("%.2f GB", num/gigaByte)

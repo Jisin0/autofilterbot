@@ -9,6 +9,10 @@ import (
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 )
 
+const (
+	maxButtonsPerRow = 10
+)
+
 var buttonRegex = regexp.MustCompile(`\[([^\[]+?)\]\((url|cmd|inline|copy):(?:/{0,2})?(.*?)\)`)
 
 // ParseFromText parses text into keyboard buttons to be saved to the database or used in a message.
@@ -30,7 +34,7 @@ func ParseFromText(text string) (returnText string, buttons [][]InlineKeyboardBu
 	var allErrors []error
 
 	for _, textRows := range strings.Split(text, "\n") {
-		find := buttonRegex.FindAllStringSubmatch(textRows, 20)
+		find := buttonRegex.FindAllStringSubmatch(textRows, maxButtonsPerRow)
 		row := make([]InlineKeyboardButton, 0, len(find))
 
 		for _, m := range find {

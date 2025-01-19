@@ -118,6 +118,7 @@ func (c Commands) checkMessage(b *gotgbot.Bot, msg *gotgbot.Message) bool {
 			return false
 		}
 		cmd = split[0][1:]
+
 		break
 	}
 

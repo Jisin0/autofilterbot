@@ -14,7 +14,7 @@ type Cache struct {
 	Autofilter *Autofilter
 }
 
-// NewCache initalizes and creates a new cache structure.
+// NewCache initializes and creates a new cache structure.
 func NewCache() *Cache {
 	return &Cache{
 		Autofilter: NewAutofilter(defualtAutofilterTimeout),

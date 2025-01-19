@@ -11,7 +11,7 @@ import (
 type URLData struct {
 	// Id of the file.
 	FileUniqueId string
-	// Id of chat where query occured.
+	// Id of chat where query occurred.
 	ChatId int64
 	// Indicates whether shortened url should be given or actual file.
 	HasShortener bool

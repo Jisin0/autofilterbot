@@ -10,7 +10,7 @@ type SearchResult struct {
 	FromUser int64 `json:"from_user"`
 	// Id of the chat where the query was started.
 	ChatID int64 `json:"chat_id,omitempty"`
-	// Files are the files fetched from the datbase.
+	// Files are the files fetched from the database.
 	Files []Files `json:"files,omitempty"`
 }
 

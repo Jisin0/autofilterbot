@@ -28,6 +28,7 @@ linters-settings:
   mnd:
     ignored-numbers:
       - '2'
+      - '4'
   stylecheck:
     checks: 
       - "all" 

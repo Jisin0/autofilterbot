@@ -1,10 +1,10 @@
 package functions
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"regexp"
 	"strings"
-	"time"
 )
 
 var nonAlphaNumericRegex = regexp.MustCompile(`[^\w\s]+`)
@@ -29,16 +29,19 @@ func RemoveExtension(input string) string {
 	return input
 }
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-
-var seededRand *rand.Rand = rand.New(
-	rand.NewSource(time.Now().UnixNano()))
+const (
+	charset    = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	lenCharSet = int64(len(charset))
+)
 
 // RandString creates a randomly generated string of given length.
 func RandString(length int) string {
 	b := make([]byte, length)
+
 	for i := range b {
-		b[i] = charset[seededRand.Intn(len(charset))]
+		randIndex, _ := rand.Int(rand.Reader, big.NewInt(lenCharSet))
+		b[i] = charset[randIndex.Int64()]
 	}
+
 	return string(b)
 }

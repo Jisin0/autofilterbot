@@ -44,7 +44,7 @@ type Config struct {
 	// File Details Calbback Template.
 	FileDetailsTemplate string `json:"fdetails_template,omitempty" bson:"fdetails_template,omitempty"`
 
-	// File size is shown in seperate button if set
+	// File size is shown in separate button if set
 	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
 
 	Shortener shortener.Shortener `json:"shortener,omitempty" bson:"shortener,omitempty"`

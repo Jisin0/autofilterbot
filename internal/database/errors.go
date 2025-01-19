@@ -2,7 +2,7 @@ package database
 
 import "fmt"
 
-// FileAlreadyExistsError indicates a simliar or same file exists.
+// FileAlreadyExistsError indicates a similar or same file exists.
 type FileAlreadyExistsError struct {
 	FileName string
 }
