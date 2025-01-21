@@ -158,7 +158,9 @@ func Stats(bot *gotgbot.Bot, ctx *ext.Context) error {
 		_, err = m.Send(bot, ctx.EffectiveChat.Id)
 	case ctx.CallbackQuery != nil:
 		ctx.CallbackQuery.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Generating Stats ...", CacheTime: fiveHoursInSeconds})
+
 		var isMedia bool
+
 		if msg, ok := ctx.CallbackQuery.Message.(*gotgbot.Message); ok {
 			isMedia = functions.HasMedia(msg)
 		}

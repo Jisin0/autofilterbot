@@ -39,7 +39,9 @@ func TestJsonCache(t *testing.T) {
 
 	for _, item := range table {
 		assert.NoError(c.Save(item.Id, item))
+
 		var d MockData
+
 		assert.NoError(c.Load(item.Id, &d))
 		assert.Equal(item, d)
 	}

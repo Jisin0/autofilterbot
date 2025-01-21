@@ -83,6 +83,7 @@ func Run(opts RunAppOptions) {
 	switch {
 	case mongodbUri != "":
 		var additionalUri []string
+
 		for i := 1; i <= 5; i++ { // attempts to fetch MONGODB_URI1 to MONGODB_URI5. //TODO: remove hardcoded limit after testing
 			if s := os.Getenv(fmt.Sprintf("MONGODB_URI%d", i)); s != "" {
 				additionalUri = append(additionalUri, s)
@@ -109,6 +110,7 @@ func Run(opts RunAppOptions) {
 	if err != nil {
 		logger.Error("autodelete module setup failed", zap.Error(err))
 	}
+
 	go autodeleteManager.Run(ctx, logger)
 
 	_app = &Core{
@@ -185,6 +187,7 @@ func (core *Core) RefreshConfig() {
 	if err != nil {
 		core.Log.Error("failed to refresh configs", zap.Error(err))
 	}
+
 	core.Config = c
 }
 

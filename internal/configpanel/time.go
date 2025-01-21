@@ -87,6 +87,7 @@ func TimeField(app AppPreview, fieldName string, possibleValues []int) panel.Cal
 						CallbackData: ctx.CallbackData.AddArg(OperationSet).AddArg(valStr).ToString(),
 					})
 				}
+
 				keyboard = append(keyboard, row)
 			}
 

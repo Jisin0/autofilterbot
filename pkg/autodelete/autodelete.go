@@ -38,6 +38,7 @@ func NewManager(bot *gotgbot.Bot) (*Manager, error) {
         expiry_time DATETIME,
         UNIQUE(chat_id, message_id)
     );`
+
 	_, err = db.Exec(createTableSQL)
 	if err != nil {
 		return nil, err
@@ -61,6 +62,7 @@ func (m *Manager) Save(chatId, messageId int64, duration time.Duration) error {
 	}
 
 	_, err := m.DB.NamedExec(insertQuery, data)
+
 	return err
 }
 
@@ -73,6 +75,7 @@ func (m *Manager) SaveMessage(msg *gotgbot.Message, duration time.Duration) erro
 	}
 
 	_, err := m.DB.NamedExec(insertQuery, data)
+
 	return err
 }
 
@@ -109,6 +112,7 @@ func (m *Manager) Run(ctx context.Context, log *zap.Logger) {
 						zap.Int64("message_id", r.MessageId),
 						zap.Error(err),
 					)
+
 					continue
 				}
 

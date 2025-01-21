@@ -51,6 +51,7 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 				Text:      "Malformed Query: Not Enough Arguments",
 				ShowAlert: true,
 			})
+
 			_app.Log.Warn("autofilter: bad callback data", zap.Strings("args", callbackData.Args))
 
 			return nil, err
@@ -157,6 +158,7 @@ func _autofilter(bot *gotgbot.Bot, ctx *ext.Context) (*gotgbot.Message, error) {
 	buttons = append(buttons, footerRow(uniqueId, 0, len(files)))
 
 	text := format.KeyValueFormat(_app.Config.GetResultTemplate(), _app.BasicMessageValues(ctx, map[string]any{"query": query, "warn": warn}))
+
 	msg, err := bot.SendMessage(inputMessage.GetChat().Id, text, &gotgbot.SendMessageOpts{
 		ReplyParameters: &gotgbot.ReplyParameters{
 			MessageId: inputMessage.GetMessageId(),

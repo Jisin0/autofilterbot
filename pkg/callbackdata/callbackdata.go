@@ -103,6 +103,7 @@ func (c CallbackData) RemoveLastPath() CallbackData {
 	}
 
 	c.Path = c.Path[:len(c.Path)-1]
+
 	return c
 }
 

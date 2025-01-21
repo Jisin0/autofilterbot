@@ -160,6 +160,7 @@ func (c *MultiCollection) EstimatedDocumentCount(ctx context.Context, opts ...*o
 		if err != nil {
 			return total, err
 		}
+
 		total += n
 	}
 

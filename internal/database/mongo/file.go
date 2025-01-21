@@ -30,11 +30,13 @@ func (c *Client) SaveFile(f *model.File) error {
 	}
 
 	_, err := c.fileCollection.InsertOne(c.ctx, f)
+
 	return err
 }
 
 func (c *Client) SaveFiles(files ...*model.File) []error {
 	var errs []error
+
 	for _, f := range files {
 		if err := c.SaveFile(f); err != nil {
 			errs = append(errs, err)

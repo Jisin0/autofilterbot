@@ -5,7 +5,6 @@ package autofilter
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/model"
@@ -28,10 +27,7 @@ func FilesFromCursor(ctx context.Context, c database.Cursor, opts FilesFromCurso
 	for i := 0; i < opts.GetMaxPages(); i++ {
 		row := make([]File, 0, opts.GetMaxPerPage())
 
-		fmt.Println(i) //TODO: remove
-
 		for j := 0; j < opts.GetMaxPerPage(); j++ {
-			fmt.Println(j)
 			if !c.Next(ctx) {
 				finished = true
 				break

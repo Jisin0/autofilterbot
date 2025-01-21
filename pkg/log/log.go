@@ -26,6 +26,7 @@ const (
 // - disableConsoleOutput: to disable output to console.
 func Initialize(logLevel string, disableConsoleOutput bool) {
 	var level zapcore.Level
+
 	switch logLevel {
 	case DebugLevelStr:
 		level = zap.DebugLevel

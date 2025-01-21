@@ -13,6 +13,7 @@ func KeyValueFormat(template string, values map[string]string) string {
 		if value, ok := values[key]; ok {
 			return value
 		}
+
 		return match // leave as is if no matching key is found
 	})
 }

@@ -164,6 +164,7 @@ func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 			allErrors = append(allErrors, err)
 			continue
 		}
+
 		deleted += 1
 	}
 

@@ -1,8 +1,6 @@
 package panel
 
 import (
-	"fmt"
-
 	"github.com/Jisin0/autofilterbot/internal/button"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -14,7 +12,6 @@ func buttonsFromPages(callbackData *callbackdata.CallbackData, pages []*Page) []
 
 	if len(callbackData.Path) <= 1 {
 		// root page so add close button
-		fmt.Println(callbackData.Path, callbackData.Args)
 		backRow = []gotgbot.InlineKeyboardButton{button.Close()}
 	} else {
 		// nested page so add back button
@@ -46,6 +43,7 @@ func buttonsFromPages(callbackData *callbackdata.CallbackData, pages []*Page) []
 				CallbackData: callbackData.AddPath(page.Name).ToString(),
 			})
 		}
+
 		totalButtons = append(totalButtons, row)
 	}
 

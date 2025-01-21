@@ -65,6 +65,7 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 
 			c.currentCursor = res
 			c.remainingCollections = slices.Delete(c.remainingCollections, i+1, len(c.remainingCollections)-1)
+
 			return true
 		}
 	}

@@ -17,14 +17,18 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 	data := callbackdata.FromString(c.Data)
 	if len(data.Args) < 2 {
 		_app.Log.Warn("select: not enough args", zap.Strings("args", data.Args))
+
 		_, err := c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Error: Not Enough Arguments", ShowAlert: true})
+
 		return err
 	}
 
 	pageIndex, err := strconv.Atoi(data.Args[1])
 	if err != nil {
 		_app.Log.Warn("select: parse index failed", zap.Error(err))
+
 		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error occurred :/", ShowAlert: true})
+
 		return err
 	}
 
@@ -38,7 +42,9 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if err != nil {
 		_app.Log.Warn("select: get result cache failed", zap.Error(err))
+
 		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Sorry An Error occurred :/", ShowAlert: true})
+
 		return err
 	}
 
@@ -49,7 +55,9 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	if pageIndex >= len(r.Files) {
 		_app.Log.Warn("select: page not found", zap.Int("length", len(r.Files)), zap.Int("index", pageIndex))
+
 		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Result Page Not Found!", ShowAlert: true})
+
 		return err
 	}
 

@@ -78,5 +78,6 @@ func tick(val bool) string {
 	if val {
 		return "✅ "
 	}
+
 	return ""
 }

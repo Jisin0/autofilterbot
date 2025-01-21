@@ -51,6 +51,7 @@ func URLDataFromString(input string) (URLData, error) {
 	if err != nil {
 		return d, err
 	}
+
 	d.ChatId = i
 
 	d.HasShortener = split[3] == "1"

@@ -27,6 +27,7 @@ func (c *Client) GetUser(userId int64) (*model.User, error) {
 	}
 
 	err := res.Decode(&u)
+
 	return &u, err
 }
 

@@ -18,6 +18,7 @@ func (c *Autofilter) Save(data *autofilter.SearchResult) error {
 	if data.UniqueId == "" {
 		return errors.New("id is empty")
 	}
+
 	return c.cache.Save(data.UniqueId, *data)
 }
 

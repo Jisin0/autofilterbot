@@ -108,6 +108,7 @@ func (c Commands) checkMessage(b *gotgbot.Bot, msg *gotgbot.Message) bool {
 	text := msg.GetText()
 
 	var cmd string
+
 	for _, t := range c.Triggers {
 		if r, _ := utf8.DecodeRuneInString(text); r != t {
 			continue
@@ -117,6 +118,7 @@ func (c Commands) checkMessage(b *gotgbot.Bot, msg *gotgbot.Message) bool {
 		if len(split) > 1 && !strings.EqualFold(split[1], b.User.Username) {
 			return false
 		}
+
 		cmd = split[0][1:]
 
 		break

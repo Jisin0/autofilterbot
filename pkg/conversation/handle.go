@@ -10,7 +10,7 @@ var ActiveListeners = NewListenerArray()
 
 // MessageHandler filters message based on active listeners.
 func MessageHandler(bot *gotgbot.Bot, update *ext.Context) error {
-	// run in seperate goroutine to prevent blocking the thread
+	// run in separate goroutine to prevent blocking the thread
 	go func() {
 		m := update.Message
 
