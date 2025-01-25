@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 
+	"github.com/Jisin0/autofilterbot/internal/format"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 )
 
@@ -56,4 +57,10 @@ func (core *Core) BasicMessageValues(ctx *ext.Context, extraValues ...map[string
 	}
 
 	return values
+}
+
+// FormatText formats a string in a pythonic syntax using a key value map.
+// basic message values are also added by default.
+func (core *Core) FormatText(ctx *ext.Context, template string, extraValues map[string]any) string {
+	return format.KeyValueFormat(template, core.BasicMessageValues(ctx, extraValues))
 }

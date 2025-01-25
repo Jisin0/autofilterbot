@@ -51,7 +51,8 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 
 	d.AddHandlerToGroup(handlers.NewMessage(message.Supergroup, Autofilter), autofilterHandlerGroup)
 
-	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"start", "about", "help", "privacy"}, StaticCommands), commandHandlerGroup)
+	d.AddHandlerToGroup(handlers.NewCommand("start", StartCommand), commandHandlerGroup)
+	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"about", "help", "privacy"}, StaticCommands), commandHandlerGroup)
 	d.AddHandlerToGroup(handlers.NewCommand("delete", DeleteFile).SetAllowChannel(true), commandHandlerGroup)
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"deleteall", "delall"}, DeleteAllFiles), commandHandlerGroup)
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"settings", "configs", "configpanel"}, Settings), commandHandlerGroup)

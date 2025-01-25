@@ -112,8 +112,6 @@ func (m *Manager) Run(ctx context.Context, log *zap.Logger) {
 						zap.Int64("message_id", r.MessageId),
 						zap.Error(err),
 					)
-
-					continue
 				}
 
 				err = m.Remove(r.ChatId, r.MessageId)

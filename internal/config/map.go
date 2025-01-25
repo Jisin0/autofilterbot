@@ -17,6 +17,9 @@ const (
 	FieldNameFdetailsTemplate = "fdetails_template"
 	FieldNameSizeButton       = "size_btn"
 	FieldNameAutodeleteTime   = "autodel_time"
+	FieldNameFsubText         = "fsub_text"
+	FieldNameFileCaption      = "file_caption"
+	FieldNameFileAutoDelete   = "file_autodel"
 )
 
 // ToMap converts the contents of the struct into map so fields can be dynamically accessed.
@@ -49,6 +52,10 @@ func (c *Config) toMap() map[string]any {
 	vals[FieldNameButtonTemplate] = c.GetButtonTemplate()
 	vals[FieldNameFdetailsTemplate] = c.GetFileDetailsTemplate()
 	vals[FieldNameSizeButton] = c.GetSizeButton()
+	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
+
+	vals[FieldNameFsubText] = c.GetFsubText()
+	vals[FieldNameFileCaption] = c.GetFileCaption()
 	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
 
 	return vals

@@ -1,5 +1,11 @@
 package model
 
+import (
+	"fmt"
+
+	"github.com/PaulSonOfLars/gotgbot/v2"
+)
+
 const (
 	FileTypeDocument = "document"
 	FileTypeVideo    = "video"
@@ -25,4 +31,73 @@ type File struct {
 	ChatId int64 `json:"chat_id,omitempty" bson:"chat_id,omitempty"`
 	// Link to the original message containing the file.
 	MessageLink string `json:"file_link,omitempty" bson:"file_link,omitempty"`
+}
+
+type SendFileOpts struct {
+	Caption  string
+	Keyboard [][]gotgbot.InlineKeyboardButton
+}
+
+// Send sends the file to chatId with given caption, markup and html parse mode.
+func (f *File) Send(bot *gotgbot.Bot, chatId int64, opts *SendFileOpts) (*gotgbot.Message, error) {
+	switch f.FileType {
+	case FileTypeDocument:
+		sendOpts := &gotgbot.SendDocumentOpts{ParseMode: gotgbot.ParseModeHTML}
+
+		if opts != nil {
+			if opts.Caption != "" {
+				sendOpts.Caption = opts.Caption
+			}
+
+			if len(opts.Keyboard) != 0 {
+				sendOpts.ReplyMarkup = gotgbot.InlineKeyboardMarkup{InlineKeyboard: opts.Keyboard}
+			}
+		}
+
+		return bot.SendDocument(chatId, gotgbot.InputFileByID(f.FileId), sendOpts)
+	case FileTypeVideo:
+		sendOpts := &gotgbot.SendVideoOpts{ParseMode: gotgbot.ParseModeHTML}
+
+		if opts != nil {
+			if opts.Caption != "" {
+				sendOpts.Caption = opts.Caption
+			}
+
+			if len(opts.Keyboard) != 0 {
+				sendOpts.ReplyMarkup = gotgbot.InlineKeyboardMarkup{InlineKeyboard: opts.Keyboard}
+			}
+		}
+
+		return bot.SendVideo(chatId, gotgbot.InputFileByID(f.FileId), sendOpts)
+	case FileTypeAudio:
+		sendOpts := &gotgbot.SendAudioOpts{ParseMode: gotgbot.ParseModeHTML}
+
+		if opts != nil {
+			if opts.Caption != "" {
+				sendOpts.Caption = opts.Caption
+			}
+
+			if len(opts.Keyboard) != 0 {
+				sendOpts.ReplyMarkup = gotgbot.InlineKeyboardMarkup{InlineKeyboard: opts.Keyboard}
+			}
+		}
+
+		return bot.SendAudio(chatId, gotgbot.InputFileByID(f.FileId), sendOpts)
+	case FileTypeVoice:
+		sendOpts := &gotgbot.SendVoiceOpts{ParseMode: gotgbot.ParseModeHTML}
+
+		if opts != nil {
+			if opts.Caption != "" {
+				sendOpts.Caption = opts.Caption
+			}
+
+			if len(opts.Keyboard) != 0 {
+				sendOpts.ReplyMarkup = gotgbot.InlineKeyboardMarkup{InlineKeyboard: opts.Keyboard}
+			}
+		}
+
+		return bot.SendVoice(chatId, gotgbot.InputFileByID(f.FileId), sendOpts)
+	default:
+		return nil, fmt.Errorf("unsupported file type %s", f.FileType)
+	}
 }

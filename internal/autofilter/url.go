@@ -29,18 +29,11 @@ func (d URLData) Encode() string {
 	return base64.StdEncoding.EncodeToString([]byte(s))
 }
 
-// URLDataFromString decodes a string encoded using URLData.Encode().
+// URLDataFromString decodes a string that is received as start data. The string must have been base64 decoded.
 func URLDataFromString(input string) (URLData, error) {
 	var d URLData
 
-	bytes, err := base64.StdEncoding.DecodeString(input)
-	if err != nil {
-		return d, err
-	}
-
-	s := string(bytes)
-
-	split := strings.Split(s, "|")
+	split := strings.Split(input, "|")
 	if len(split) < 4 {
 		return d, fmt.Errorf("not enough arguments")
 	}

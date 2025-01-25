@@ -35,6 +35,13 @@ type Config struct {
 	PrivacyText    string                          `json:"privacy_text,omitempty" bson:"privacy_text,omitempty"`
 	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
 
+	// Fsub message text.
+	FsubText string `json:"fsub_text,omitempty" bson:"fsub_text,omitempty"`
+	// Html formatted file caption.
+	FileCaption string `json:"file_caption,omitempty" bson:"file_caption,omitempty"`
+	// File autodelete time in minutes.
+	FileAutoDelete int `json:"file_autodel,omitempty" bson:"file_autodel,omitempty"`
+
 	// Template to use for autofilter result message
 	ResultTemplate string `json:"af_template,omitempty" bson:"af_template,omitempty"`
 	// Message sent when no results are available.
@@ -77,4 +84,27 @@ Uploaded: {date}`
 
 func (c *Config) GetFsubChannels() []model.FsubChannel {
 	return c.FsubChannels
+}
+
+func (c *Config) GetFsubText() string {
+	if c.FsubText != "" {
+		return c.FsubText
+	}
+
+	return `<i><b>👋 Hᴇʏ ᴛʜᴇʀᴇ {mention}</b></i>
+<i>Pʟᴇᴀsᴇ ᴊᴏɪɴ ᴍʏ ᴄʜᴀɴɴᴇʟs ғɪʀsᴛ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ғɪʟᴇ</i>
+
+<i>Cʟɪᴄᴋ ᴛʜᴇ <b>JOIN</b> ʙᴜᴛᴛᴏɴ ʙᴇʟᴏᴡ ᴀɴᴅ ᴛʜᴇɴ <b>RETRY</b> ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ғɪʟᴇ 👇</i>`
+}
+
+func (c *Config) GetFileCaption() string {
+	if c.FileCaption != "" {
+		return c.FileCaption
+	}
+
+	return "<i>{file_name}</i>\n\n<b>📂 File Size</b>: <code>{file_size}</code>\n{warn}"
+}
+
+func (c *Config) GetFileAutoDelete() int {
+	return c.FileAutoDelete
 }

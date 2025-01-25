@@ -21,8 +21,8 @@ type FsubChannel struct {
 // - userId: id of user to check for.
 //
 // NOTE: If some error other than "user not found" occurs during api call function returns true and error.
-func (f FsubChannel) IsMember(bot *gotgbot.Bot, userId int64) (bool, error) {
-	member, err := bot.GetChatMember(f.ID, userId, nil)
+func IsMember(bot *gotgbot.Bot, chatId, userId int64) (bool, error) {
+	member, err := bot.GetChatMember(chatId, userId, nil)
 	if err != nil {
 		if strings.Contains(err.Error(), "user not found") {
 			return false, nil
@@ -48,14 +48,14 @@ func (f FsubChannel) IsMember(bot *gotgbot.Bot, userId int64) (bool, error) {
 // - userId: id of user to check.
 //
 // NOTE: On db level error returns true and error.
-func (f FsubChannel) HasJoinRequest(db database.Database, userId int64) (bool, error) {
+func HasJoinRequest(db database.Database, chatId, userId int64) (bool, error) {
 	user, err := db.GetUser(userId)
 	if err != nil {
 		return true, err
 	}
 
 	for _, c := range user.JoinRequests {
-		if f.ID == c {
+		if chatId == c {
 			return true, nil
 		}
 	}
@@ -63,27 +63,23 @@ func (f FsubChannel) HasJoinRequest(db database.Database, userId int64) (bool, e
 	return false, nil
 }
 
-// FsubChannelArray is a list of all fsub channels.
-type FsubChannelArray struct {
-	DB   database.Database
-	List []FsubChannel
-}
-
 // GetNotMemberOrRequest returns all channels the user is not a member of or has pending join request.
 //
 // - bot: bot client to make api requests.
 // - db: database client.
+// - f: fsub channels from config.
 // - userId: id of user to check.
-func (f FsubChannelArray) GetNotMemberOrRequest(bot *gotgbot.Bot, userId int64) ([]FsubChannel, error) {
+//
+// Returns slice of channels user is not a member. Error returned will be any API call or DB query failure.
+func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.FsubChannel, userId int64) ([]model.FsubChannel, error) {
 	var (
-		l         = f.List
 		user      *model.User
 		allErrors []error
-		notJoined = make([]FsubChannel, len(l))
+		notJoined = make([]model.FsubChannel, len(f))
 	)
 
-	for _, c := range l {
-		isMember, err := c.IsMember(bot, userId)
+	for _, c := range f {
+		isMember, err := IsMember(bot, c.ID, userId)
 		if err != nil {
 			allErrors = append(allErrors, err) //TODO: wrap error with channel info
 		}
@@ -93,7 +89,7 @@ func (f FsubChannelArray) GetNotMemberOrRequest(bot *gotgbot.Bot, userId int64) 
 		}
 
 		if user == nil {
-			user, err = f.DB.GetUser(userId)
+			user, err = db.GetUser(userId)
 			if err != nil {
 				allErrors = append(allErrors, err)
 				continue // or break to prevent further db queries?
