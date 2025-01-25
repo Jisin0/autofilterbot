@@ -72,6 +72,7 @@ func FileDetails(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if err != nil {
 		c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "404: File Not Found", ShowAlert: true})
 		_app.Log.Debug("fdetails: get file failed", zap.Error(err), zap.String("unique_id", fileUniqueId))
+		return nil
 	}
 
 	text := format.KeyValueFormat(_app.Config.GetFileDetailsTemplate(), map[string]string{
