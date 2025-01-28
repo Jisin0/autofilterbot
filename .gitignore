@@ -35,3 +35,4 @@ autodelete.sqlite
 
 # json cache folders
 .results
+.batch
