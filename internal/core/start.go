@@ -19,6 +19,7 @@ import (
 const (
 	DataPrefixFile  = 'f'
 	DataPrefixBatch = 'b'
+	DataPrefixRetry = 'r'
 )
 
 // StartCommand handles the start command.
@@ -120,6 +121,25 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 			if err != nil {
 				_app.Log.Warn("start: insert auto delete failed", zap.Error(err))
 			}
+		}
+	case DataPrefixRetry:
+		d, err := RetryDataFromString(data)
+		if err != nil {
+			_app.Log.Warn("start: parse retry data failed", zap.Error(err), zap.String("data", data))
+			return nil
+		}
+
+		url := fmt.Sprintf("https://t.me/c/%d/%d", functions.ChatIdToMtproto(d.ChatId), d.MessageId)
+		text := fmt.Sprintf("<b>𝖯𝗅𝖾𝖺𝗌𝖾 𝖧𝖾𝖺𝖽 𝖡𝖺𝖼𝗄 𝗍𝗈 𝖳𝗁𝖾 𝖢𝗁𝖺𝗍 𝖺𝗇𝖽 𝖳𝗋𝗒 𝖠𝗀𝖺𝗂𝗇 <a href='%s'>» 𝖦𝗈 𝖡𝖺𝖼𝗄</a></b>", url)
+
+		_, err = bot.SendMessage(m.Chat.Id, text, &gotgbot.SendMessageOpts{
+			ReplyMarkup: gotgbot.InlineKeyboardMarkup{
+				InlineKeyboard: [][]gotgbot.InlineKeyboardButton{{{Text: "« ɢᴏ ʙᴀᴄᴋ", Url: url}}},
+			},
+			ParseMode: gotgbot.ParseModeHTML,
+		})
+		if err != nil {
+			_app.Log.Warn("start: send retry msg failed", zap.Error(err))
 		}
 	}
 

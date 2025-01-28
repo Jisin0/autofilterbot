@@ -88,7 +88,7 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 			Keyboard: [][]gotgbot.InlineKeyboardButton{{{Text: "🗑️ ᴅᴇʟᴇᴛᴇ ғɪʟᴇ 🗑️", CallbackData: "close"}}},
 		})
 		if err != nil {
-			if strings.Contains(err.Error(), "chat not found") { // user has not started bot
+			if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
 				// redirect to pm for a retry msg
 				data := &RetryData{ //TODO: implement
 					ChatId:    c.Message.GetChat().Id,
@@ -106,6 +106,8 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 			}
 
 			_app.Log.Warn("all: send file failed", zap.Error(err), zap.String("file_id", f.FileId))
+
+			continue
 		}
 
 		sentMessages = append(sentMessages, struct {
