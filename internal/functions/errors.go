@@ -2,6 +2,7 @@ package functions
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
@@ -16,6 +17,11 @@ type FloodWaitError struct {
 
 func (f *FloodWaitError) Error() string {
 	return fmt.Sprintf("429: unable to %s retry after %d", f.Method, f.Duration)
+}
+
+// Wait sleeps for duration.
+func (f *FloodWaitError) Wait() {
+	time.Sleep(time.Second * time.Duration(f.Duration))
 }
 
 // AsFloodWait attemots to parse a telegram bot API floodwait error as a FloodWaitError.

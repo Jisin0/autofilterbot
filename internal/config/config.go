@@ -51,6 +51,9 @@ type Config struct {
 	// File Details Calbback Template.
 	FileDetailsTemplate string `json:"fdetails_template,omitempty" bson:"fdetails_template,omitempty"`
 
+	// Maximum number of message in a single batch.
+	BatchSizeLimit int64 `json:"batch_size,omitempty" bson:"batch_size,omitempty"`
+
 	// File size is shown in separate button if set
 	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
 
@@ -107,4 +110,12 @@ func (c *Config) GetFileCaption() string {
 
 func (c *Config) GetFileAutoDelete() int {
 	return c.FileAutoDelete
+}
+
+func (c *Config) GetBatchSizeLimit() int64 {
+	if c.BatchSizeLimit != 0 {
+		return c.BatchSizeLimit
+	}
+
+	return 50
 }

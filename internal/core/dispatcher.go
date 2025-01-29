@@ -58,6 +58,7 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d.AddHandlerToGroup(exthandlers.NewCommands([]string{"settings", "configs", "configpanel"}, Settings), commandHandlerGroup)
 	d.AddHandlerToGroup(handlers.NewCommand("logs", Logs), commandHandlerGroup)
 	d.AddHandlerToGroup(handlers.NewCommand("stats", Stats), commandHandlerGroup)
+	d.AddHandlerToGroup(handlers.NewCommand("batch", NewBatch), commandHandlerGroup)
 
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("cmd"), StaticCommands), callbackQueryGroup)
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("close"), Close), callbackQueryGroup)

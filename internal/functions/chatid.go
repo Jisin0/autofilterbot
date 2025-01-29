@@ -9,3 +9,9 @@ func ChatIdToMtproto(id int64) int64 {
 	}
 	return id
 }
+
+// MtprotoToChatId converts a mtproto chat id to a bot api one.
+// Should only be used for channel or supergroup ids.
+func MtprotoToChatId(id int64) int64 {
+	return MaxChannelID - id
+}

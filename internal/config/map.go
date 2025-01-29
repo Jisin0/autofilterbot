@@ -20,6 +20,7 @@ const (
 	FieldNameFsubText         = "fsub_text"
 	FieldNameFileCaption      = "file_caption"
 	FieldNameFileAutoDelete   = "file_autodel"
+	FieldNameBatchSize        = "batch_size"
 )
 
 // ToMap converts the contents of the struct into map so fields can be dynamically accessed.
@@ -57,6 +58,8 @@ func (c *Config) toMap() map[string]any {
 	vals[FieldNameFsubText] = c.GetFsubText()
 	vals[FieldNameFileCaption] = c.GetFileCaption()
 	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
+
+	vals[FieldNameBatchSize] = c.GetBatchSizeLimit()
 
 	return vals
 }
