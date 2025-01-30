@@ -43,6 +43,8 @@ func ParseMessageLink(s string) (*MessageLink, error) {
 	chatId, err := strconv.ParseInt(split[len(split)-2], 10, 64)
 	if err != nil {
 		username = split[len(split)-2]
+	} else {
+		chatId = MtprotoToChatId(chatId)
 	}
 
 	return &MessageLink{

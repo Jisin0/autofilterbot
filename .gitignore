@@ -36,3 +36,6 @@ autodelete.sqlite
 # json cache folders
 .results
 .batch
+
+# dev notes
+notes.txt
