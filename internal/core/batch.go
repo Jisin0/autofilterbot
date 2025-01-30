@@ -1,3 +1,5 @@
+// Handles batch and gelink cmds. Lots of scruffy spaghetti code.
+
 package core
 
 import (
@@ -154,6 +156,103 @@ func NewBatch(bot *gotgbot.Bot, ctx *ext.Context) error {
 	})
 	if err != nil {
 		_app.Log.Warn("batch: send success msg failed", zap.Error(err))
+	}
+
+	return nil
+}
+
+// GenLink handles the /genlink command. Mostly copies from batch.
+func GenLink(bot *gotgbot.Bot, ctx *ext.Context) error {
+	if !_app.AuthAdmin(ctx) {
+		return nil
+	}
+
+	m := ctx.Message
+	chatId := m.Chat.Id
+
+	var (
+		channelId, messageId int64
+	)
+
+	if replyM := m.ReplyToMessage; replyM != nil {
+		if origin, ok := replyM.ForwardOrigin.(gotgbot.MessageOriginChannel); ok {
+			channelId = origin.Chat.Id
+			messageId = origin.MessageId
+		} else if link, err := functions.ParseMessageLink(replyM.Text); err == nil {
+			if c, err := link.GetChat(bot); err == nil {
+				channelId = c.Id
+				messageId = link.MessageId
+			} else {
+				sendChatErr(bot, chatId, err)
+				return nil
+			}
+		}
+	}
+
+	if messageId == 0 {
+		split := strings.Fields(m.Text)
+		if len(split) > 1 {
+			if link, err := functions.ParseMessageLink(split[1]); err == nil {
+				if c, err := link.GetChat(bot); err == nil {
+					channelId = c.Id
+					messageId = link.MessageId
+				} else {
+					sendChatErr(bot, chatId, err)
+					return nil
+				}
+			}
+		}
+	}
+
+	if messageId == 0 {
+		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
+
+		askM, err := conv.Ask("Please forward or send the post link of the message:", nil)
+		if err != nil {
+			_app.Log.Debug("genlink: conv exited with error", zap.Error(err))
+			return nil
+		}
+
+		if origin, ok := askM.ForwardOrigin.(gotgbot.MessageOriginChannel); ok {
+			channelId = origin.Chat.Id
+			messageId = origin.MessageId
+		} else if link, err := functions.ParseMessageLink(askM.Text); err == nil {
+			if c, err := link.GetChat(bot); err == nil {
+				channelId = c.Id
+				messageId = link.MessageId
+			} else {
+				sendChatErr(bot, chatId, err)
+				return nil
+			}
+		} else {
+			askM.Reply(bot, "Message Is Not a Forwarded Channel Post or Message Link!", nil)
+			return nil
+		}
+	}
+
+	data := &BatchURLData{
+		ChatId:         channelId,
+		StartMessageId: messageId,
+		EndMessageId:   messageId,
+	}
+	url := fmt.Sprintf("https://t.me/%s?start=%s", bot.Username, data.Encode())
+
+	text := fmt.Sprintf(`
+<b>𝖬𝖾𝗌𝗌𝖺𝗀𝖾 𝖫𝗂𝗇𝗄 𝖧𝖺𝗌 𝖡𝖾𝖾𝗇 𝖢𝗋𝖾𝖺𝗍𝖾𝖽 𝖲𝗎𝖼𝖼𝖾𝗌𝗌𝖿𝗎𝗅𝗅𝗒 🎉</b>
+<b>𝖳𝗋𝗒 𝖭𝗈𝗐:</b> <a href='%s'>ᴄʟɪᴄᴋ ʜᴇʀᴇ</a>
+<b>𝖢𝗈𝗉𝗒:</b> <code>%s</code>
+`, url, url)
+	btn := [][]gotgbot.InlineKeyboardButton{
+		{{Text: "𝖳𝗋𝗒 𝖭𝗈𝗐", Url: url}},
+		{{Text: "𝖳𝖺𝗉 𝗍𝗈 𝖢𝗈𝗉𝗒", CopyText: &gotgbot.CopyTextButton{Text: url}}},
+	}
+
+	_, err := bot.SendMessage(m.Chat.Id, text, &gotgbot.SendMessageOpts{
+		ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: btn},
+		ParseMode:   gotgbot.ParseModeHTML,
+	})
+	if err != nil {
+		_app.Log.Warn("genlink: send success msg failed", zap.Error(err))
 	}
 
 	return nil
