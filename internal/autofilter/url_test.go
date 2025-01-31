@@ -10,7 +10,7 @@ import (
 func TestURLData(t *testing.T) {
 	assert := assert.New(t)
 
-	table := []autofilter.URLData{
+	table := []*autofilter.URLData{
 		{
 			FileUniqueId: "SDKHjshkdja5645a==addkov_Askdj",
 			ChatId:       -100123456789,
@@ -31,7 +31,7 @@ func TestURLData(t *testing.T) {
 		t.Run(item.FileUniqueId, func(t *testing.T) {
 			s := item.Encode()
 
-			out, err := autofilter.URLDataFromString(s)
+			out, err := autofilter.URLDataFromBase64String(s)
 			assert.NoError(err)
 			assert.Equal(item, out)
 		})

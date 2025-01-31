@@ -29,25 +29,31 @@ func (d URLData) Encode() string {
 	return base64.StdEncoding.EncodeToString([]byte(s))
 }
 
+// URLDataFromBase64String decodes the base64 encoded string and then parses it.
+func URLDataFromBase64String(input string) (*URLData, error) {
+	b, err := base64.StdEncoding.DecodeString(input)
+	if err != nil {
+		return nil, err
+	}
+	return URLDataFromString(string(b))
+}
+
 // URLDataFromString decodes a string that is received as start data. The string must have been base64 decoded.
-func URLDataFromString(input string) (URLData, error) {
-	var d URLData
+func URLDataFromString(input string) (*URLData, error) {
 
 	split := strings.Split(input, "|")
 	if len(split) < 4 {
-		return d, fmt.Errorf("not enough arguments")
+		return nil, fmt.Errorf("not enough arguments")
 	}
-
-	d.FileUniqueId = split[1]
 
 	i, err := strconv.ParseInt(split[2], 10, 64)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
 
-	d.ChatId = i
-
-	d.HasShortener = split[3] == "1"
-
-	return d, nil
+	return &URLData{
+		FileUniqueId: split[1],
+		ChatId:       i,
+		HasShortener: split[3] == "1",
+	}, nil
 }

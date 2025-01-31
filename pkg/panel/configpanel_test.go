@@ -57,9 +57,10 @@ func TestPanel(t *testing.T) {
 		err         error  // expected error
 	}{
 		{
-			data: "config:pg1|fakearg1_fakearg2",
-			text: "foo",
-			err:  nil,
+			data:        "config:pg1|fakearg1_fakearg2",
+			text:        "foo",
+			err:         nil,
+			buttonCount: 1,
 		},
 		{
 			data:        "config:pg2",
