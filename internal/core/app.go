@@ -26,6 +26,7 @@ var _app *Core
 // Core wraps various individual components of the app to orchestrate application processes.
 type Core struct {
 	app.App
+	Ctx context.Context
 }
 
 // extendedHandler returns a handlers.Response that calls
@@ -114,7 +115,7 @@ func Run(opts RunAppOptions) {
 	go autodeleteManager.Run(ctx, logger)
 
 	_app = &Core{
-		app.App{
+		App: app.App{
 			DB:         db,
 			Config:     appConfig,
 			Bot:        bot,
@@ -124,6 +125,7 @@ func Run(opts RunAppOptions) {
 			Cache:      cache.NewCache(),
 			Admins:     env.Int64s("ADMINS"),
 		},
+		Ctx: ctx,
 	}
 
 	_app.ConfigPanel = configpanel.CreatePanel(_app)

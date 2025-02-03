@@ -39,7 +39,7 @@ func (c *Client) DeleteUser(userId int64) error {
 
 // GetAllUsers return a cursor to loop over all users.
 func (c *Client) GetAllUsers() (database.Cursor, error) {
-	return c.userCollection.Find(c.ctx, nil)
+	return c.userCollection.Find(c.ctx, bson.M{})
 }
 
 func (c *Client) SaveUserJoinRequest(userId, chatId int64) error {

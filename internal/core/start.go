@@ -24,6 +24,16 @@ const (
 
 // StartCommand handles the start command.
 func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
+	m := ctx.Message
+	user := m.From
+
+	go func() {
+		err := _app.DB.SaveUser(user.Id)
+		if err != nil {
+			_app.Log.Warn("start: save user failed", zap.Error(err))
+		}
+	}()
+
 	split := ctx.Args()
 	if len(split) < 2 {
 		return StaticCommands(bot, ctx)
@@ -34,9 +44,6 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		_app.Log.Warn("start: decode data failed", zap.Error(err))
 		return nil
 	}
-
-	m := ctx.Message
-	user := m.From
 
 	data := string(bytes)
 	switch data[0] {

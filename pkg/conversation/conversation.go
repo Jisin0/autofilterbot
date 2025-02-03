@@ -91,11 +91,16 @@ func (c *Conversator) Listen(d ...time.Duration) (*gotgbot.Message, error) {
 	return m, err
 }
 
-// Ask sends a message to the chat and waits for a reply. returns a ErrListenTimeout if deadline exceded.
-//
-// - text: Text content of the message.
-// - opts: optional params for SendMessage.
+// Ask sends a message to the chat and waits for a reply. returns a ErrListenTimeout if deadline exceded:
+//   - text: Text content of the message.
+//   - opts: optional params for SendMessage.
 func (c *Conversator) Ask(text string, opts *gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
+	if opts == nil {
+		opts = &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML}
+	} else if opts.ParseMode == "" {
+		opts.ParseMode = gotgbot.ParseModeHTML
+	}
+
 	firstM, err := c.bot.SendMessage(c.chatId, text, opts)
 	if err != nil {
 		return nil, err
