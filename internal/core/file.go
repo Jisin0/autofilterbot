@@ -61,7 +61,7 @@ func DeleteFile(bot *gotgbot.Bot, ctx *ext.Context) error {
 	} else {
 		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
 
-		replyM, err := conv.Ask("Please send me the file you would like to delete:", nil)
+		replyM, err := conv.Ask(_app.Ctx, "Please send me the file you would like to delete:", nil)
 		if err != nil {
 			m.Reply(bot, fmt.Sprintf("An Error occurred: %v", err), nil)
 			return nil
@@ -135,7 +135,7 @@ func DeleteAllFiles(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if len(files) > delAllCountDangerous {
 		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
 
-		msg, err := conv.Ask(fmt.Sprintf("<b>⛔ Dangerous Operation</b>\n<i>Are you sure you want to delete %d files? Send <code>yes</code> to confirm or /cancel to cancel:</i>", len(files)), &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+		msg, err := conv.Ask(_app.Ctx, fmt.Sprintf("<b>⛔ Dangerous Operation</b>\n<i>Are you sure you want to delete %d files? Send <code>yes</code> to confirm or /cancel to cancel:</i>", len(files)), &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
 		if err != nil {
 			_app.Log.Warn("delall: ask confirmation failed", zap.Error(err))
 			return nil

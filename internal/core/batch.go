@@ -80,7 +80,7 @@ func NewBatch(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if startId == 0 {
 		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
 
-		askM, err := conv.Ask("Please forward or send the post link of the first message in the batch:", nil)
+		askM, err := conv.Ask(_app.Ctx, "Please forward or send the post link of the first message in the batch:", nil)
 		if err != nil {
 			_app.Log.Debug("batch: conv exited with error", zap.Error(err))
 			return nil
@@ -106,7 +106,7 @@ func NewBatch(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if endId == 0 {
 		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
 
-		askM, err := conv.Ask("Please forward or send the post link of the last message in the batch:", nil)
+		askM, err := conv.Ask(_app.Ctx, "Please forward or send the post link of the last message in the batch:", nil)
 		if err != nil {
 			_app.Log.Debug("batch: conv exited with error", zap.Error(err))
 			return nil
@@ -207,7 +207,7 @@ func GenLink(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if messageId == 0 {
 		conv := conversation.NewConversatorFromUpdate(bot, ctx.Update)
 
-		askM, err := conv.Ask("Please forward or send the post link of the message:", nil)
+		askM, err := conv.Ask(_app.Ctx, "Please forward or send the post link of the message:", nil)
 		if err != nil {
 			_app.Log.Debug("genlink: conv exited with error", zap.Error(err))
 			return nil

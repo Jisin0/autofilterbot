@@ -73,13 +73,13 @@ func NewConversatorFromUpdate(bot *gotgbot.Bot, update *gotgbot.Update) *Convers
 }
 
 // Listen listens for incoming messages in current conversation. returns a ErrListenTimeout if deadline exceded.
-func (c *Conversator) Listen(d ...time.Duration) (*gotgbot.Message, error) {
+func (c *Conversator) Listen(ctx context.Context, d ...time.Duration) (*gotgbot.Message, error) {
 	expiryDuration := FiveMinutes
 	if len(d) != 0 {
 		expiryDuration = d[0]
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), expiryDuration)
+	ctx, cancel := context.WithTimeout(ctx, expiryDuration)
 	defer cancel()
 
 	m, err := Listen(ctx, c.ListenFilter())
@@ -94,7 +94,7 @@ func (c *Conversator) Listen(d ...time.Duration) (*gotgbot.Message, error) {
 // Ask sends a message to the chat and waits for a reply. returns a ErrListenTimeout if deadline exceded:
 //   - text: Text content of the message.
 //   - opts: optional params for SendMessage.
-func (c *Conversator) Ask(text string, opts *gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
+func (c *Conversator) Ask(ctx context.Context, text string, opts *gotgbot.SendMessageOpts) (*gotgbot.Message, error) {
 	if opts == nil {
 		opts = &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML}
 	} else if opts.ParseMode == "" {
@@ -108,7 +108,7 @@ func (c *Conversator) Ask(text string, opts *gotgbot.SendMessageOpts) (*gotgbot.
 
 	c.lastMessageId = firstM.MessageId
 
-	return c.Listen()
+	return c.Listen(ctx)
 }
 
 // ListenFilter returns a filters.Message to match incoming messages in l.chatId from l.userId.
@@ -132,10 +132,12 @@ func Listen(ctx context.Context, filter filters.Message) (*gotgbot.Message, erro
 	ActiveListeners.Add(NewListener(filter, c))
 
 	// listen for either a message or timeout
-	select {
-	case <-ctx.Done():
-		return nil, ErrListenTimeout
-	case m := <-c:
-		return m, nil
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ErrListenTimeout
+		case m := <-c:
+			return m, nil
+		}
 	}
 }

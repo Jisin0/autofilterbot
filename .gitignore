@@ -39,3 +39,6 @@ autodelete.sqlite
 
 # dev notes
 notes.txt
+
+# goland configs
+.idea

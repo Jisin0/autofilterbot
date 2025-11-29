@@ -18,12 +18,14 @@ var _ database.Database = (*Client)(nil)
 type Client struct {
 	// userCollections stores data about users of the bot.
 	userCollection *mongo.Collection
-	// fileCollection stores all saved files
+	// fileCollection stores all saved files.
 	fileCollection *mongo.Collection
 	// configCollection stores settings configuration of the bot.
 	configCollection *mongo.Collection
 	// groupCollection contains data about group chats.
 	groupCollection *mongo.Collection
+	// Collection of long operations like index.
+	opsCollection *mongo.Collection
 
 	ctx    context.Context
 	client *mongo.Client
@@ -64,6 +66,7 @@ func NewClient(ctx context.Context, mongodbUri, databaseName, collectionName str
 		fileCollection:   fcol,
 		configCollection: dataBase.Collection(database.CollectionNameConfigs),
 		groupCollection:  dataBase.Collection(database.CollectionNameGroups),
+		opsCollection:    dataBase.Collection(database.CollectionNameOperations),
 	}
 
 	return client, nil

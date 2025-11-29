@@ -62,4 +62,21 @@ type Database interface {
 	Stats() (*model.Stats, error)
 	// GetName returns the name of the database as a user friendly string.
 	GetName() string
+
+	// NewIndexOperation inserts a new index operation into the collection.
+	NewIndexOperation(i *model.Index) error
+	// UpdateIndexOperation updates an index operation.
+	UpdateIndexOperation(pid string, vals map[string]interface{}) (bool, error)
+	// GetIndexOperation fetches an index operation by it's id.
+	GetIndexOperation(pid string) (*model.Index, error)
+	// GetAllIndexOperations fetches all active index operations.
+	GetActiveIndexOperations() ([]*model.Index, error)
+	// DeleteOperation deletes an active operation by id.
+	DeleteOperation(pid string) error
+}
+
+// KeyValuePair represents a single key-value pair in a document.
+type KeyValuePair struct {
+	Key   string
+	Value interface{}
 }

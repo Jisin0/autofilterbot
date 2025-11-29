@@ -68,7 +68,7 @@ func (c *Client) SearchFiles(query string) (database.Cursor, error) {
 	pattern := `(?i)(\b|[\.\+\-_])` + strings.ReplaceAll(query, " ", `.*[\s\.\+\-_]`) + `(\b|[\.\+\-_])`
 	pipeline := bson.D{{Key: "file_name", Value: bson.D{{Key: "$regex", Value: pattern}}}}
 
-	return c.fileCollection.Find(context.TODO(), pipeline, options.Find().SetSort(bson.M{"time": -1}).SetLimit(50))
+	return c.fileCollection.Find(context.Background(), pipeline, options.Find().SetSort(bson.M{"time": -1}).SetLimit(50))
 }
 
 // fileIdFilter creates a bson filter to match by file_id.

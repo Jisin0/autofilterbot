@@ -12,6 +12,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/configpanel"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
+	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/env"
 	"github.com/Jisin0/autofilterbot/pkg/log"
@@ -116,14 +117,15 @@ func Run(opts RunAppOptions) {
 
 	_app = &Core{
 		App: app.App{
-			DB:         db,
-			Config:     appConfig,
-			Bot:        bot,
-			Log:        logger,
-			AutoDelete: autodeleteManager,
-			StartTime:  time.Now(),
-			Cache:      cache.NewCache(),
-			Admins:     env.Int64s("ADMINS"),
+			DB:           db,
+			Config:       appConfig,
+			Bot:          bot,
+			Log:          logger,
+			AutoDelete:   autodeleteManager,
+			StartTime:    time.Now(),
+			Cache:        cache.NewCache(),
+			Admins:       env.Int64s("ADMINS"),
+			IndexManager: index.NewManager(),
 		},
 		Ctx: ctx,
 	}
@@ -149,7 +151,8 @@ func Run(opts RunAppOptions) {
 
 	logger.Info(fmt.Sprintf("@%s started successfully !", bot.Username))
 
-	//TODO: setup dispatcher and run bot
+	go _app.RestartActiveIndexOperations(ctx)
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 
@@ -191,6 +194,26 @@ func (core *Core) RefreshConfig() {
 	}
 
 	core.Config = c
+}
+
+// RestartActiveIndexOperations restarts all active index operations.
+func (c *Core) RestartActiveIndexOperations(ctx context.Context) {
+	ops, err := c.DB.GetActiveIndexOperations()
+	if err != nil {
+		_app.Log.Debug("core: failed to fetch active index operations", zap.Error(err))
+		return
+	}
+
+	if len(ops) == 0 {
+		return
+	}
+
+	c.Log.Debug("core: restartsing active index operations", zap.Int("num", len(ops)))
+
+	for _, i := range ops {
+		ctx, o := c.IndexManager.NewOperation(ctx, i, c.DB, c.Log, c.Bot)
+		c.IndexManager.RunOperation(ctx, o)
+	}
 }
 
 // App returns the initialized global app instance.

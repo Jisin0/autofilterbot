@@ -3,6 +3,7 @@ package log
 
 import (
 	"os"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -27,7 +28,7 @@ const (
 func Initialize(logLevel string, disableConsoleOutput bool) {
 	var level zapcore.Level
 
-	switch logLevel {
+	switch strings.ToLower(logLevel) {
 	case DebugLevelStr:
 		level = zap.DebugLevel
 	case InfoLevelStr:

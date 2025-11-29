@@ -9,6 +9,7 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/cache"
 	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/panel"
 	"github.com/Jisin0/autofilterbot/pkg/shortener"
@@ -27,8 +28,9 @@ type App struct {
 	Admins      []int64
 	ConfigPanel *panel.Panel
 
-	AutoDelete *autodelete.Manager
-	Shortener  *shortener.Shortener
+	AutoDelete   *autodelete.Manager
+	Shortener    *shortener.Shortener
+	IndexManager *index.Manager
 }
 
 func (a *App) GetDB() database.Database {
@@ -65,4 +67,8 @@ func (a *App) GetAutoDelete() *autodelete.Manager {
 
 func (a *App) GetShortener() *shortener.Shortener {
 	return a.Shortener
+}
+
+func (a *App) GetIndexManager() *index.Manager {
+	return a.IndexManager
 }

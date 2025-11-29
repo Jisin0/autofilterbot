@@ -52,7 +52,7 @@ func Broadcast(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if method == nil {
-		m, err := conversation.NewConversatorFromUpdate(bot, ctx.Update).Ask("<b>𝖯𝗅𝖾𝖺𝗌𝖾 𝖲𝖾𝗇𝖽 𝗍𝗁𝖾 𝖬𝖾𝗌𝗌𝖺𝗀𝖾 𝗍𝗈 𝖻𝖾 𝖡𝗋𝗈𝖺𝖽𝖼𝖺𝗌𝗍𝖾𝖽:</b>", nil)
+		m, err := conversation.NewConversatorFromUpdate(bot, ctx.Update).Ask(_app.Ctx, "<b>𝖯𝗅𝖾𝖺𝗌𝖾 𝖲𝖾𝗇𝖽 𝗍𝗁𝖾 𝖬𝖾𝗌𝗌𝖺𝗀𝖾 𝗍𝗈 𝖻𝖾 𝖡𝗋𝗈𝖺𝖽𝖼𝖺𝗌𝗍𝖾𝖽:</b>", nil)
 		if err != nil {
 			return nil
 		}

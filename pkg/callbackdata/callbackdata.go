@@ -95,6 +95,20 @@ func (c CallbackData) AddPath(val string) CallbackData {
 	return c
 }
 
+// GetArg fetches the argument at given index.
+func (c CallbackData) GetArg(index int) (string, bool) {
+	if len(c.Args)-1 > index {
+		return "", false
+	}
+
+	return c.Args[index], true
+}
+
+// LenArgs returns the length of c.Args.
+func (c CallbackData) LenArgs() int {
+	return len(c.Args)
+}
+
 // RemoveLastPath removes the last path in the callback data.
 func (c CallbackData) RemoveLastPath() CallbackData {
 	// if less than 2 paths then returned unchaged.
