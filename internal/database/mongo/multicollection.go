@@ -94,7 +94,7 @@ func (c *MultiCollection) DeleteOne(ctx context.Context, filter interface{}, opt
 	for i, col := range c.allCollections {
 		res, err := col.DeleteOne(ctx, filter, opts...)
 		if err != nil {
-			c.log.Error("multicollection deleteone failed", zap.Int("index", i), zap.Error(err))
+			c.log.Error("multicollection: deleteone failed", zap.Int("index", i), zap.Error(err))
 			continue
 		}
 
