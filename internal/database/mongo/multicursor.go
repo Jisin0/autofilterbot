@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"slices"
 	"sync"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
@@ -65,7 +64,10 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 			}
 
 			c.currentCursor = res
-			c.remainingCollections = slices.Delete(c.remainingCollections, i+1, len(c.remainingCollections)-1)
+
+			if len(c.remainingCollections) > 1 {
+				c.remainingCollections = c.remainingCollections[i+1 : len(c.remainingCollections)-1]
+			}
 
 			return true
 		}

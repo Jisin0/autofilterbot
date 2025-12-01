@@ -28,6 +28,22 @@ type MultiCollection struct {
 	log *zap.Logger
 }
 
+// NewMultiCollection creates a new multi collection and sets the collection at given index as current storage.
+func NewMultiCollection(allCollections []*mongo.Collection, index int, log *zap.Logger) *MultiCollection {
+	return &MultiCollection{
+		storageCollection:      allCollections[index],
+		storageCollectionIndex: index,
+		allCollections:         allCollections,
+		log:                    log,
+	}
+}
+
+// InsertOne inserts a single document to the current storage collection.
+func (c *MultiCollection) InsertOne(ctx context.Context, document interface{},
+	opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error) {
+	return c.storageCollection.InsertOne(ctx, document)
+}
+
 // Find executes a find command and returns a Cursor over the matching documents in the virtual collection.
 func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (database.Cursor, error) {
 	cursor := &MultiCursor{
@@ -48,7 +64,10 @@ func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...
 		}
 
 		cursor.currentCursor = res
-		cursor.remainingCollections = c.allCollections[i+1 : len(c.allCollections)-1]
+
+		if len(c.allCollections) > 1 {
+			cursor.remainingCollections = c.allCollections[i+1 : len(c.allCollections)-1]
+		}
 	}
 
 	return cursor, err

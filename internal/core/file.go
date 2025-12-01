@@ -29,18 +29,18 @@ func NewFile(bot *gotgbot.Bot, ctx *ext.Context) error {
 	}
 
 	if file.FileName == "" {
-		_app.Log.Debug("empty file name after sanitization", zap.String("file_id", file.FileName), zap.String("file_type", file.FileType))
+		_app.Log.Debug("newfile: empty file name after sanitization", zap.String("file_id", file.FileName), zap.String("file_type", file.FileType))
 		return nil
 	}
 
 	err := _app.DB.SaveFile(file)
 	if err != nil {
 		if _, ok := err.(database.FileAlreadyExistsError); ok {
-			_app.Log.Debug("duplicate file skipped", zap.String("file_name", file.FileName))
+			_app.Log.Debug("newfile: duplicate file skipped", zap.String("file_name", file.FileName))
 			return nil
 		}
 
-		_app.Log.Warn("failed to save file", zap.Error(err))
+		_app.Log.Warn("newfile: failed to save file", zap.Error(err))
 	}
 
 	return nil

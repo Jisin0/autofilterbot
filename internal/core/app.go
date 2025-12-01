@@ -92,7 +92,14 @@ func Run(opts RunAppOptions) {
 			}
 		}
 
-		db, err = mongo.NewClient(ctx, mongodbUri, databaseName, collectionName, additionalUri...)
+		opts := mongo.NewClientOpts{
+			DatabaseName:        databaseName,
+			FilesCollectionName: collectionName,
+			AdditionalURLs:      additionalUri,
+			// MultiCollectionIndex: 0, //TODO: add to config and implement
+		}
+
+		db, err = mongo.NewClient(ctx, mongodbUri, logger, opts)
 	case couchBaseUri != "":
 		logger.Fatal("not implemented")
 	default:
