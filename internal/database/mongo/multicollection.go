@@ -189,7 +189,6 @@ func (c *MultiCollection) EstimatedDocumentCount(ctx context.Context, opts ...*o
 // RunCollectionUpdater is a background job that ensures storageCollection is set to the collection with least documents stored.
 //
 // WARNING: The document count of the collection does not essentially represent the storage usage of the database but the logic depends on the assumption that files will be by far the heaviest collection.
-// TODO: Find a decent name for this func.
 func (c *MultiCollection) RunCollectionUpdater(ctx context.Context, log *zap.Logger) {
 	if len(c.allCollections) == 1 { // hopefully isnt 0 lol
 		return

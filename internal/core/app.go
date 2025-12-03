@@ -28,6 +28,8 @@ var _app *Core
 type Core struct {
 	app.App
 	Ctx context.Context
+
+	additionalURLsCount int
 }
 
 // extendedHandler returns a handlers.Response that calls
@@ -215,12 +217,17 @@ func (c *Core) RestartActiveIndexOperations(ctx context.Context) {
 		return
 	}
 
-	c.Log.Debug("core: restartsing active index operations", zap.Int("num", len(ops)))
+	c.Log.Debug("core: restarting active index operations", zap.Int("num", len(ops)))
 
 	for _, i := range ops {
 		ctx, o := c.IndexManager.NewOperation(ctx, i, c.DB, c.Log, c.Bot)
 		c.IndexManager.RunOperation(ctx, o)
 	}
+}
+
+// GetAdditionalCollectionCount returns the number of additional db urls provided.
+func (c *Core) GetAdditionalCollectionCount() int {
+	return c.additionalURLsCount
 }
 
 // App returns the initialized global app instance.
