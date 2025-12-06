@@ -10,7 +10,6 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/internal/cache"
 	"github.com/Jisin0/autofilterbot/internal/configpanel"
-	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
@@ -78,35 +77,29 @@ func Run(opts RunAppOptions) {
 		mongodbUri = s
 	}
 
-	couchBaseUri := os.Getenv("COUCHBASE_URI")
+	if mongodbUri == "" {
+		logger.Fatal("MONGODB_URI not provided. Set it as an environment variable or provide as a command line argument.")
+	}
+
 	databaseName := os.Getenv("DATABASE_NAME")
 	collectionName := os.Getenv("COLLECTION_NAME")
 
-	var db database.Database
+	var additionalUri []string
 
-	switch {
-	case mongodbUri != "":
-		var additionalUri []string
-
-		for i := 1; i <= 5; i++ { // attempts to fetch MONGODB_URI1 to MONGODB_URI5. //TODO: remove hardcoded limit after testing
-			if s := os.Getenv(fmt.Sprintf("MONGODB_URI%d", i)); s != "" {
-				additionalUri = append(additionalUri, s)
-			}
+	for i := 1; i <= 5; i++ { // attempts to fetch MONGODB_URI1 to MONGODB_URI5. //TODO: remove hardcoded limit after testing
+		if s := os.Getenv(fmt.Sprintf("MONGODB_URI%d", i)); s != "" {
+			additionalUri = append(additionalUri, s)
 		}
-
-		opts := mongo.NewClientOpts{
-			DatabaseName:        databaseName,
-			FilesCollectionName: collectionName,
-			AdditionalURLs:      additionalUri,
-			// MultiCollectionIndex: 0, //TODO: add to config and implement
-		}
-
-		db, err = mongo.NewClient(ctx, mongodbUri, logger, opts)
-	case couchBaseUri != "":
-		logger.Fatal("not implemented")
-	default:
-		logger.Fatal("mongodb or couchbase uri not found, please read the database setup guide")
 	}
+
+	mongoOpts := mongo.NewClientOpts{
+		DatabaseName:        databaseName,
+		FilesCollectionName: collectionName,
+		AdditionalURLs:      additionalUri,
+		// MultiCollectionIndex: 0, //TODO: add to config and implement
+	}
+
+	db, err := mongo.NewClient(ctx, mongodbUri, logger, mongoOpts)
 
 	if err != nil {
 		logger.Fatal("database setup failed", zap.Error(err))

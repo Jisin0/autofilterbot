@@ -1,4 +1,4 @@
-// Package database holds interfaces and types used for mongo or couchbase storage.
+// Package database holds interfaces and types used for database storage.
 package database
 
 import (
@@ -16,6 +16,7 @@ const (
 	DefaultDatabaseName = "AutoFilterBot"
 )
 
+// DEPRECATED
 type Database interface {
 	// Shutdown gracefully closes the database.
 	Shutdown() error
