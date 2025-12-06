@@ -142,3 +142,15 @@ func (c *Client) Stats() (*model.Stats, error) {
 func (c *Client) GetName() string {
 	return "MongoDB Atlas"
 }
+
+// UpdateStorageCollection updates the storage collection to given index.
+func (c *Client) UpdateStorageCollection(index int) error {
+	return c.fileCollection.SetStorageCollection(index)
+}
+
+// RunCollectionUpdater is a background job that ensures storageCollection is set to the collection with least documents stored.
+//
+// WARNING: The document count of the collection does not essentially represent the storage usage of the database but the logic depends on the assumption that files will be by far the heaviest collection.
+func (c *Client) RunCollectionUpdater(ctx context.Context, log *zap.Logger) {
+	go c.fileCollection.RunCollectionUpdater(ctx, log)
+}

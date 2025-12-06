@@ -18,6 +18,8 @@ type IntFieldOpts struct {
 	PossibleValues []int
 	// Description for the field.
 	Description string
+	// Middleware is called after a value is successully set, allowing any sync operations to be run.
+	Middleware func(val int)
 }
 
 // IntField is a helper for cofiguring int values in the config panel.
@@ -65,6 +67,10 @@ func IntField(app AppPreview, fieldName string, opts IntFieldOpts) panel.Callbac
 			err = app.GetDB().UpdateConfig(ctx.Bot.Id, fieldName, val)
 			if err != nil {
 				return "", nil, err
+			}
+
+			if opts.Middleware != nil {
+				opts.Middleware(val)
 			}
 
 			s = fmt.Sprintf("<i><b>✅ %s has been set to %d!</b></i>", ctx.Page.DisplayName, val)

@@ -5,7 +5,7 @@ package configpanel
 
 import (
 	"github.com/Jisin0/autofilterbot/internal/config"
-	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/panel"
 	"go.uber.org/zap"
 )
@@ -17,11 +17,12 @@ const (
 )
 
 type AppPreview interface {
-	GetDB() database.Database
+	GetDB() *mongo.Client
 	GetConfig() *config.Config
 	GetLog() *zap.Logger
 	RefreshConfig()
 	GetAdditionalCollectionCount() int
+	SetCollectionIndex(index int)
 }
 
 // CreatePanel creates the bot's configpanel and adds all pages.
@@ -36,6 +37,7 @@ func CreatePanel(app AppPreview) *panel.Panel {
 	dbPage.NewSubPage("coll", "File Database").WithCallbackFunc(IntField(app, config.FieldNameCollectionIndex, IntFieldOpts{
 		Range:       &IntRange{Start: 0, End: app.GetAdditionalCollectionCount()},
 		Description: "Collection/Database to Store Files. 0 is your Main Database.",
+		Middleware:  func(val int) { app.SetCollectionIndex(val) },
 	}))
 	dbPage.NewSubPage("updater", "Auto Collection Updater").WithCallbackFunc(BoolField(
 		app,

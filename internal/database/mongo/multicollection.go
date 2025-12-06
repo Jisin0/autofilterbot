@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
@@ -237,10 +238,22 @@ func (c *MultiCollection) RunCollectionUpdater(ctx context.Context, log *zap.Log
 				c.storageCollection = smallestDocumentCollection
 				c.storageCollectionIndex = i
 
-				log.Debug("updated storage collection", zap.Int("index", i))
+				log.Debug("multicollection: updated storage collection", zap.Int("index", i))
 			}
 		case <-ctx.Done():
 			return
 		}
 	}
+}
+
+// SetStorageCollection sets the collection with given index for storing new files.
+func (c *MultiCollection) SetStorageCollection(index int) error {
+	if len(c.allCollections) <= index {
+		return fmt.Errorf("multicolllection: setstorage: index %d out of range with length %d", index, len(c.allCollections))
+	}
+
+	c.storageCollection = c.allCollections[index]
+	c.storageCollectionIndex = index
+
+	return nil
 }

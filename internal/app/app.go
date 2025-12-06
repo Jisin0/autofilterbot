@@ -8,7 +8,7 @@ import (
 
 	"github.com/Jisin0/autofilterbot/internal/cache"
 	"github.com/Jisin0/autofilterbot/internal/config"
-	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/panel"
@@ -19,7 +19,7 @@ import (
 
 // App wraps various individual components of the app to orchestrate application processes.
 type App struct {
-	DB          database.Database
+	DB          *mongo.Client
 	Log         *zap.Logger
 	StartTime   time.Time
 	Bot         *gotgbot.Bot
@@ -33,7 +33,7 @@ type App struct {
 	IndexManager *index.Manager
 }
 
-func (a *App) GetDB() database.Database {
+func (a *App) GetDB() *mongo.Client {
 	return a.DB
 }
 

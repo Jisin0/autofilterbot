@@ -96,7 +96,6 @@ func Run(opts RunAppOptions) {
 		DatabaseName:        databaseName,
 		FilesCollectionName: collectionName,
 		AdditionalURLs:      additionalUri,
-		// MultiCollectionIndex: 0, //TODO: add to config and implement
 	}
 
 	db, err := mongo.NewClient(ctx, mongodbUri, logger, mongoOpts)
@@ -108,6 +107,13 @@ func Run(opts RunAppOptions) {
 	appConfig, err := db.GetConfig(bot.Id)
 	if err != nil {
 		logger.Error("failed to load configs from db", zap.Error(err))
+	}
+
+	if appConfig.FileCollectionIndex != 0 {
+		err = db.UpdateStorageCollection(appConfig.FileCollectionIndex)
+		if err != nil {
+			logger.Warn("setting custom storage collection failed, using default database", zap.Error(err))
+		}
 	}
 
 	autodeleteManager, err := autodelete.NewManager(bot)
@@ -154,6 +160,10 @@ func Run(opts RunAppOptions) {
 	logger.Info(fmt.Sprintf("@%s started successfully !", bot.Username))
 
 	go _app.RestartActiveIndexOperations(ctx)
+
+	if appConfig.FileCollectionUpdater {
+		_app.DB.RunCollectionUpdater(ctx, logger)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -221,6 +231,13 @@ func (c *Core) RestartActiveIndexOperations(ctx context.Context) {
 // GetAdditionalCollectionCount returns the number of additional db urls provided.
 func (c *Core) GetAdditionalCollectionCount() int {
 	return c.additionalURLsCount
+}
+
+func (c *Core) SetCollectionIndex(index int) {
+	err := c.DB.UpdateStorageCollection(index)
+	if err != nil {
+		c.Log.Warn("core: failed to update collection index", zap.Error(err))
+	}
 }
 
 // App returns the initialized global app instance.
