@@ -80,6 +80,10 @@ func IntField(app AppPreview, fieldName string, opts IntFieldOpts) panel.Callbac
 				return "", nil, err
 			}
 
+			if opts.Middleware != nil {
+				opts.Middleware(0)
+			}
+
 			s = fmt.Sprintf("<i><b>✅ %s has been Reset !</b></i>", ctx.Page.DisplayName)
 		default:
 			var s strings.Builder
