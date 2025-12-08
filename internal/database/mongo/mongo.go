@@ -43,8 +43,6 @@ type NewClientOpts struct {
 	AdditionalURLs []string
 	// Index of the file collection to use for storage, defaults to 0. Can be updated from config panel.
 	MultiCollectionIndex int
-	// Indicates wether the collection updater must be run.
-	RunCollectionUpdater bool
 }
 
 // NewClient creates a new client and connect to mongodb.
@@ -103,10 +101,6 @@ func NewClient(ctx context.Context, mongodbUri string, log *zap.Logger, opts ...
 		configCollection: dataBase.Collection(database.CollectionNameConfigs),
 		groupCollection:  dataBase.Collection(database.CollectionNameGroups),
 		opsCollection:    dataBase.Collection(database.CollectionNameOperations),
-	}
-
-	if clientOpts.RunCollectionUpdater {
-		go fileCollection.RunCollectionUpdater(ctx, log)
 	}
 
 	return client, nil
