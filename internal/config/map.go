@@ -63,6 +63,9 @@ func (c *Config) toMap() map[string]any {
 
 	vals[FieldNameBatchSize] = c.GetBatchSizeLimit()
 
+	vals[FieldNameCollectionIndex] = c.GetFileCollectionIndex()
+	vals[FieldNameCollectionUpdater] = c.GetFileCollectiionUpdater()
+
 	return vals
 }
 
