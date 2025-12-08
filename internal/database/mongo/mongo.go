@@ -3,6 +3,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/model"
@@ -110,6 +111,27 @@ func (c *Client) Shutdown() error {
 	return c.client.Disconnect(context.Background()) // main ctx may already have been cancelled when this is called
 }
 
+// fileCounts generates a better visual list of file collection counts, when implementing fmt.Stringer, used for stats.
+type fileCounts []int64
+
+func (f fileCounts) String() string {
+	if len(f) == 0 {
+		return "No Collections Found"
+	}
+
+	if len(f) == 1 {
+		return fmt.Sprint(f[0])
+	}
+
+	var s string
+
+	for i, n := range f {
+		s += fmt.Sprintf("\n├┄┄Collection %d: %d", i, n)
+	}
+
+	return s
+}
+
 func (c *Client) Stats() (*model.Stats, error) {
 	users, err := c.userCollection.EstimatedDocumentCount(c.ctx)
 	if err != nil {
@@ -121,15 +143,21 @@ func (c *Client) Stats() (*model.Stats, error) {
 		return nil, err
 	}
 
-	files, err := c.fileCollection.EstimatedDocumentCount(c.ctx)
-	if err != nil {
-		return nil, err
+	var files []int64
+
+	for _, coll := range c.fileCollection.allCollections {
+		n, err := coll.EstimatedDocumentCount(c.ctx)
+		if err != nil {
+			return nil, err
+		}
+
+		files = append(files, n)
 	}
 
 	return &model.Stats{
 		Users:  users,
 		Groups: groups,
-		Files:  files,
+		Files:  fileCounts(files),
 	}, nil
 }
 

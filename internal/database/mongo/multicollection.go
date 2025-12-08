@@ -67,7 +67,7 @@ func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...
 		cursor.currentCursor = res
 
 		if len(c.allCollections) > 1 {
-			cursor.remainingCollections = c.allCollections[i+1 : len(c.allCollections)-1]
+			cursor.remainingCollections = c.allCollections[i : len(c.allCollections)-1]
 		}
 	}
 
