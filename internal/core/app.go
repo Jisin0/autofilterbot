@@ -138,6 +138,7 @@ func Run(opts RunAppOptions) {
 		Ctx: ctx,
 	}
 
+	_app.additionalURLsCount = len(additionalUri)
 	_app.ConfigPanel = configpanel.CreatePanel(_app)
 
 	dispatcher := SetupDispatcher(logger)
