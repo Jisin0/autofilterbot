@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
@@ -28,6 +29,22 @@ type MultiCollection struct {
 	log *zap.Logger
 }
 
+// NewMultiCollection creates a new multi collection and sets the collection at given index as current storage.
+func NewMultiCollection(allCollections []*mongo.Collection, index int, log *zap.Logger) *MultiCollection {
+	return &MultiCollection{
+		storageCollection:      allCollections[index],
+		storageCollectionIndex: index,
+		allCollections:         allCollections,
+		log:                    log,
+	}
+}
+
+// InsertOne inserts a single document to the current storage collection.
+func (c *MultiCollection) InsertOne(ctx context.Context, document interface{},
+	opts ...*options.InsertOneOptions) (*mongo.InsertOneResult, error) {
+	return c.storageCollection.InsertOne(ctx, document)
+}
+
 // Find executes a find command and returns a Cursor over the matching documents in the virtual collection.
 func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...*options.FindOptions) (database.Cursor, error) {
 	cursor := &MultiCursor{
@@ -44,14 +61,20 @@ func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...
 	for i, col := range c.allCollections {
 		res, err = col.Find(ctx, filter, opts...)
 		if err != nil { // this does not mean no documents are found. If filter was not matched, an empty cursor will be returned.
+			c.log.Debug("multicollection: find: find operation returned error", zap.Error(err), zap.Int("collection", i))
 			continue
 		}
 
 		cursor.currentCursor = res
-		cursor.remainingCollections = c.allCollections[i+1 : len(c.allCollections)-1]
+
+		if len(c.allCollections) > i+1 {
+			cursor.remainingCollections = c.allCollections[i+1:]
+		}
+
+		return cursor, err
 	}
 
-	return cursor, err
+	return nil, errors.New("multicollection: find: all collections returned error")
 }
 
 // FindOne finds a single document in any collection that matches given filter.
@@ -94,7 +117,7 @@ func (c *MultiCollection) DeleteOne(ctx context.Context, filter interface{}, opt
 	for i, col := range c.allCollections {
 		res, err := col.DeleteOne(ctx, filter, opts...)
 		if err != nil {
-			c.log.Error("multicollection deleteone failed", zap.Int("index", i), zap.Error(err))
+			c.log.Error("multicollection: deleteone failed", zap.Int("index", i), zap.Error(err))
 			continue
 		}
 
@@ -170,7 +193,6 @@ func (c *MultiCollection) EstimatedDocumentCount(ctx context.Context, opts ...*o
 // RunCollectionUpdater is a background job that ensures storageCollection is set to the collection with least documents stored.
 //
 // WARNING: The document count of the collection does not essentially represent the storage usage of the database but the logic depends on the assumption that files will be by far the heaviest collection.
-// TODO: Find a decent name for this func.
 func (c *MultiCollection) RunCollectionUpdater(ctx context.Context, log *zap.Logger) {
 	if len(c.allCollections) == 1 { // hopefully isnt 0 lol
 		return
@@ -219,10 +241,22 @@ func (c *MultiCollection) RunCollectionUpdater(ctx context.Context, log *zap.Log
 				c.storageCollection = smallestDocumentCollection
 				c.storageCollectionIndex = i
 
-				log.Debug("updated storage collection", zap.Int("index", i))
+				log.Debug("multicollection: updated storage collection", zap.Int("index", i))
 			}
 		case <-ctx.Done():
 			return
 		}
 	}
+}
+
+// SetStorageCollection sets the collection with given index for storing new files.
+func (c *MultiCollection) SetStorageCollection(index int) error {
+	if len(c.allCollections) <= index {
+		return fmt.Errorf("multicolllection: setstorage: index %d out of range with length %d", index, len(c.allCollections))
+	}
+
+	c.storageCollection = c.allCollections[index]
+	c.storageCollectionIndex = index
+
+	return nil
 }

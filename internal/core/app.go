@@ -10,7 +10,6 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/app"
 	"github.com/Jisin0/autofilterbot/internal/cache"
 	"github.com/Jisin0/autofilterbot/internal/configpanel"
-	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
@@ -28,6 +27,8 @@ var _app *Core
 type Core struct {
 	app.App
 	Ctx context.Context
+
+	additionalURLsCount int
 }
 
 // extendedHandler returns a handlers.Response that calls
@@ -76,28 +77,28 @@ func Run(opts RunAppOptions) {
 		mongodbUri = s
 	}
 
-	couchBaseUri := os.Getenv("COUCHBASE_URI")
+	if mongodbUri == "" {
+		logger.Fatal("MONGODB_URI not provided. Set it as an environment variable or provide as a command line argument.")
+	}
+
 	databaseName := os.Getenv("DATABASE_NAME")
 	collectionName := os.Getenv("COLLECTION_NAME")
 
-	var db database.Database
+	var additionalUri []string
 
-	switch {
-	case mongodbUri != "":
-		var additionalUri []string
-
-		for i := 1; i <= 5; i++ { // attempts to fetch MONGODB_URI1 to MONGODB_URI5. //TODO: remove hardcoded limit after testing
-			if s := os.Getenv(fmt.Sprintf("MONGODB_URI%d", i)); s != "" {
-				additionalUri = append(additionalUri, s)
-			}
+	for i := 1; i <= 5; i++ { // attempts to fetch MONGODB_URI1 to MONGODB_URI5. //TODO: remove hardcoded limit after testing
+		if s := os.Getenv(fmt.Sprintf("MONGODB_URI%d", i)); s != "" {
+			additionalUri = append(additionalUri, s)
 		}
-
-		db, err = mongo.NewClient(ctx, mongodbUri, databaseName, collectionName, additionalUri...)
-	case couchBaseUri != "":
-		logger.Fatal("not implemented")
-	default:
-		logger.Fatal("mongodb or couchbase uri not found, please read the database setup guide")
 	}
+
+	mongoOpts := mongo.NewClientOpts{
+		DatabaseName:        databaseName,
+		FilesCollectionName: collectionName,
+		AdditionalURLs:      additionalUri,
+	}
+
+	db, err := mongo.NewClient(ctx, mongodbUri, logger, mongoOpts)
 
 	if err != nil {
 		logger.Fatal("database setup failed", zap.Error(err))
@@ -106,6 +107,13 @@ func Run(opts RunAppOptions) {
 	appConfig, err := db.GetConfig(bot.Id)
 	if err != nil {
 		logger.Error("failed to load configs from db", zap.Error(err))
+	}
+
+	if appConfig.FileCollectionIndex != 0 {
+		err = db.UpdateStorageCollection(appConfig.FileCollectionIndex)
+		if err != nil {
+			logger.Warn("setting custom storage collection failed, using default database", zap.Error(err))
+		}
 	}
 
 	autodeleteManager, err := autodelete.NewManager(bot)
@@ -130,6 +138,7 @@ func Run(opts RunAppOptions) {
 		Ctx: ctx,
 	}
 
+	_app.additionalURLsCount = len(additionalUri)
 	_app.ConfigPanel = configpanel.CreatePanel(_app)
 
 	dispatcher := SetupDispatcher(logger)
@@ -152,6 +161,10 @@ func Run(opts RunAppOptions) {
 	logger.Info(fmt.Sprintf("@%s started successfully !", bot.Username))
 
 	go _app.RestartActiveIndexOperations(ctx)
+
+	if appConfig.FileCollectionUpdater {
+		_app.DB.RunCollectionUpdater(ctx, logger)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -208,11 +221,23 @@ func (c *Core) RestartActiveIndexOperations(ctx context.Context) {
 		return
 	}
 
-	c.Log.Debug("core: restartsing active index operations", zap.Int("num", len(ops)))
+	c.Log.Debug("core: restarting active index operations", zap.Int("num", len(ops)))
 
 	for _, i := range ops {
 		ctx, o := c.IndexManager.NewOperation(ctx, i, c.DB, c.Log, c.Bot)
 		c.IndexManager.RunOperation(ctx, o)
+	}
+}
+
+// GetAdditionalCollectionCount returns the number of additional db urls provided.
+func (c *Core) GetAdditionalCollectionCount() int {
+	return c.additionalURLsCount
+}
+
+func (c *Core) SetCollectionIndex(index int) {
+	err := c.DB.UpdateStorageCollection(index)
+	if err != nil {
+		c.Log.Warn("core: failed to update collection index", zap.Error(err))
 	}
 }
 

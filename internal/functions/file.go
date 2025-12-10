@@ -31,7 +31,7 @@ func FileFromMessage(m *gotgbot.Message) *model.File {
 		fileId = m.Video.FileId
 		uniqueId = m.Video.FileUniqueId
 		fileName = m.Video.FileName
-		fileSize = m.Document.FileSize
+		fileSize = m.Video.FileSize
 		fileType = model.FileTypeVideo
 	case m.Audio != nil:
 		fileId = m.Audio.FileId

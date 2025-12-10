@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"slices"
 	"sync"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
@@ -32,6 +31,7 @@ type MultiCursor struct {
 // Next loads the next document into the current cursor or quries the next collection if available. It returns false if all collections were exhausted.
 func (c *MultiCursor) Next(ctx context.Context) bool {
 	if c.currentCursor == nil { // should never happen in a perfect world
+		c.log.Warn("multicursor: next: current cursor is nil", zap.Any("query", c.filter))
 		return false
 	}
 
@@ -54,7 +54,7 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 	for i, col := range c.remainingCollections {
 		res, err = col.Find(ctx, c.filter, c.opts...) // should this ctx be used? maybe pass ctx to MultiCursor from Find and use the same
 		if err != nil {
-			c.log.Debug("multicursor next find operation", zap.Error(err))
+			c.log.Debug("multicursor: next: find operation failed", zap.Error(err))
 			continue
 		}
 
@@ -64,14 +64,19 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 			}
 
 			c.currentCursor = res
-			c.remainingCollections = slices.Delete(c.remainingCollections, i+1, len(c.remainingCollections)-1)
+
+			if len(c.remainingCollections) > i+1 {
+				c.remainingCollections = c.remainingCollections[i+1:]
+			} else if len(c.remainingCollections) == i+1 {
+				c.remainingCollections = nil
+			}
 
 			return true
 		}
 	}
 
 	// all collections are exhausted so empty remainingCollections just in case and return false
-	c.remainingCollections = []*mongo.Collection{}
+	c.remainingCollections = nil
 
 	return false
 }

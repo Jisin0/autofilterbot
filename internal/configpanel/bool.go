@@ -8,7 +8,7 @@ import (
 )
 
 // BoolField is a helper for modifying bool fields.
-func BoolField(app AppPreview, fieldName string) panel.CallbackFunc {
+func BoolField(app AppPreview, fieldName string, description ...string) panel.CallbackFunc {
 	return func(ctx *panel.Context) (string, [][]gotgbot.InlineKeyboardButton, error) {
 		var (
 			op   string
@@ -37,7 +37,12 @@ func BoolField(app AppPreview, fieldName string) panel.CallbackFunc {
 
 			s = fmt.Sprintf("<i><b>✅ %s has been Reset !</b></i>", ctx.Page.DisplayName)
 		default:
-			return fmt.Sprintf("<i>Use The Buttons Below to Enable/Disable %s</i>", ctx.Page.DisplayName),
+			var s string
+			if len(description) != 0 {
+				s = "ℹ️ " + description[0]
+			}
+
+			return s + fmt.Sprintf("<i>Use The Buttons Below to Enable/Disable %s</i>", ctx.Page.DisplayName),
 				[][]gotgbot.InlineKeyboardButton{{{Text: "Enable", CallbackData: data.RemoveArgs().AddArg(OperationSet).ToString()}, {Text: "Disable", CallbackData: data.RemoveArgs().AddArg(OperationReset).ToString()}}},
 				nil
 		}

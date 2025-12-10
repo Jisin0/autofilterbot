@@ -10,8 +10,6 @@ import (
 // Config contains custom values saved for the bot using the config panel.
 type Config struct {
 	BotId int64 `json:"_id" bson:"_id" `
-	// Force Subscribe Channels.
-	FsubChannels []model.FsubChannel `json:"fsub,omitempty" bson:"fsub,omitempty"`
 
 	// Autofilter result settings
 
@@ -35,6 +33,8 @@ type Config struct {
 	PrivacyText    string                          `json:"privacy_text,omitempty" bson:"privacy_text,omitempty"`
 	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
 
+	// Force Subscribe Channels.
+	FsubChannels []model.FsubChannel `json:"fsub,omitempty" bson:"fsub,omitempty"`
 	// Fsub message text.
 	FsubText string `json:"fsub_text,omitempty" bson:"fsub_text,omitempty"`
 	// Html formatted file caption.
@@ -59,8 +59,13 @@ type Config struct {
 
 	Shortener shortener.Shortener `json:"shortener,omitempty" bson:"shortener,omitempty"`
 
-	// Time in minutes after which message should be deleted.
+	// Time in minutes after which result message should be deleted.
 	AutodeleteTime int `json:"autodel_time,omitempty" bson:"autodel_time,omitempty"`
+
+	// Index of collection to use to store files.
+	FileCollectionIndex int `json:"collection_index,omitempty" bson:"collection_index,omitempty"`
+	// Indicates wether the updater should be run to update file collection periodically.
+	FileCollectionUpdater bool `json:"collection_updater,omitempty" bson:"collection_updater,omitempty"`
 
 	// cached value from ToMap, updated using UpdateMap
 	cachedMap map[string]any
@@ -118,4 +123,12 @@ func (c *Config) GetBatchSizeLimit() int64 {
 	}
 
 	return 50
+}
+
+func (c *Config) GetFileCollectionIndex() int {
+	return c.FileCollectionIndex
+}
+
+func (c *Config) GetFileCollectiionUpdater() bool {
+	return c.FileCollectionUpdater
 }

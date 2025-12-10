@@ -1,26 +1,28 @@
 package config
 
 const (
-	FieldNameFsub             = "fsub"
-	FieldNameMaxResults       = "max_results"
-	FiledNameMaxPages         = "max_pages"
-	FieldNameMaxPerPage       = "max_per_page"
-	FieldNameStart            = "start"
-	FieldNameAbout            = "about"
-	FieldNameHelp             = "help"
-	FieldNamePrivacy          = "privacy"
-	FieldNameStats            = "stats"
-	FieldNameShortener        = "shortener"
-	FieldNameNoResultText     = "no_result_text"
-	FieldNameResultTemplate   = "af_template"
-	FieldNameButtonTemplate   = "btn_template"
-	FieldNameFdetailsTemplate = "fdetails_template"
-	FieldNameSizeButton       = "size_btn"
-	FieldNameAutodeleteTime   = "autodel_time"
-	FieldNameFsubText         = "fsub_text"
-	FieldNameFileCaption      = "file_caption"
-	FieldNameFileAutoDelete   = "file_autodel"
-	FieldNameBatchSize        = "batch_size"
+	FieldNameFsub              = "fsub"
+	FieldNameMaxResults        = "max_results"
+	FiledNameMaxPages          = "max_pages"
+	FieldNameMaxPerPage        = "max_per_page"
+	FieldNameStart             = "start"
+	FieldNameAbout             = "about"
+	FieldNameHelp              = "help"
+	FieldNamePrivacy           = "privacy"
+	FieldNameStats             = "stats"
+	FieldNameShortener         = "shortener"
+	FieldNameNoResultText      = "no_result_text"
+	FieldNameResultTemplate    = "af_template"
+	FieldNameButtonTemplate    = "btn_template"
+	FieldNameFdetailsTemplate  = "fdetails_template"
+	FieldNameSizeButton        = "size_btn"
+	FieldNameAutodeleteTime    = "autodel_time"
+	FieldNameFsubText          = "fsub_text"
+	FieldNameFileCaption       = "file_caption"
+	FieldNameFileAutoDelete    = "file_autodel"
+	FieldNameBatchSize         = "batch_size"
+	FieldNameCollectionIndex   = "collection_index"
+	FieldNameCollectionUpdater = "collection_updater"
 )
 
 // ToMap converts the contents of the struct into map so fields can be dynamically accessed.
@@ -60,6 +62,9 @@ func (c *Config) toMap() map[string]any {
 	vals[FieldNameAutodeleteTime] = c.GetAutodeleteTime()
 
 	vals[FieldNameBatchSize] = c.GetBatchSizeLimit()
+
+	vals[FieldNameCollectionIndex] = c.GetFileCollectionIndex()
+	vals[FieldNameCollectionUpdater] = c.GetFileCollectiionUpdater()
 
 	return vals
 }
