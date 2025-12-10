@@ -1,8 +1,8 @@
 // Package models contains types shared by various packages.
 package model
 
-// FsubChannel is a single force sub channel.
-type FsubChannel struct {
+// Channel is a single telegram channel object.
+type Channel struct {
 	// Telegram id of the channel.
 	ID int64 `json:"id" bson:"id"`
 	// Name or title of the channel.

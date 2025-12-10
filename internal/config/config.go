@@ -34,7 +34,7 @@ type Config struct {
 	PrivacyButtons [][]button.InlineKeyboardButton `json:"privacy_buttons,omitempty" bson:"privacy_buttons,omitempty"`
 
 	// Force Subscribe Channels.
-	FsubChannels []model.FsubChannel `json:"fsub,omitempty" bson:"fsub,omitempty"`
+	FsubChannels []model.Channel `json:"fsub,omitempty" bson:"fsub,omitempty"`
 	// Fsub message text.
 	FsubText string `json:"fsub_text,omitempty" bson:"fsub_text,omitempty"`
 	// Html formatted file caption.
@@ -90,7 +90,7 @@ Type: {file_type}
 Uploaded: {date}`
 }
 
-func (c *Config) GetFsubChannels() []model.FsubChannel {
+func (c *Config) GetFsubChannels() []model.Channel {
 	return c.FsubChannels
 }
 

@@ -12,7 +12,7 @@ import (
 
 // FsubChannel is a single force sub channel.
 type FsubChannel struct {
-	model.FsubChannel
+	model.Channel
 }
 
 // IsJoined reports wether the user is a member of the channel.
@@ -71,11 +71,11 @@ func HasJoinRequest(db database.Database, chatId, userId int64) (bool, error) {
 // - userId: id of user to check.
 //
 // Returns slice of channels user is not a member. Error returned will be any API call or DB query failure.
-func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.FsubChannel, userId int64) ([]model.FsubChannel, error) {
+func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.Channel, userId int64) ([]model.Channel, error) {
 	var (
 		user      *model.User
 		allErrors []error
-		notJoined = make([]model.FsubChannel, len(f))
+		notJoined = make([]model.Channel, len(f))
 	)
 
 	for _, c := range f {
