@@ -65,16 +65,22 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 
 			c.currentCursor = res
 
-			if len(c.remainingCollections) > 1 {
-				c.remainingCollections = c.remainingCollections[i+1 : len(c.remainingCollections)-1]
+			c.log.Debug("remaining", zap.Int("n", len(c.remainingCollections)))
+
+			if len(c.remainingCollections) > i+1 {
+				c.remainingCollections = c.remainingCollections[i+1:]
+			} else if len(c.remainingCollections) == i+1 {
+				c.remainingCollections = nil
 			}
+
+			c.log.Debug("multicollection: next: updated current cursor from remainig collections", zap.Int("collection", i), zap.Int("remaining", len(c.remainingCollections)))
 
 			return true
 		}
 	}
 
 	// all collections are exhausted so empty remainingCollections just in case and return false
-	c.remainingCollections = []*mongo.Collection{}
+	c.remainingCollections = nil
 
 	return false
 }

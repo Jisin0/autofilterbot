@@ -61,17 +61,20 @@ func (c *MultiCollection) Find(ctx context.Context, filter interface{}, opts ...
 	for i, col := range c.allCollections {
 		res, err = col.Find(ctx, filter, opts...)
 		if err != nil { // this does not mean no documents are found. If filter was not matched, an empty cursor will be returned.
+			c.log.Debug("multicollection: find: find operation returned error", zap.Error(err), zap.Int("collection", i))
 			continue
 		}
 
 		cursor.currentCursor = res
 
-		if len(c.allCollections) > 1 {
-			cursor.remainingCollections = c.allCollections[i : len(c.allCollections)-1]
+		if len(c.allCollections) > i+1 {
+			cursor.remainingCollections = c.allCollections[i+1:]
 		}
+
+		return cursor, err
 	}
 
-	return cursor, err
+	return nil, errors.New("multicollection: find: all collections returned error")
 }
 
 // FindOne finds a single document in any collection that matches given filter.
