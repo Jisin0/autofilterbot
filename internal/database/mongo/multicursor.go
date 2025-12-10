@@ -65,15 +65,11 @@ func (c *MultiCursor) Next(ctx context.Context) bool {
 
 			c.currentCursor = res
 
-			c.log.Debug("remaining", zap.Int("n", len(c.remainingCollections)))
-
 			if len(c.remainingCollections) > i+1 {
 				c.remainingCollections = c.remainingCollections[i+1:]
 			} else if len(c.remainingCollections) == i+1 {
 				c.remainingCollections = nil
 			}
-
-			c.log.Debug("multicollection: next: updated current cursor from remainig collections", zap.Int("collection", i), zap.Int("remaining", len(c.remainingCollections)))
 
 			return true
 		}
