@@ -75,7 +75,7 @@ func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.Cha
 	var (
 		user      *model.User
 		allErrors []error
-		notJoined = make([]model.Channel, len(f))
+		notJoined = make([]model.Channel, 0)
 	)
 
 	for _, c := range f {

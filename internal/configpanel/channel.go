@@ -12,6 +12,7 @@ import (
 	"github.com/Jisin0/autofilterbot/pkg/panel"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 // ChannelFieldOpts provides optional parameters to ChannelField.
@@ -112,10 +113,16 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 				}
 			}
 
+			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: "Force Subscribe"})
+			if err != nil {
+				app.GetLog().Debug("configpanel: channel: failed to generate invite link", zap.Int64("id", chat.Id), zap.Error(err))
+				return "Failed to Create Invite Link. Please Make Sure the bot has Permissions to Add Users", nil, nil
+			}
+
 			currentChannels = append(currentChannels, model.Channel{
 				ID:         chat.Id,
 				Title:      chat.Title,
-				InviteLink: chat.InviteLink,
+				InviteLink: link.InviteLink,
 			})
 
 			app.GetDB().UpdateConfig(ctx.Bot.Id, config.FieldNameFsub, currentChannels)
@@ -137,13 +144,19 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 				return "", nil, err
 			}
 
+			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: "Force Subscribe"})
+			if err != nil {
+				app.GetLog().Debug("configpanel: channel: failed to generate invite link", zap.Int64("id", chat.Id), zap.Error(err))
+				return "Failed to Create Invite Link. Please Make Sure the bot has Permissions to Add Users", nil, nil
+			}
+
 			for i, c := range currentChannels {
 				if c.ID != channelID {
 					continue
 				}
 
 				currentChannels[i].Title = chat.Title
-				currentChannels[i].InviteLink = chat.InviteLink
+				currentChannels[i].InviteLink = link.InviteLink
 			}
 
 			app.GetDB().UpdateConfig(ctx.Bot.Id, config.FieldNameFsub, currentChannels)
