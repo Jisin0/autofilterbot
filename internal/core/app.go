@@ -241,6 +241,10 @@ func (c *Core) SetCollectionIndex(index int) {
 	}
 }
 
+func (c *Core) GetContext() context.Context {
+	return c.Ctx
+}
+
 // App returns the initialized global app instance.
 func Application() *Core {
 	return _app
