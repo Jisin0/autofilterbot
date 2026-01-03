@@ -37,7 +37,7 @@ func CreatePanel(app AppPreview) *panel.Panel {
 	p.AddPage(panel.NewPage("autodel", "Auto Delete").WithCallbackFunc(TimeField(app, config.FieldNameAutodeleteTime, []int{5, 10, 15, 20, 30, 45})))
 	p.AddPage(panel.NewPage("filedel", "File AutoDelete").WithCallbackFunc(TimeField(app, config.FieldNameFileAutoDelete, []int{5, 10, 15, 20, 30, 45})))
 
-	p.NewPage("fsub", "Force Sub").WithCallbackFunc(ChannelField(app, config.FieldNameFsub, ChannelFieldOpts{Description: "Force Subcribe Channels are Channels that the User Must Join to get Files."}))
+	p.NewPage("fsub", "Force Sub").WithCallbackFunc(ChannelField(app, config.FieldNameFsub, ChannelFieldOpts{Description: "Force Subcribe Channels are Channels that the User Must Join to get Files.", AllowRequestInvite: true}))
 
 	dbPage := panel.NewPage("db", "Database").WithContent("📂 Configure Database Settings from the Options Below.")
 	dbPage.NewSubPage("coll", "File Database").WithCallbackFunc(IntField(app, config.FieldNameCollectionIndex, IntFieldOpts{

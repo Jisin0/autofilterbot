@@ -8,7 +8,9 @@ type Channel struct {
 	// Name or title of the channel.
 	Title string `json:"title" bson:"title"`
 	// Invite link for the channel.
-	InviteLink string `json:"link" bson:"link"`
+	InviteLink string `json:"link" bson:"link,omitempty"`
+	// Indicates wether the invite link creates a join request.
+	CreatesJoinRequest bool `json:"request,omitempty"`
 }
 
 // Stats are database statistics.

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/Jisin0/autofilterbot/internal/database"
+	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 )
@@ -71,7 +72,7 @@ func HasJoinRequest(db database.Database, chatId, userId int64) (bool, error) {
 // - userId: id of user to check.
 //
 // Returns slice of channels user is not a member. Error returned will be any API call or DB query failure.
-func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.Channel, userId int64) ([]model.Channel, error) {
+func GetNotMemberOrRequest(bot *gotgbot.Bot, db *mongo.Client, f []model.Channel, userId int64) ([]model.Channel, error) {
 	var (
 		user      *model.User
 		allErrors []error
@@ -89,7 +90,7 @@ func GetNotMemberOrRequest(bot *gotgbot.Bot, db database.Database, f []model.Cha
 		}
 
 		if user == nil {
-			user, err = db.GetUser(userId)
+			user, err = db.GetUserJoinRequests(userId)
 			if err != nil {
 				allErrors = append(allErrors, err)
 				continue // or break to prevent further db queries?

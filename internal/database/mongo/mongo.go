@@ -20,6 +20,8 @@ var _ database.Database = (*Client)(nil)
 type Client struct {
 	// userCollections stores data about users of the bot.
 	userCollection *mongo.Collection
+	// joinRequestCollection stores join requests sent by users.
+	joinRequestsCollection *mongo.Collection
 	// fileCollection stores all saved files.
 	fileCollection *MultiCollection
 	// configCollection stores settings configuration of the bot.
@@ -94,14 +96,15 @@ func NewClient(ctx context.Context, mongodbUri string, log *zap.Logger, opts ...
 	primaryFileCollection.Indexes().CreateOne(context.TODO(), mongo.IndexModel{Keys: bson.D{{Key: "file_name", Value: "text"}, {Key: "time", Value: 1}}})
 
 	client := &Client{
-		ctx:              ctx,
-		client:           mongoClient,
-		db:               dataBase,
-		userCollection:   dataBase.Collection(database.CollectionNameUsers),
-		fileCollection:   fileCollection,
-		configCollection: dataBase.Collection(database.CollectionNameConfigs),
-		groupCollection:  dataBase.Collection(database.CollectionNameGroups),
-		opsCollection:    dataBase.Collection(database.CollectionNameOperations),
+		ctx:                    ctx,
+		client:                 mongoClient,
+		db:                     dataBase,
+		userCollection:         dataBase.Collection(database.CollectionNameUsers),
+		fileCollection:         fileCollection,
+		configCollection:       dataBase.Collection(database.CollectionNameConfigs),
+		groupCollection:        dataBase.Collection(database.CollectionNameGroups),
+		opsCollection:          dataBase.Collection(database.CollectionNameOperations),
+		joinRequestsCollection: dataBase.Collection(database.CollectionNameJoinRequests),
 	}
 
 	return client, nil

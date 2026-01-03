@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	CollectionNameUsers      = "Users"
-	CollectionNameFiles      = "Files"
-	CollectionNameConfigs    = "Configs"
-	CollectionNameOperations = "Operations"
-	CollectionNameGroups     = "Groups"
+	CollectionNameUsers        = "Users"
+	CollectionNameFiles        = "Files"
+	CollectionNameConfigs      = "Configs"
+	CollectionNameOperations   = "Operations"
+	CollectionNameGroups       = "Groups"
+	CollectionNameJoinRequests = "JoinRequests"
 
 	DefaultDatabaseName = "AutoFilterBot"
 )

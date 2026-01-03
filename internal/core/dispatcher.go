@@ -22,6 +22,7 @@ const (
 	callbackQueryGroup
 	miscHandlerGroup
 	middleWareGroup
+	joinRequestGroup
 )
 
 // SetupDispatcher creates a new empty dispatcher with error and panic recovery setup.
@@ -75,8 +76,10 @@ func SetupDispatcher(log *zap.Logger) *ext.Dispatcher {
 	d.AddHandlerToGroup(handlers.NewCallback(callbackquery.Prefix("index"), CbIndex), callbackQueryGroup)
 
 	d.AddHandlerToGroup(handlers.NewMessage(exthandlers.ChatIds(env.Int64s("FILE_CHANNELS")), NewFile), miscHandlerGroup)
+	d.AddHandlerToGroup(handlers.NewChatJoinRequest(func(cjr *gotgbot.ChatJoinRequest) bool { return true }, HandleJoinRequest), joinRequestGroup)
 
 	d.AddHandlerToGroup(handlers.NewMessage(message.All, conversation.MessageHandler), middleWareGroup)
+	d.AddHandlerToGroup(exthandlers.NewAllUpdates(LogUpdate), miscHandlerGroup)
 
 	return d
 }

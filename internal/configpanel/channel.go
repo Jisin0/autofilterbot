@@ -21,6 +21,8 @@ type ChannelFieldOpts struct {
 	Description string
 	// Maximum number of channels allowed.
 	MaxAmount int
+	// Indicates whether the user should be asked if a request invite link should be generated.
+	AllowRequestInvite bool
 }
 
 func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel.CallbackFunc {
@@ -54,15 +56,15 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 					app.GetDB().UpdateConfig(ctx.Bot.Id, config.FieldNameFsub, currentChannels)
 					go app.RefreshConfig()
 
-					return "Force Sub Channel was Deleted Successfully ✅", nil, nil
+					return fieldName + " Channel was Deleted Successfully ✅", nil, nil
 				}
 			}
 
-			return "Force Sub Cahnnel to Delete Was not Found 🫤", nil, nil
+			return fieldName + " Channel to Delete Was not Found 🫤", nil, nil
 		case OperationReset:
 			conv := conversation.NewConversatorFromUpdate(ctx.Bot, ctx.Update.Update)
 
-			m, err := conv.Ask(app.GetContext(), "Are you sure you want to delete all Force Sub Channels? (y/N)", nil)
+			m, err := conv.Ask(app.GetContext(), "Are you sure you want to delete all Channels? (y/N)", nil)
 			if err != nil {
 				return "", nil, errors.Wrap(err, "configpanel: channel: send reset confirmation message failed")
 			}
@@ -74,28 +76,31 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 			app.GetDB().ResetConfig(ctx.Bot.Id, config.FieldNameFsub)
 			go app.RefreshConfig()
 
-			return "Force Sub Channels Have Been Reset Succesfully ✅", nil, nil
+			return fieldName + " Channels Have Been Reset Succesfully ✅", nil, nil
 		case OperationSet:
 			if opts.MaxAmount != 0 && len(currentChannels) >= opts.MaxAmount {
 				ctx.CallbackQuery.Answer(ctx.Bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Channel Limit Reached.\n\nPlease delete a value to try again.", ShowAlert: true})
 				return "", nil, nil
 			}
 
-			conv := conversation.NewConversatorFromUpdate(ctx.Bot, ctx.Update.Update)
+			chatIDStr, _ := data.GetArg(1)
+			chatID, _ := strconv.ParseInt(chatIDStr, 10, 64)
 
-			m, err := conv.Ask(app.GetContext(), "Please Forward a Post from the Channel (with quotes) or Send the Chat id in the Format -100xxxxxxx: ", nil)
-			if err != nil {
-				return "", nil, errors.Wrap(err, "conversation: channel: send channel request message failed")
-			}
+			if chatID == 0 {
+				conv := conversation.NewConversatorFromUpdate(ctx.Bot, ctx.Update.Update)
 
-			var chatID int64
-
-			if m.ForwardOrigin != nil {
-				if f, ok := m.ForwardOrigin.(gotgbot.MessageOriginChannel); ok {
-					chatID = f.Chat.Id
+				m, err := conv.Ask(app.GetContext(), "Please Forward a Post from the Channel (with quotes) or Send the Chat id in the Format -100xxxxxxx: ", nil)
+				if err != nil {
+					return "", nil, errors.Wrap(err, "configpanel: channel: send channel request message failed")
 				}
-			} else {
-				chatID, _ = strconv.ParseInt(strings.TrimSpace(m.Text), 10, 64)
+
+				if m.ForwardOrigin != nil {
+					if f, ok := m.ForwardOrigin.(gotgbot.MessageOriginChannel); ok {
+						chatID = f.Chat.Id
+					}
+				} else {
+					chatID, _ = strconv.ParseInt(strings.TrimSpace(m.Text), 10, 64)
+				}
 			}
 
 			if chatID == 0 {
@@ -109,26 +114,43 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 
 			for _, c := range currentChannels {
 				if c.ID == chat.Id {
-					return "New channel is already a Force Subscribe channel!", nil, nil
+					return "New channel is already add!", nil, nil
 				}
 			}
 
-			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: "Force Subscribe"})
+			var isRequest bool
+
+			if s, ok := data.GetArg(2); ok {
+				isRequest, err = strconv.ParseBool(s)
+				if err != nil {
+					return "", nil, errors.Wrap(err, "configpanel: channel: failed to parse 'is request' arg")
+				}
+			} else if opts.AllowRequestInvite {
+				return "<b>Would you like to add the channel as a request invite channel?</b> \n\nThe user will send a join request, requiring admin approval, instead of joining directly.",
+					[][]gotgbot.InlineKeyboardButton{{
+						{Text: "Yes", CallbackData: ctx.CallbackData.AddArg(fmt.Sprint(chatID)).AddArg("1").ToString()},
+						{Text: "No", CallbackData: ctx.CallbackData.AddArg(fmt.Sprint(chatID)).AddArg("0").ToString()},
+					}},
+					nil
+			}
+
+			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: fieldName, CreatesJoinRequest: isRequest})
 			if err != nil {
 				app.GetLog().Debug("configpanel: channel: failed to generate invite link", zap.Int64("id", chat.Id), zap.Error(err))
 				return "Failed to Create Invite Link. Please Make Sure the bot has Permissions to Add Users", nil, nil
 			}
 
 			currentChannels = append(currentChannels, model.Channel{
-				ID:         chat.Id,
-				Title:      chat.Title,
-				InviteLink: link.InviteLink,
+				ID:                 chat.Id,
+				Title:              chat.Title,
+				InviteLink:         link.InviteLink,
+				CreatesJoinRequest: isRequest,
 			})
 
 			app.GetDB().UpdateConfig(ctx.Bot.Id, config.FieldNameFsub, currentChannels)
 			go app.RefreshConfig()
 
-			return fmt.Sprintf("%s has been Saved as a Force Subscribe Channel Successfully ✅", chat.Title), nil, nil
+			return fmt.Sprintf("%s has been Saved as a %s Channel Successfully ✅", chat.Title, fieldName), nil, nil
 		case OperationRefresh:
 			if len(data.Args) < 2 {
 				return "", nil, errors.New("configpanel: channel: insufficient data for refresh operation")
@@ -144,20 +166,32 @@ func ChannelField(app AppPreview, fieldName string, opts ChannelFieldOpts) panel
 				return "", nil, err
 			}
 
-			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: "Force Subscribe"})
-			if err != nil {
-				app.GetLog().Debug("configpanel: channel: failed to generate invite link", zap.Int64("id", chat.Id), zap.Error(err))
-				return "Failed to Create Invite Link. Please Make Sure the bot has Permissions to Add Users", nil, nil
-			}
+			var (
+				channel      model.Channel
+				channelIndex *int
+			)
 
 			for i, c := range currentChannels {
 				if c.ID != channelID {
 					continue
 				}
 
-				currentChannels[i].Title = chat.Title
-				currentChannels[i].InviteLink = link.InviteLink
+				channel = c
+				channelIndex = &i
 			}
+
+			if channelIndex == nil {
+				return "Channel was not found in saved channels!", nil, nil
+			}
+
+			link, err := ctx.Bot.CreateChatInviteLink(chat.Id, &gotgbot.CreateChatInviteLinkOpts{Name: fieldName, CreatesJoinRequest: channel.CreatesJoinRequest})
+			if err != nil {
+				app.GetLog().Debug("configpanel: channel: failed to generate invite link", zap.Int64("id", chat.Id), zap.Error(err))
+				return "Failed to Create Invite Link. Please Make Sure the bot has Permissions to Add Users", nil, nil
+			}
+
+			currentChannels[*channelIndex].Title = chat.Title
+			currentChannels[*channelIndex].InviteLink = link.InviteLink
 
 			app.GetDB().UpdateConfig(ctx.Bot.Id, config.FieldNameFsub, currentChannels)
 			go app.RefreshConfig()
