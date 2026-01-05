@@ -43,7 +43,7 @@ func Initialize(logLevel string, disableConsoleOutput bool) {
 
 	lumberjackLogger := &lumberjack.Logger{
 		Filename:   "logs/app.log",
-		MaxSize:    10, // MB
+		MaxSize:    2, // MB
 		MaxBackups: 5,
 		MaxAge:     10,   // Days
 		Compress:   true, // .gz
@@ -56,8 +56,8 @@ func Initialize(logLevel string, disableConsoleOutput bool) {
 		CallerKey:      "caller",
 		MessageKey:     "msg",
 		StacktraceKey:  "stacktrace",
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
-		EncodeTime:     zapcore.TimeEncoderOfLayout("01/02/2006 15:04:05"),
+		EncodeTime:     zapcore.TimeEncoderOfLayout("02/01/2006 15:04:05"),
+		EncodeLevel:    zapcore.CapitalLevelEncoder,
 		EncodeDuration: zapcore.SecondsDurationEncoder,
 		EncodeCaller:   zapcore.ShortCallerEncoder,
 	}
@@ -73,6 +73,8 @@ func Initialize(logLevel string, disableConsoleOutput bool) {
 	cores := []zapcore.Core{fileCore}
 
 	if !disableConsoleOutput {
+		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder // color log level text
+
 		consoleCore := zapcore.NewCore(
 			zapcore.NewConsoleEncoder(encoderConfig),
 			zapcore.AddSync(os.Stdout),
