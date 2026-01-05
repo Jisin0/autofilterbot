@@ -97,7 +97,7 @@ func (c CallbackData) AddPath(val string) CallbackData {
 
 // GetArg fetches the argument at given index.
 func (c CallbackData) GetArg(index int) (string, bool) {
-	if len(c.Args)-1 > index {
+	if index > len(c.Args)-1 {
 		return "", false
 	}
 

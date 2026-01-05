@@ -73,7 +73,11 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 					}
 				}
 
-				btns = append(btns, []gotgbot.InlineKeyboardButton{button.Close(user.Id)}, []gotgbot.InlineKeyboardButton{{Text: "𝖱𝖾𝗍𝗋𝗒 🔃"}})
+				btns = append(btns,
+					[]gotgbot.InlineKeyboardButton{
+						button.Close(user.Id),
+						{Text: "ʀᴇᴛʀʏ 🔃", Url: fmt.Sprintf("https://t.me/%s?start=%s", bot.Username, ctx.Args()[1])},
+					})
 
 				_, err = m.Reply(bot,
 					format.KeyValueFormat(_app.Config.GetFsubText(), _app.BasicMessageValues(ctx)),

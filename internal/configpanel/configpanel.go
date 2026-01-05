@@ -4,6 +4,8 @@ Package configpanel handles the /settings command
 package configpanel
 
 import (
+	"context"
+
 	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
 	"github.com/Jisin0/autofilterbot/pkg/panel"
@@ -11,12 +13,14 @@ import (
 )
 
 const (
-	OperationDelete = "del"
-	OperationSet    = "set"
-	OperationReset  = "reset"
+	OperationDelete  = "del"
+	OperationSet     = "set"
+	OperationReset   = "reset"
+	OperationRefresh = "ref"
 )
 
 type AppPreview interface {
+	GetContext() context.Context
 	GetDB() *mongo.Client
 	GetConfig() *config.Config
 	GetLog() *zap.Logger
@@ -32,6 +36,8 @@ func CreatePanel(app AppPreview) *panel.Panel {
 	p.AddPage(panel.NewPage("sizebtn", "Size Button").WithCallbackFunc(BoolField(app, config.FieldNameSizeButton)))
 	p.AddPage(panel.NewPage("autodel", "Auto Delete").WithCallbackFunc(TimeField(app, config.FieldNameAutodeleteTime, []int{5, 10, 15, 20, 30, 45})))
 	p.AddPage(panel.NewPage("filedel", "File AutoDelete").WithCallbackFunc(TimeField(app, config.FieldNameFileAutoDelete, []int{5, 10, 15, 20, 30, 45})))
+
+	p.NewPage("fsub", "Force Sub").WithCallbackFunc(ChannelField(app, config.FieldNameFsub, ChannelFieldOpts{Description: "Force Subcribe Channels are Channels that the User Must Join to get Files.", AllowRequestInvite: true}))
 
 	dbPage := panel.NewPage("db", "Database").WithContent("📂 Configure Database Settings from the Options Below.")
 	dbPage.NewSubPage("coll", "File Database").WithCallbackFunc(IntField(app, config.FieldNameCollectionIndex, IntFieldOpts{

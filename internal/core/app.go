@@ -150,6 +150,9 @@ func Run(opts RunAppOptions) {
 
 	err = updater.StartPolling(bot, &ext.PollingOpts{
 		DropPendingUpdates: true,
+		GetUpdatesOpts: &gotgbot.GetUpdatesOpts{
+			AllowedUpdates: []string{"message", "channel_post", "inline_query", "chosen_inline_result", "callback_query", "chat_join_request"},
+		},
 	})
 	if err != nil {
 		logger.Fatal(
@@ -241,9 +244,19 @@ func (c *Core) SetCollectionIndex(index int) {
 	}
 }
 
+func (c *Core) GetContext() context.Context {
+	return c.Ctx
+}
+
 // App returns the initialized global app instance.
 func Application() *Core {
 	return _app
+}
+
+// LogUpdate prints update information to debug log.
+func LogUpdate(bot *gotgbot.Bot, ctx *ext.Context) error {
+	_app.Log.Debug(fmt.Sprintf("received %s update (%d)", ctx.GetType(), ctx.UpdateId))
+	return nil
 }
 
 // containsI64 reports whether the given value is in a slice.
