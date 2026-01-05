@@ -3,7 +3,9 @@ package core
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
+	"github.com/Jisin0/autofilterbot/internal/fsub"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -59,6 +61,32 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 		_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{Text: "Result Page Not Found!", ShowAlert: true})
 
 		return err
+	}
+
+	ok, err = fsub.CheckFsub(_app, bot, ctx)
+	if err != nil {
+		if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
+			// redirect to dm for a retry msg
+			data := &RetryData{
+				ChatId:    c.Message.GetChat().Id,
+				MessageId: c.Message.GetMessageId(),
+			}
+
+			_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
+				Url: fmt.Sprintf("t.me/%s?start=%s", bot.Username, data.Encode()),
+			})
+			if err != nil {
+				_app.Log.Warn("all: retry answer failed", zap.Error(err))
+			}
+
+			return nil
+		}
+
+		_app.Log.Warn("all: check fsub failed", zap.Error(err))
+	}
+
+	if !ok {
+		return nil
 	}
 
 	if len(data.Args) > 2 { // if file uid in args

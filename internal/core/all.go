@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Jisin0/autofilterbot/internal/fsub"
 	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
@@ -63,6 +64,32 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 		return nil
 	}
 
+	ok, err = fsub.CheckFsub(_app, bot, ctx)
+	if err != nil {
+		if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
+			// redirect to dm for a retry msg
+			data := &RetryData{
+				ChatId:    c.Message.GetChat().Id,
+				MessageId: c.Message.GetMessageId(),
+			}
+
+			_, err = c.Answer(bot, &gotgbot.AnswerCallbackQueryOpts{
+				Url: fmt.Sprintf("t.me/%s?start=%s", bot.Username, data.Encode()),
+			})
+			if err != nil {
+				_app.Log.Warn("all: retry answer failed", zap.Error(err))
+			}
+
+			return nil
+		}
+
+		_app.Log.Warn("all: check fsub failed", zap.Error(err))
+	}
+
+	if !ok {
+		return nil
+	}
+
 	pageFiles := r.Files[pageIndex]
 
 	sentMessages := make([]struct {
@@ -89,7 +116,7 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 		})
 		if err != nil {
 			if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
-				// redirect to pm for a retry msg
+				// redirect to dm for a retry msg
 				data := &RetryData{ //TODO: implement
 					ChatId:    c.Message.GetChat().Id,
 					MessageId: c.Message.GetMessageId(),
