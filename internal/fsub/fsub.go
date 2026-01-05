@@ -5,10 +5,17 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Jisin0/autofilterbot/internal/button"
+	"github.com/Jisin0/autofilterbot/internal/config"
 	"github.com/Jisin0/autofilterbot/internal/database"
 	"github.com/Jisin0/autofilterbot/internal/database/mongo"
+	"github.com/Jisin0/autofilterbot/internal/format"
 	"github.com/Jisin0/autofilterbot/internal/model"
 	"github.com/PaulSonOfLars/gotgbot/v2"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext"
+	"go.uber.org/zap"
+
+	pkgerrors "github.com/pkg/errors"
 )
 
 // FsubChannel is a single force sub channel.
@@ -114,4 +121,108 @@ func GetNotMemberOrRequest(bot *gotgbot.Bot, db *mongo.Client, f []model.Channel
 	}
 
 	return notJoined, errors.Join(allErrors...)
+}
+
+type appPreview interface {
+	GetDB() *mongo.Client
+	GetConfig() *config.Config
+	GetLog() *zap.Logger
+	BasicMessageValues(ctx *ext.Context, extraValues ...map[string]any) map[string]string
+}
+
+// CheckFsub checks wether the user has joined or sent a join request to all force subscribe channels.
+// The user is sent a message directing them to join the required channels.
+//
+// Returns boolean indicating whether the user has joined all channels and error indicating an API or Db request error.
+//
+// NOTE: true will be returned incase of an error.
+func CheckFsub(app appPreview, bot *gotgbot.Bot, ctx *ext.Context) (bool, error) {
+	var (
+		userID int64
+		chatID int64
+	)
+
+	switch {
+	case ctx.Message != nil:
+		userID = ctx.Message.From.Id
+		chatID = ctx.Message.Chat.Id
+	case ctx.CallbackQuery != nil:
+		userID = ctx.CallbackQuery.From.Id
+		chatID = ctx.CallbackQuery.From.Id
+	case ctx.InlineQuery != nil:
+		userID = ctx.InlineQuery.From.Id
+		chatID = ctx.InlineQuery.From.Id
+	}
+
+	notJoined, err := GetNotMemberOrRequest(bot, app.GetDB(), app.GetConfig().GetFsubChannels(), userID)
+	if err != nil {
+		return true, pkgerrors.Wrap(err, "fsub: ")
+	}
+
+	if len(notJoined) == 0 {
+		return true, nil
+	}
+
+	var btns [][]gotgbot.InlineKeyboardButton
+
+	switch len(notJoined) {
+	case 1:
+		btns = [][]gotgbot.InlineKeyboardButton{{{Text: "ᴊᴏɪɴ ᴍʏ ᴄʜᴀɴɴᴇʟ", Url: notJoined[0].InviteLink}}}
+	case 2:
+		btns = [][]gotgbot.InlineKeyboardButton{
+			{{Text: "ᴊᴏɪɴ ғɪʀsᴛ ᴄʜᴀɴɴᴇʟ", Url: notJoined[0].InviteLink}},
+			{{Text: "ᴊᴏɪɴ sᴇᴄᴏɴᴅ ᴄʜᴀɴɴᴇʟ", Url: notJoined[1].InviteLink}},
+		}
+	default:
+		btns = make([][]gotgbot.InlineKeyboardButton, 0, len(notJoined)+1)
+		for i, c := range notJoined {
+			btns = append(btns, []gotgbot.InlineKeyboardButton{{Text: fmt.Sprintf("ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ %d", i+1), Url: c.InviteLink}})
+		}
+	}
+
+	text := format.KeyValueFormat(app.GetConfig().GetFsubText(), app.BasicMessageValues(ctx))
+
+	retryButton := gotgbot.InlineKeyboardButton{Text: "ʀᴇᴛʀʏ 🔃"}
+
+	switch {
+	case ctx.Message != nil:
+		retryButton.Url = fmt.Sprintf("https://t.me/%s?start=%s", bot.Username, ctx.Args()[1])
+	case ctx.CallbackQuery != nil:
+		retryButton.CallbackData = ctx.CallbackQuery.Data
+	case ctx.InlineQuery != nil:
+		retryButton.SwitchInlineQueryCurrentChat = &ctx.InlineQuery.Query
+	}
+
+	btns = append(btns,
+		[]gotgbot.InlineKeyboardButton{
+			button.Close(userID),
+			retryButton,
+		})
+
+	if ctx.InlineQuery != nil {
+		_, err := ctx.InlineQuery.Answer(bot, []gotgbot.InlineQueryResult{gotgbot.InlineQueryResultArticle{
+			Id:    "retry",
+			Title: "Join My Channels First 👇",
+			InputMessageContent: gotgbot.InputTextMessageContent{
+				MessageText: text,
+				ParseMode:   gotgbot.ParseModeHTML,
+			},
+			ReplyMarkup: &gotgbot.InlineKeyboardMarkup{InlineKeyboard: btns},
+		}},
+			&gotgbot.AnswerInlineQueryOpts{
+				CacheTime: 5,
+			})
+
+		return false, pkgerrors.Wrap(err, "fsub: failed to answer inline query: ")
+	}
+
+	_, err = bot.SendMessage(chatID,
+		text,
+		&gotgbot.SendMessageOpts{
+			ParseMode:   gotgbot.ParseModeHTML,
+			ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: btns},
+		},
+	)
+
+	return false, pkgerrors.Wrap(err, "fsub: send fsub message failed: ")
 }

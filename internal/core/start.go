@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/Jisin0/autofilterbot/internal/autofilter"
-	"github.com/Jisin0/autofilterbot/internal/button"
-	"github.com/Jisin0/autofilterbot/internal/format"
 	"github.com/Jisin0/autofilterbot/internal/fsub"
 	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/Jisin0/autofilterbot/internal/model"
@@ -48,50 +46,13 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 	data := string(bytes)
 	switch data[0] {
 	case DataPrefixFile:
-		if f := _app.Config.GetFsubChannels(); len(f) != 0 {
-			notJoined, err := fsub.GetNotMemberOrRequest(bot, _app.DB, f, user.Id)
-			if err != nil {
-				_app.Log.Warn("start: check fsub failed", zap.Error(err))
-				return nil
-			}
+		ok, err := fsub.CheckFsub(_app, bot, ctx)
+		if err != nil {
+			_app.Log.Warn("start: check fsub failed", zap.Error(err))
+		}
 
-			if len(notJoined) != 0 {
-				var btns [][]gotgbot.InlineKeyboardButton
-
-				switch len(notJoined) {
-				case 1:
-					btns = [][]gotgbot.InlineKeyboardButton{{{Text: "ᴊᴏɪɴ ᴍʏ ᴄʜᴀɴɴᴇʟ", Url: notJoined[0].InviteLink}}}
-				case 2:
-					btns = [][]gotgbot.InlineKeyboardButton{
-						{{Text: "ᴊᴏɪɴ ғɪʀsᴛ ᴄʜᴀɴɴᴇʟ", Url: notJoined[0].InviteLink}},
-						{{Text: "ᴊᴏɪɴ sᴇᴄᴏɴᴅ ᴄʜᴀɴɴᴇʟ", Url: notJoined[1].InviteLink}},
-					}
-				default:
-					btns = make([][]gotgbot.InlineKeyboardButton, 0, len(notJoined)+1)
-					for i, c := range notJoined {
-						btns = append(btns, []gotgbot.InlineKeyboardButton{{Text: fmt.Sprintf("ᴊᴏɪɴ ᴄʜᴀɴɴᴇʟ %d", i+1), Url: c.InviteLink}})
-					}
-				}
-
-				btns = append(btns,
-					[]gotgbot.InlineKeyboardButton{
-						button.Close(user.Id),
-						{Text: "ʀᴇᴛʀʏ 🔃", Url: fmt.Sprintf("https://t.me/%s?start=%s", bot.Username, ctx.Args()[1])},
-					})
-
-				_, err = m.Reply(bot,
-					format.KeyValueFormat(_app.Config.GetFsubText(), _app.BasicMessageValues(ctx)),
-					&gotgbot.SendMessageOpts{
-						ParseMode:   gotgbot.ParseModeHTML,
-						ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: btns},
-					},
-				)
-				if err != nil {
-					_app.Log.Warn("start: send fsub message failed", zap.Error(err))
-				}
-
-				return nil
-			}
+		if !ok {
+			return nil
 		}
 
 		d, err := autofilter.URLDataFromString(data)
