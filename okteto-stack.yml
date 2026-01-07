@@ -1,0 +1,19 @@
+services:
+  drone-vc-p:
+    build: .
+    environment:
+      BOT_TOKEN: $BOT_TOKEN
+      ADMINS: $ADMINS
+      FILE_CHANNELS: $FILE_CHANNELS
+      LOG_LEVEL: $LOG_LEVEL
+      APP_ID: $APP_ID
+      APP_HASH: $APP_HASH
+      MONGODB_URI: $MONGODB_URI
+      MONGODB_URI1: $MONGODB_URI1
+      MONGODB_URI2: $MONGODB_URI2
+      MONGODB_URI3: $MONGODB_URI3
+      MONGODB_URI4: $MONGODB_URI4
+      MONGODB_URI5: $MONGODB_URI5
+    resources:
+      cpu: 1000m
+      memory: 1Gi

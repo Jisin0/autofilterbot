@@ -1,0 +1,53 @@
+{
+    "name": "autofilterbot",
+    "description": "Telegram Bot to Automatically Search, Filter and Index Files.",
+    "keywords": [
+        "Go",
+        "autofilter",
+        "Telegram"
+    ],
+    "website": "https://github.com/Jisin0",
+    "repository": "https://github.com/Jisin0/autofilterbot",
+    "success_url": "https://telegram.dog/Jisin0",
+    "env": {
+        "BOT_TOKEN": {
+            "description": "Your Bot Token From @BotFather",
+            "value": ""
+        },
+        "MONGODB_URI": {
+            "description": "Mongodb URI obtained from mongodb atlas, filled with username and password.",
+            "value": ""
+        },
+        "ADNINS": {
+            "description": "Telegram ids of administrators of the bot, separated by spaces.",
+            "value": ""
+        },
+        "FILE_CHANNELS": {
+            "description": "Telegram chat ids of channels where the bot scans for new files, separated by spaces.",
+            "value": ""
+        },
+        "LOG_LEVEL": {
+            "description": "Optional. Log level to be printed out or recorded, defaults to info.",
+            "required": false
+        },
+        "APP_ID": {
+            "description": "Optional. Telegram MTProto app id. ",
+            "required": false
+        },
+        "APP_HASH": {
+            "description": "Optional. Telegram MTProto app hash. ",
+            "required": false
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-go.git"
+        }
+    ],
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "eco"
+        }
+    }
+}
