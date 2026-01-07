@@ -4,7 +4,7 @@
 [![Go Tests](https://github.com/Jisin0/autofilterbot/workflows/Tests/badge.svg)](https://github.com/Jisin0/autofilterbot/actions?query=workflow%3ABuild+event%3Apush+branch%3Amain)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-**autofilterbot**is a highly customisable, automatic, fast telegram bot written in [GO](https://go.dev) that can automatically save, filter, sort and index files.
+**autofilterbot** is a heavily customisable, automatic, fast telegram bot written in [GO](https://go.dev) that can automatically save, filter, sort and index files.
 
 ## Commands
 ```
@@ -143,7 +143,9 @@ go build .
 </details>
 
 ## Contributing
-All contributions and enhancements are welcome and we'll need all the hekp we could get. Please remember to follow [conventional commits](https://conventionalcommits.org) when contributing. Feel free to contact me [@FractalProjects](https://telegram.dog/FractelDiscussions) for suggestions, reporting issues or for a quick review when contributing.
+All contributions and enhancements are welcome and we'll need all the help we could get. 
+
+Please remember to follow [conventional commits](https://conventionalcommits.org) when contributing. Feel free to contact me [@FractalProjects](https://telegram.dog/FractelDiscussions) for suggestions, reporting issues or for a quick review when contributing.
 
 If reporting an issue, please provide the app logs (can be obtained using /logs) after setting the LOG_LEVEL to debug fro effective investigation.
 
