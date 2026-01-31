@@ -16,6 +16,30 @@ import (
 	"go.uber.org/zap"
 )
 
+// SendBatch sends a message batch to the target chat.
+func SendBatch(bot *gotgbot.Bot, chatID int64, rawData string) error {
+	data, err := BatchURLDataFromString(rawData)
+	if err != nil {
+		return err
+	}
+
+	for i := data.StartMessageId; i <= data.EndMessageId; i++ {
+		_, err := bot.CopyMessage(chatID, data.ChatId, i, nil)
+		if err != nil {
+			if functions.IsChatNotFoundErr(err) {
+				bot.SendMessage(chatID, "It looks like I'm no longer a part of the channel where this batch was created :(\n\nPlease contact a bot administrator or add me to the channel if you are one.", nil)
+				_app.Log.Debug("sendbatch: failed to send batch: chat not found", zap.Int64("channel_id", data.ChatId), zap.Error(err))
+
+				return nil
+			}
+
+			_app.Log.Debug("sendbatch: copy message failed", zap.Int64("channel_id", data.ChatId), zap.Int64("msg_id", i), zap.Error(err))
+		}
+	}
+
+	return nil
+}
+
 // NewBatch handles the /batch commmand.
 func NewBatch(bot *gotgbot.Bot, ctx *ext.Context) error {
 	if !_app.AuthAdmin(ctx) {

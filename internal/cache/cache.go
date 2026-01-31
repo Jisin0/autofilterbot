@@ -7,16 +7,19 @@ import "time"
 
 const (
 	defualtAutofilterTimeout = time.Minute * 15
+	defaultBatchTimeout      = time.Hour * 2
 )
 
 // Cache wraps all json cache helper types into a struct.
 type Cache struct {
 	Autofilter *Autofilter
+	Batch      *Batch
 }
 
 // NewCache initializes and creates a new cache structure.
 func NewCache() *Cache {
 	return &Cache{
 		Autofilter: NewAutofilter(defualtAutofilterTimeout),
+		Batch:      NewBatch(defaultBatchTimeout),
 	}
 }

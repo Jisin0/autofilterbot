@@ -2,6 +2,7 @@ package functions
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/PaulSonOfLars/gotgbot/v2"
@@ -43,4 +44,11 @@ func AsFloodWait(e error) (*FloodWaitError, bool) {
 		Method:   rpc.Method,
 		Duration: rpc.ResponseParams.RetryAfter,
 	}, true
+}
+
+// IsChatNotFoundErr reports whether the error is a telegram "chat not found" or "user blocked" API error.
+// NOTE: Uses string comparison and could be unreliable.
+func IsChatNotFoundErr(e error) bool {
+	s := e.Error()
+	return strings.Contains(s, "chat not found") || strings.Contains(s, "blocked")
 }

@@ -66,7 +66,7 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	ok, err = fsub.CheckFsub(_app, bot, ctx)
 	if err != nil {
-		if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
+		if functions.IsChatNotFoundErr(err) { // user has not started bot or blocked
 			// redirect to dm for a retry msg
 			data := &RetryData{
 				ChatId:    c.Message.GetChat().Id,
@@ -115,7 +115,7 @@ func All(bot *gotgbot.Bot, ctx *ext.Context) error {
 			Keyboard: [][]gotgbot.InlineKeyboardButton{{{Text: "🗑️ ᴅᴇʟᴇᴛᴇ ғɪʟᴇ 🗑️", CallbackData: "close"}}},
 		})
 		if err != nil {
-			if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
+			if functions.IsChatNotFoundErr(err) { // user has not started bot or blocked
 				// redirect to dm for a retry msg
 				data := &RetryData{ //TODO: implement
 					ChatId:    c.Message.GetChat().Id,

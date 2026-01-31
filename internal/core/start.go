@@ -113,6 +113,23 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 		if err != nil {
 			_app.Log.Warn("start: send retry msg failed", zap.Error(err))
 		}
+	case DataPrefixBatch:
+		ok, err := fsub.CheckFsub(_app, bot, ctx)
+		if err != nil {
+			_app.Log.Warn("start: check fsub failed", zap.Error(err))
+		}
+
+		if !ok {
+			return nil
+		}
+
+		pm, _ := m.Reply(bot, "<b>Fetching Media 📥</b>", &gotgbot.SendMessageOpts{ParseMode: gotgbot.ParseModeHTML})
+
+		SendBatch(bot, m.Chat.Id, data)
+
+		if pm != nil {
+			pm.Delete(bot, nil)
+		}
 	}
 
 	return nil

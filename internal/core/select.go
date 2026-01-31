@@ -3,9 +3,9 @@ package core
 import (
 	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/Jisin0/autofilterbot/internal/fsub"
+	"github.com/Jisin0/autofilterbot/internal/functions"
 	"github.com/Jisin0/autofilterbot/pkg/callbackdata"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
@@ -65,7 +65,7 @@ func Select(bot *gotgbot.Bot, ctx *ext.Context) error {
 
 	ok, err = fsub.CheckFsub(_app, bot, ctx)
 	if err != nil {
-		if s := err.Error(); strings.Contains(s, "chat not found") || strings.Contains(s, "blocked") { // user has not started bot or blocked
+		if functions.IsChatNotFoundErr(err) { // user has not started bot or blocked
 			// redirect to dm for a retry msg
 			data := &RetryData{
 				ChatId:    c.Message.GetChat().Id,
