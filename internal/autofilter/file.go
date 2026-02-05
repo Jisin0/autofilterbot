@@ -27,7 +27,7 @@ func (files Files) Process(chatId int64, botUsername string, opts ProcessFilesOp
 type ProcessFilesOptions interface {
 	GetButtonTemplate() string
 	GetSizeButton() bool
-	GetShortener() shortener.Shortener
+	GetShortener() *shortener.Shortener
 }
 
 // ProcessFiles changes files into a keboard slice to be used as markup in a message.

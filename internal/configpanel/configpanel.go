@@ -51,6 +51,8 @@ func CreatePanel(app AppPreview) *panel.Panel {
 		"The Auto Collection-Updater periodically runs to change the database used to store files, to the database with least files.\n\nWhen Enabled, the Collection set from Config Panel will bee Ignored\n\nNOTE: Application must be restarted for changes to take effect.\n\n",
 	))
 
+	p.NewPage("shorten", "URL Shortener").WithCallbackFunc(Shortener(app))
+
 	p.AddPage(dbPage)
 
 	return p

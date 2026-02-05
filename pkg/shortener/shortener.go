@@ -18,6 +18,14 @@ type Shortener struct {
 	RawURL bool `json:"raw_url,omitempty" bson:"raw_url,omitempty"`
 }
 
+// NewShortener creates a new *Shortener object that can be used to shorten urls.
+func NewShortener(apiKey string, rootURL string) *Shortener {
+	return &Shortener{
+		ApiKey:  apiKey,
+		RootURL: rootURL,
+	}
+}
+
 // ShortenURLOpts are optional parameter for ShortenURL.
 type ShortenURLOpts struct {
 	// If set api call will be made returning the result url.
@@ -35,7 +43,7 @@ type shortenResult struct {
 
 func (c *Shortener) ShortenURL(inputURL string) (string, error) {
 	// protocol is already added when saving
-	requestURL := fmt.Sprintf("%v/api?api=%v&url=%v", c.RootURL, c.ApiKey, inputURL)
+	requestURL := fmt.Sprintf("https://%s/api?api=%s&url=%s", c.RootURL, c.ApiKey, inputURL)
 
 	if c.RawURL {
 		return requestURL, nil

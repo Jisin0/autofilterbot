@@ -57,7 +57,7 @@ type Config struct {
 	// File size is shown in separate button if set
 	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
 
-	Shortener shortener.Shortener `json:"shortener,omitempty" bson:"shortener,omitempty"`
+	Shortener *shortener.Shortener `json:"shortener,omitempty" bson:"shortener,omitempty"`
 
 	// Time in minutes after which result message should be deleted.
 	AutodeleteTime int `json:"autodel_time,omitempty" bson:"autodel_time,omitempty"`
@@ -71,7 +71,7 @@ type Config struct {
 	cachedMap map[string]any
 }
 
-func (c *Config) GetShortener() shortener.Shortener {
+func (c *Config) GetShortener() *shortener.Shortener {
 	return c.Shortener
 }
 
