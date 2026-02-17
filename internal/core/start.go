@@ -68,6 +68,38 @@ func StartCommand(bot *gotgbot.Bot, ctx *ext.Context) error {
 			return nil
 		}
 
+		if d.HasShortener && _app.Config.GetShortener() != nil {
+			d.HasShortener = false // invert hasShortener before shortening
+			url := d.Encode()
+
+			shortenedURL, err := _app.Config.GetShortener().ShortenURL(fmt.Sprintf("https://t.me/%s?start=%s", bot.Username, d.Encode()))
+			fmt.Println(shortenedURL)
+			if err != nil {
+				_app.Log.Warn("start: failed to shorten url", zap.Error(err), zap.String("url", url))
+			} else {
+				text := _app.FormatText(ctx, _app.Config.GetShortenedMessage(), map[string]any{
+					"file_name": f.FileName,
+					"file_size": functions.FileSizeToString(f.FileSize),
+				})
+
+				keyboard := [][]gotgbot.InlineKeyboardButton{{{Text: "📥 Dᴏᴡɴʟᴏᴀᴅ 📥", Url: shortenedURL}}}
+
+				if _app.Config.ShortenerTutorial != "" {
+					keyboard = append(keyboard, []gotgbot.InlineKeyboardButton{{Text: "🔗  𝘏𝘰𝘸 𝘛𝘰 𝘋𝘰𝘸𝘯𝘭𝘰𝘢𝘥  🗂️", Url: _app.Config.ShortenerTutorial}})
+				}
+
+				_, err = bot.SendMessage(ctx.EffectiveChat.Id, text, &gotgbot.SendMessageOpts{
+					ParseMode:   gotgbot.ParseModeHTML,
+					ReplyMarkup: gotgbot.InlineKeyboardMarkup{InlineKeyboard: keyboard},
+				})
+				if err == nil {
+					return nil
+				}
+
+				_app.Log.Warn("start: failed to send shortened message", zap.String("shortened_url", shortenedURL), zap.Error(err))
+			}
+		}
+
 		var (
 			warn    string
 			delTime = _app.Config.GetFileAutoDelete()

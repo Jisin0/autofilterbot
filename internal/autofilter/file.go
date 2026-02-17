@@ -33,7 +33,7 @@ type ProcessFilesOptions interface {
 // ProcessFiles changes files into a keboard slice to be used as markup in a message.
 func ProcessFiles(files Files, chatId int64, botUsername string, opts ProcessFilesOptions) [][]gotgbot.InlineKeyboardButton {
 	var (
-		hasShortener = opts.GetShortener().ApiKey != ""
+		hasShortener = opts.GetShortener() != nil
 		result       = make([][]gotgbot.InlineKeyboardButton, 0, len(files))
 	)
 

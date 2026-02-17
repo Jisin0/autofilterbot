@@ -57,7 +57,12 @@ type Config struct {
 	// File size is shown in separate button if set
 	SizeButton bool `json:"size_btn,omitempty" bson:"size_btn,omitempty"`
 
+	// URL shortener
 	Shortener *shortener.Shortener `json:"shortener,omitempty" bson:"shortener,omitempty"`
+	// Message sent when url successfully shortened.
+	ShortenedMessage string `json:"shortened_text,omitempty" bson:"shortened_text,omitempty"`
+	// Link to a tutorial video on how to use the shortener.
+	ShortenerTutorial string `json:"shortener_tutorial,omitempty" bson:"shortener_tutorial,omitempty"`
 
 	// Time in minutes after which result message should be deleted.
 	AutodeleteTime int `json:"autodel_time,omitempty" bson:"autodel_time,omitempty"`
@@ -73,6 +78,21 @@ type Config struct {
 
 func (c *Config) GetShortener() *shortener.Shortener {
 	return c.Shortener
+}
+
+func (c *Config) GetShortenedMessage() string {
+	if c.ShortenedMessage != "" {
+		return c.ShortenedMessage
+	}
+
+	return `
+<i><b>Hᴇʏ ᴛʜᴇʀᴇ {mention} 👋🏽 </b></i>
+
+<u><b>✅ Sᴇᴄᴜʀᴇ ʟɪɴᴋ ᴛᴏ ʏᴏᴜʀ ғɪʟᴇ ʜᴀs sᴜᴄᴄᴇssғᴜʟʟʏ ʙᴇᴇɴ ɢᴇɴᴇʀᴀᴛᴇᴅ ᴘʟᴇᴀsᴇ ᴄʟɪᴄᴋ ᴅᴏᴡɴʟᴏᴀᴅ ʙᴜᴛᴛᴏɴ</b></u>
+				
+<b>🗃️ Fɪʟᴇ Nᴀᴍᴇ :</b> <code>{file_name}</code>
+<b>🔖 Fɪʟᴇ Sɪᴢᴇ :</b> <code>{file_size}</code>
+	`
 }
 
 func (c *Config) GetAutodeleteTime() int {

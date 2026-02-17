@@ -12,7 +12,6 @@ import (
 	"github.com/Jisin0/autofilterbot/internal/index"
 	"github.com/Jisin0/autofilterbot/pkg/autodelete"
 	"github.com/Jisin0/autofilterbot/pkg/panel"
-	"github.com/Jisin0/autofilterbot/pkg/shortener"
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"go.uber.org/zap"
 )
@@ -29,7 +28,6 @@ type App struct {
 	ConfigPanel *panel.Panel
 
 	AutoDelete   *autodelete.Manager
-	Shortener    *shortener.Shortener
 	IndexManager *index.Manager
 }
 
@@ -63,10 +61,6 @@ func (a *App) GetAdmins() []int64 {
 
 func (a *App) GetAutoDelete() *autodelete.Manager {
 	return a.AutoDelete
-}
-
-func (a *App) GetShortener() *shortener.Shortener {
-	return a.Shortener
 }
 
 func (a *App) GetIndexManager() *index.Manager {

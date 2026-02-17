@@ -35,6 +35,8 @@ type ShortenURLOpts struct {
 type shortenResult struct {
 	// Shortened url.
 	Url string `json:"url,omitempty"`
+	// Shortened url, some shorteners use this field name.
+	ShortenedURL string `json:"shortenedUrl,omitempty"`
 	// Status returned by most shorteners either Success or Error.
 	Status string `json:"status"`
 	// Error message returned by most shorteners.
@@ -76,5 +78,10 @@ func (c *Shortener) ShortenURL(inputURL string) (string, error) {
 		return "", fmt.Errorf("shortener error response: %v", res.Message)
 	}
 
-	return res.Url, nil
+	url := res.Url
+	if res.ShortenedURL != "" {
+		url = res.ShortenedURL
+	}
+
+	return url, nil
 }
